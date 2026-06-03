@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  --background: #FAFAF8;
+  --foreground: #1C1917;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Safe area for bottom nav on notched phones */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Shimmer — light version */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #F5F5F4 25%, #E7E5E4 50%, #F5F5F4 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* Cinematic gradient for hero — fades to warm white */
+.hero-gradient {
+  background: linear-gradient(
+    to right,
+    rgba(0,0,0,0.90) 30%,
+    rgba(0,0,0,0.55) 65%,
+    rgba(0,0,0,0.10) 100%
+  );
+}
+.hero-fade-bottom {
+  background: linear-gradient(to bottom, transparent 40%, #FAFAF8 100%);
+}
+
+/* Horizontal scroll — no scrollbar */
+.scroll-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scroll-hide::-webkit-scrollbar { display: none; }
+
+/* Scrollbar — light */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D6D3D1; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #A8A29E; }
