@@ -25,8 +25,22 @@ const HEADERS = {
   "Prefer": "resolution=merge-duplicates",
 };
 
-async function upsert(table, rows) {
-  const url = `${SUPABASE_URL}/rest/v1/${table}`;
+async function upsertCredits(rows) {
+  // Credits have no unique constraint so we use plain insert with ignore-on-conflict header
+  const url = `${SUPABASE_URL}/rest/v1/movie_credits`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { ...HEADERS, "Prefer": "resolution=ignore-duplicates" },
+    body: JSON.stringify(rows),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Supabase error on movie_credits: ${err}`);
+  }
+}
+
+async function upsert(table, rows, conflictCol = "tmdb_id") {
+  const url = `${SUPABASE_URL}/rest/v1/${table}?on_conflict=${conflictCol}`;
   const res = await fetch(url, {
     method: "POST",
     headers: HEADERS,
@@ -92,6 +106,8 @@ function buildPeopleRows(m) {
 }
 
 async function main() {
+  const creditsOnly = process.argv.includes("--credits-only");
+
   console.log("🎬  Bollywood DB Importer");
   console.log(`📂  Reading ${DATA_FILE}...`);
 
@@ -99,26 +115,34 @@ async function main() {
   const movies = raw.movies;
   console.log(`📊  ${movies.length} films to import\n`);
 
-  // 1. Insert movies in batches
-  console.log("📽️   Inserting movies...");
-  for (let i = 0; i < movies.length; i += BATCH_SIZE) {
-    const batch = movies.slice(i, i + BATCH_SIZE).map(buildMovieRow);
-    await upsert("movies", batch);
-    process.stdout.write(`  ${Math.min(i + BATCH_SIZE, movies.length)}/${movies.length} ✓\r`);
+  if (!creditsOnly) {
+    // 1. Insert movies in batches
+    console.log("📽️   Inserting movies...");
+    for (let i = 0; i < movies.length; i += BATCH_SIZE) {
+      const batch = movies.slice(i, i + BATCH_SIZE).map(buildMovieRow);
+      await upsert("movies", batch);
+      process.stdout.write(`  ${Math.min(i + BATCH_SIZE, movies.length)}/${movies.length} ✓\r`);
+    }
+    console.log(`\n  ✅  Movies done`);
+  } else {
+    console.log("⏩  Skipping movies (--credits-only mode)");
   }
-  console.log(`\n  ✅  Movies done`);
 
-  // 2. Fetch inserted movies to get their UUIDs
+  // 2. Fetch inserted movies to get their UUIDs (paginate in case > 1000)
   console.log("\n🔑  Fetching movie IDs...");
-  const idsRes = await fetch(
-    `${SUPABASE_URL}/rest/v1/movies?select=id,tmdb_id&limit=1000`,
-    { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
-  );
-  const movieRows = await idsRes.json();
+  const movieRows = [];
+  for (let offset = 0; offset < movies.length + 1000; offset += 1000) {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/movies?select=id,tmdb_id&limit=1000&offset=${offset}`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+    );
+    const batch = await r.json();
+    if (!batch.length) break;
+    movieRows.push(...batch);
+  }
   const tmdbToUuid = Object.fromEntries(movieRows.map((r) => [r.tmdb_id, r.id]));
 
   // 3. Collect and deduplicate all people
-  console.log("\n👥  Inserting people...");
   const allPeople = new Map();
   for (const m of movies) {
     for (const p of buildPeopleRows(m)) {
@@ -126,11 +150,17 @@ async function main() {
     }
   }
   const peopleArr = [...allPeople.values()];
-  for (let i = 0; i < peopleArr.length; i += BATCH_SIZE) {
-    await upsert("people", peopleArr.slice(i, i + BATCH_SIZE));
-    process.stdout.write(`  ${Math.min(i + BATCH_SIZE, peopleArr.length)}/${peopleArr.length} ✓\r`);
+
+  if (!creditsOnly) {
+    console.log("\n👥  Inserting people...");
+    for (let i = 0; i < peopleArr.length; i += BATCH_SIZE) {
+      await upsert("people", peopleArr.slice(i, i + BATCH_SIZE), "tmdb_id");
+      process.stdout.write(`  ${Math.min(i + BATCH_SIZE, peopleArr.length)}/${peopleArr.length} ✓\r`);
+    }
+    console.log(`\n  ✅  ${peopleArr.length} people done`);
+  } else {
+    console.log("⏩  Skipping people (--credits-only mode)");
   }
-  console.log(`\n  ✅  ${peopleArr.length} people done`);
 
   // 4. Fetch people UUIDs
   console.log("\n🔑  Fetching people IDs...");
@@ -177,7 +207,7 @@ async function main() {
   }
 
   for (let i = 0; i < allCredits.length; i += BATCH_SIZE) {
-    await upsert("movie_credits", allCredits.slice(i, i + BATCH_SIZE));
+    await upsertCredits(allCredits.slice(i, i + BATCH_SIZE));
     process.stdout.write(`  ${Math.min(i + BATCH_SIZE, allCredits.length)}/${allCredits.length} ✓\r`);
   }
   console.log(`\n  ✅  ${allCredits.length} credits done`);

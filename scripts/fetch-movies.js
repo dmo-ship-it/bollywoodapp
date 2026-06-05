@@ -8,6 +8,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const https = require("https");
 
 const TOKEN = process.env.TMDB_TOKEN;
 const OUTPUT_FILE = path.join(__dirname, "../data/movies.json");
@@ -15,6 +16,7 @@ const LANGUAGES = [
   { code: "hi", name: "Hindi" },
   { code: "ta", name: "Tamil" },
   { code: "te", name: "Telugu" },
+  { code: "ml", name: "Malayalam" },
 ];
 const DELAY_MS = 260; // ~40 requests per 10s — stays within TMDB rate limit
 
@@ -35,9 +37,27 @@ function sleep(ms) {
 }
 
 async function get(url) {
-  const res = await fetch(url, { headers: HEADERS });
-  if (!res.ok) throw new Error(`TMDB error ${res.status} for ${url}`);
-  return res.json();
+  return new Promise((resolve, reject) => {
+    const options = {
+      headers: HEADERS,
+    };
+    https.get(url, options, (res) => {
+      let data = "";
+      if (res.statusCode !== 200) {
+        reject(new Error(`TMDB error ${res.statusCode} for ${url}`));
+        res.resume();
+        return;
+      }
+      res.on("data", (chunk) => (data += chunk));
+      res.on("end", () => {
+        try {
+          resolve(JSON.parse(data));
+        } catch (e) {
+          reject(new Error(`Failed to parse JSON: ${e.message}`));
+        }
+      });
+    }).on("error", reject);
+  });
 }
 
 // Fetch one page of films for a specific language, sorted by vote count
@@ -45,9 +65,8 @@ async function fetchPage(language, page) {
   const url =
     `${BASE}/discover/movie` +
     `?with_original_language=${language}` +
-    `&region=IN` +
     `&sort_by=vote_count.desc` +
-    `&vote_count.gte=50` +
+    `&vote_count.gte=3` +
     `&page=${page}`;
   return get(url);
 }
