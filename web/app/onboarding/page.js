@@ -4,18 +4,17 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../lib/supabase-browser";
 
+// Ordered by popularity / audience size
 const LANGUAGES = [
-  // Primary (in our DB)
-  { code: "hi", label: "Hindi",     flag: "🎬", primary: true },
-  { code: "ta", label: "Tamil",     flag: "🎬", primary: true },
-  { code: "te", label: "Telugu",    flag: "🎬", primary: true },
-  { code: "ml", label: "Malayalam", flag: "🎬", primary: true },
-  // Major regional
-  { code: "kn", label: "Kannada",   flag: "🎬", primary: false },
-  { code: "mr", label: "Marathi",   flag: "🎬", primary: false },
-  { code: "bn", label: "Bengali",   flag: "🎬", primary: false },
-  { code: "pa", label: "Punjabi",   flag: "🎬", primary: false },
-  { code: "gu", label: "Gujarati",  flag: "🎬", primary: false },
+  { code: "hi", label: "Hindi"     },
+  { code: "ta", label: "Tamil"     },
+  { code: "te", label: "Telugu"    },
+  { code: "ml", label: "Malayalam" },
+  { code: "kn", label: "Kannada"   },
+  { code: "mr", label: "Marathi"   },
+  { code: "bn", label: "Bengali"   },
+  { code: "pa", label: "Punjabi"   },
+  { code: "gu", label: "Gujarati"  },
 ];
 
 const RATINGS = [
@@ -219,9 +218,6 @@ export default function OnboardingPage() {
       });
     };
 
-    const primaryLangs = LANGUAGES.filter((l) => l.primary);
-    const otherLangs   = LANGUAGES.filter((l) => !l.primary);
-
     return (
       <div className="max-w-lg mx-auto px-4 py-10">
         <div className="mb-6">
@@ -256,62 +252,30 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* Primary languages */}
-        <div className="mb-4">
-          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">Major Cinema Languages</p>
-          <div className="grid grid-cols-2 gap-2">
-            {primaryLangs.map((lang) => {
-              const rank = languageRanking.indexOf(lang.code);
-              const selected = rank !== -1;
-              return (
-                <button
-                  key={lang.code}
-                  onClick={() => toggleLanguage(lang.code)}
-                  className={`relative flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-left ${
-                    selected
-                      ? "border-amber-400 bg-amber-400/10 text-white"
-                      : "border-white/10 bg-zinc-900 text-zinc-400 hover:border-white/30 hover:text-white"
-                  }`}
-                >
-                  <span className="text-sm font-semibold">{lang.label}</span>
-                  {selected && (
-                    <span className="ml-auto w-5 h-5 rounded-full bg-amber-400 text-black text-xs font-black flex items-center justify-center shrink-0">
-                      {rank + 1}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Regional languages */}
-        <div className="mb-8">
-          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">Regional Languages</p>
-          <div className="grid grid-cols-2 gap-2">
-            {otherLangs.map((lang) => {
-              const rank = languageRanking.indexOf(lang.code);
-              const selected = rank !== -1;
-              return (
-                <button
-                  key={lang.code}
-                  onClick={() => toggleLanguage(lang.code)}
-                  className={`relative flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-left ${
-                    selected
-                      ? "border-amber-400 bg-amber-400/10 text-white"
-                      : "border-white/10 bg-zinc-900 text-zinc-400 hover:border-white/30 hover:text-white"
-                  }`}
-                >
-                  <span className="text-sm font-semibold">{lang.label}</span>
-                  {selected && (
-                    <span className="ml-auto w-5 h-5 rounded-full bg-amber-400 text-black text-xs font-black flex items-center justify-center shrink-0">
-                      {rank + 1}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+        {/* All languages in one grid */}
+        <div className="grid grid-cols-2 gap-2 mb-8">
+          {LANGUAGES.map((lang) => {
+            const rank = languageRanking.indexOf(lang.code);
+            const isSelected = rank !== -1;
+            return (
+              <button
+                key={lang.code}
+                onClick={() => toggleLanguage(lang.code)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-left ${
+                  isSelected
+                    ? "border-amber-400 bg-amber-400/10 text-white"
+                    : "border-white/10 bg-zinc-900 text-zinc-400 hover:border-white/30 hover:text-white"
+                }`}
+              >
+                <span className="text-sm font-semibold">{lang.label}</span>
+                {isSelected && (
+                  <span className="ml-auto w-5 h-5 rounded-full bg-amber-400 text-black text-xs font-black flex items-center justify-center shrink-0">
+                    {rank + 1}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
 
         <button
