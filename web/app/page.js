@@ -71,7 +71,7 @@ export default function HomePage() {
   }, [search, vibe, decade, section]);
 
   useEffect(() => {
-    const t = setTimeout(fetchMovies, 250);
+    const t = setTimeout(fetchMovies, 150);
     return () => clearTimeout(t);
   }, [fetchMovies]);
 

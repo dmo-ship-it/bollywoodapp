@@ -126,7 +126,7 @@ export default function OnboardingPage() {
       setResults(data ?? []);
       setShowDropdown(true);
       setSearching(false);
-    }, 300);
+    }, 150);
   }, [query]);
 
   function addMovie(movie) {
