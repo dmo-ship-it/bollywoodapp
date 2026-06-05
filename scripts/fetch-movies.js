@@ -1,5 +1,5 @@
-// Bollywood Movie Fetcher
-// Pulls top Hindi films from TMDB and saves them to data/movies.json
+// Regional Cinema Movie Fetcher
+// Pulls ALL Hindi, Tamil, and Telugu films from TMDB and saves them to data/movies.json
 //
 // Usage:
 //   TMDB_TOKEN=your_token_here node fetch-movies.js
@@ -11,7 +11,11 @@ const path = require("path");
 
 const TOKEN = process.env.TMDB_TOKEN;
 const OUTPUT_FILE = path.join(__dirname, "../data/movies.json");
-const TARGET_COUNT = 500;
+const LANGUAGES = [
+  { code: "hi", name: "Hindi" },
+  { code: "ta", name: "Tamil" },
+  { code: "te", name: "Telugu" },
+];
 const DELAY_MS = 260; // ~40 requests per 10s — stays within TMDB rate limit
 
 if (!TOKEN) {
@@ -36,11 +40,11 @@ async function get(url) {
   return res.json();
 }
 
-// Fetch one page of Hindi films, sorted by vote count so popular films come first
-async function fetchPage(page) {
+// Fetch one page of films for a specific language, sorted by vote count
+async function fetchPage(language, page) {
   const url =
     `${BASE}/discover/movie` +
-    `?with_original_language=hi` +
+    `?with_original_language=${language}` +
     `&region=IN` +
     `&sort_by=vote_count.desc` +
     `&vote_count.gte=50` +
@@ -161,55 +165,73 @@ function transformMovie(raw) {
 }
 
 async function main() {
-  console.log("🎬  Bollywood Movie Fetcher");
-  console.log(`🎯  Target: ${TARGET_COUNT} films\n`);
+  console.log("🎬  Regional Cinema Movie Fetcher");
+  console.log(`📍  Languages: ${LANGUAGES.map(l => l.name).join(", ")}\n`);
 
   const movies = [];
   const seenIds = new Set();
-  let page = 1;
 
-  while (movies.length < TARGET_COUNT) {
-    process.stdout.write(`📄  Page ${page} — fetching list...`);
-    const pageData = await fetchPage(page);
-    const results = pageData.results || [];
+  for (const lang of LANGUAGES) {
+    console.log(`\n🎞️   Fetching ${lang.name} films (${lang.code})...`);
+    let page = 1;
+    let pageData = null;
+    let langCount = 0;
 
-    if (results.length === 0) {
-      console.log("\n⚠️   No more results from TMDB.");
-      break;
-    }
-
-    console.log(` ${results.length} films found`);
-
-    for (const film of results) {
-      if (movies.length >= TARGET_COUNT) break;
-      if (seenIds.has(film.id)) continue;
-      seenIds.add(film.id);
-
-      process.stdout.write(
-        `  [${movies.length + 1}/${TARGET_COUNT}] ${film.title}...`
-      );
+    while (true) {
+      process.stdout.write(`  📄  Page ${page} — fetching list...`);
 
       try {
-        await sleep(DELAY_MS);
-        const details = await fetchMovieDetails(film.id);
-        const transformed = transformMovie(details);
-        movies.push(transformed);
-        console.log(" ✓");
+        pageData = await fetchPage(lang.code, page);
       } catch (err) {
-        console.log(` ✗ (${err.message})`);
+        console.log(`\n  ✗ Error fetching page ${page}: ${err.message}`);
+        break;
+      }
+
+      const results = pageData.results || [];
+
+      if (results.length === 0) {
+        console.log("\n  ✓ No more results.");
+        break;
+      }
+
+      console.log(` ${results.length} films found`);
+
+      for (const film of results) {
+        if (seenIds.has(film.id)) {
+          // Already fetched from another language
+          continue;
+        }
+        seenIds.add(film.id);
+
+        process.stdout.write(
+          `    [${movies.length + 1}] ${film.title}...`
+        );
+
+        try {
+          await sleep(DELAY_MS);
+          const details = await fetchMovieDetails(film.id);
+          const transformed = transformMovie(details);
+          movies.push(transformed);
+          langCount++;
+          console.log(" ✓");
+        } catch (err) {
+          console.log(` ✗ (${err.message})`);
+        }
+      }
+
+      page++;
+
+      // Safety check — TMDB won't have infinite pages
+      if (page > pageData.total_pages) {
+        console.log(`  ✓ Reached last page (${pageData.total_pages}).`);
+        break;
       }
     }
 
-    page++;
-
-    // Safety check — TMDB won't have infinite pages
-    if (page > pageData.total_pages) {
-      console.log("\n⚠️   Reached last page of TMDB results.");
-      break;
-    }
+    console.log(`  📊  ${langCount} ${lang.name} films added (${movies.length} total so far)`);
   }
 
-  console.log(`\n✅  Fetched ${movies.length} films`);
+  console.log(`\n✅  Fetched ${movies.length} films total`);
   console.log(`💾  Saving to ${OUTPUT_FILE}...`);
 
   fs.writeFileSync(
@@ -219,9 +241,8 @@ async function main() {
 
   console.log("🎉  Done!\n");
   console.log("Next steps:");
-  console.log("  1. Open data/movies.json to review the data");
-  console.log("  2. Manually add box_office_india_crore, verdict, awards, soundtrack for top 50 films");
-  console.log("  3. Set up a database and import this JSON");
+  console.log("  1. Review data/movies.json");
+  console.log("  2. Run: SUPABASE_URL=... SUPABASE_KEY=... node scripts/import-movies.js");
 }
 
 main().catch((err) => {
