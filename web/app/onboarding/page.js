@@ -15,15 +15,7 @@ const LANGUAGES = [
   { code: "mr", label: "Marathi",   flag: "🎬", primary: false },
   { code: "bn", label: "Bengali",   flag: "🎬", primary: false },
   { code: "pa", label: "Punjabi",   flag: "🎬", primary: false },
-  // Other dialects & languages
-  { code: "bh", label: "Bhojpuri",    flag: "🎬", primary: false },
-  { code: "gu", label: "Gujarati",    flag: "🎬", primary: false },
-  { code: "or", label: "Odia",        flag: "🎬", primary: false },
-  { code: "ur", label: "Urdu",        flag: "🎬", primary: false },
-  { code: "ra", label: "Rajasthani",  flag: "🎬", primary: false },
-  { code: "ha", label: "Haryanvi",    flag: "🎬", primary: false },
-  { code: "as", label: "Assamese",    flag: "🎬", primary: false },
-  { code: "ma", label: "Maithili",    flag: "🎬", primary: false },
+  { code: "gu", label: "Gujarati",  flag: "🎬", primary: false },
 ];
 
 const RATINGS = [
@@ -293,10 +285,10 @@ export default function OnboardingPage() {
           </div>
         </div>
 
-        {/* Other languages */}
+        {/* Regional languages */}
         <div className="mb-8">
-          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">Regional & Other Languages</p>
-          <div className="flex flex-wrap gap-2">
+          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">Regional Languages</p>
+          <div className="grid grid-cols-2 gap-2">
             {otherLangs.map((lang) => {
               const rank = languageRanking.indexOf(lang.code);
               const selected = rank !== -1;
@@ -304,15 +296,15 @@ export default function OnboardingPage() {
                 <button
                   key={lang.code}
                   onClick={() => toggleLanguage(lang.code)}
-                  className={`relative flex items-center gap-2 px-3 py-2 rounded-full border text-sm transition-all ${
+                  className={`relative flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-left ${
                     selected
                       ? "border-amber-400 bg-amber-400/10 text-white"
                       : "border-white/10 bg-zinc-900 text-zinc-400 hover:border-white/30 hover:text-white"
                   }`}
                 >
-                  {lang.label}
+                  <span className="text-sm font-semibold">{lang.label}</span>
                   {selected && (
-                    <span className="w-4 h-4 rounded-full bg-amber-400 text-black text-[10px] font-black flex items-center justify-center">
+                    <span className="ml-auto w-5 h-5 rounded-full bg-amber-400 text-black text-xs font-black flex items-center justify-center shrink-0">
                       {rank + 1}
                     </span>
                   )}
