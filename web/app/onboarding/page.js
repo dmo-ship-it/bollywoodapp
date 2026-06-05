@@ -4,6 +4,28 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../lib/supabase-browser";
 
+const LANGUAGES = [
+  // Primary (in our DB)
+  { code: "hi", label: "Hindi",     flag: "🎬", primary: true },
+  { code: "ta", label: "Tamil",     flag: "🎬", primary: true },
+  { code: "te", label: "Telugu",    flag: "🎬", primary: true },
+  { code: "ml", label: "Malayalam", flag: "🎬", primary: true },
+  // Major regional
+  { code: "kn", label: "Kannada",   flag: "🎬", primary: false },
+  { code: "mr", label: "Marathi",   flag: "🎬", primary: false },
+  { code: "bn", label: "Bengali",   flag: "🎬", primary: false },
+  { code: "pa", label: "Punjabi",   flag: "🎬", primary: false },
+  // Other dialects & languages
+  { code: "bh", label: "Bhojpuri",    flag: "🎬", primary: false },
+  { code: "gu", label: "Gujarati",    flag: "🎬", primary: false },
+  { code: "or", label: "Odia",        flag: "🎬", primary: false },
+  { code: "ur", label: "Urdu",        flag: "🎬", primary: false },
+  { code: "ra", label: "Rajasthani",  flag: "🎬", primary: false },
+  { code: "ha", label: "Haryanvi",    flag: "🎬", primary: false },
+  { code: "as", label: "Assamese",    flag: "🎬", primary: false },
+  { code: "ma", label: "Maithili",    flag: "🎬", primary: false },
+];
+
 const RATINGS = [
   { emoji: "❤️", label: "Loved",       value: 5 },
   { emoji: "👍", label: "Liked",       value: 4 },
@@ -78,18 +100,19 @@ export default function OnboardingPage() {
   const router   = useRouter();
   const supabase = createClient();
 
-  const [step,         setStep]         = useState(0);
-  const [user,         setUser]         = useState(null);
-  const [query,        setQuery]        = useState("");
-  const [results,      setResults]      = useState([]);
-  const [searching,    setSearching]    = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [selected,     setSelected]     = useState([]); // [{ movie, rating }]
-  const [pairs,        setPairs]        = useState([]);
-  const [pairIdx,      setPairIdx]      = useState(0);
-  const [compResults,  setCompResults]  = useState([]);
-  const [dna,          setDna]          = useState([]);
-  const [saving,       setSaving]       = useState(false);
+  const [step,            setStep]            = useState(0);
+  const [user,            setUser]            = useState(null);
+  const [languageRanking, setLanguageRanking] = useState([]); // ordered array of lang codes
+  const [query,           setQuery]           = useState("");
+  const [results,         setResults]         = useState([]);
+  const [searching,       setSearching]       = useState(false);
+  const [showDropdown,    setShowDropdown]     = useState(false);
+  const [selected,        setSelected]        = useState([]); // [{ movie, rating }]
+  const [pairs,           setPairs]           = useState([]);
+  const [pairIdx,         setPairIdx]         = useState(0);
+  const [compResults,     setCompResults]     = useState([]);
+  const [dna,             setDna]             = useState([]);
+  const [saving,          setSaving]          = useState(false);
 
   const debounceRef = useRef(null);
 
@@ -133,15 +156,19 @@ export default function OnboardingPage() {
     );
   }
 
+  function handleLanguageContinue() {
+    setStep(1);
+  }
+
   function handleContinue() {
     const rated = selected.filter((s) => s.rating != null);
     const p = generatePairs(rated);
     if (p.length > 0) {
       setPairs(p);
-      setStep(1);
+      setStep(2);
     } else {
       setDna(buildDNA(rated));
-      setStep(2);
+      setStep(3);
     }
   }
 
@@ -155,7 +182,7 @@ export default function OnboardingPage() {
       setPairIdx((i) => i + 1);
     } else {
       setDna(buildDNA(selected));
-      setStep(2);
+      setStep(3);
     }
   }
 
@@ -175,15 +202,148 @@ export default function OnboardingPage() {
         await supabase.from("user_reactions").upsert(reactions, { onConflict: "user_id,movie_id" });
       }
       await supabase.from("user_profiles").upsert(
-        { user_id: user.id, dna, onboarding_complete: true, email: user.email },
+        {
+          user_id: user.id,
+          dna,
+          onboarding_complete: true,
+          email: user.email,
+          language_preferences: languageRanking, // ordered array e.g. ["hi","ta","ml"]
+        },
         { onConflict: "user_id" }
       );
     }
     router.push("/");
   }
 
-  // ── Step 0: Search + Rate ──
+  // ── Step 0: Language Ranking ──
   if (step === 0) {
+    const toggleLanguage = (code) => {
+      setLanguageRanking((prev) => {
+        if (prev.includes(code)) {
+          return prev.filter((c) => c !== code);
+        } else {
+          return [...prev, code];
+        }
+      });
+    };
+
+    const primaryLangs = LANGUAGES.filter((l) => l.primary);
+    const otherLangs   = LANGUAGES.filter((l) => !l.primary);
+
+    return (
+      <div className="max-w-lg mx-auto px-4 py-10">
+        <div className="mb-6">
+          <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-2">Step 1 of 4</p>
+          <h1 className="text-2xl font-black mb-1">Which film languages do you watch?</h1>
+          <p className="text-zinc-400 text-sm">Tap to select in order — your first pick is your primary language</p>
+        </div>
+
+        {/* Selected ranking display */}
+        {languageRanking.length > 0 && (
+          <div className="mb-6 p-4 bg-zinc-900 border border-white/10 rounded-2xl">
+            <p className="text-xs text-zinc-500 mb-3 uppercase tracking-widest">Your ranking</p>
+            <div className="space-y-2">
+              {languageRanking.map((code, idx) => {
+                const lang = LANGUAGES.find((l) => l.code === code);
+                return (
+                  <div key={code} className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded-full bg-amber-400 text-black text-xs font-black flex items-center justify-center shrink-0">
+                      {idx + 1}
+                    </span>
+                    <span className="text-sm font-semibold text-white">{lang?.label}</span>
+                    <button
+                      onClick={() => toggleLanguage(code)}
+                      className="ml-auto text-zinc-600 hover:text-zinc-300 text-lg leading-none"
+                    >
+                      ×
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Primary languages */}
+        <div className="mb-4">
+          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">Major Cinema Languages</p>
+          <div className="grid grid-cols-2 gap-2">
+            {primaryLangs.map((lang) => {
+              const rank = languageRanking.indexOf(lang.code);
+              const selected = rank !== -1;
+              return (
+                <button
+                  key={lang.code}
+                  onClick={() => toggleLanguage(lang.code)}
+                  className={`relative flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-left ${
+                    selected
+                      ? "border-amber-400 bg-amber-400/10 text-white"
+                      : "border-white/10 bg-zinc-900 text-zinc-400 hover:border-white/30 hover:text-white"
+                  }`}
+                >
+                  <span className="text-sm font-semibold">{lang.label}</span>
+                  {selected && (
+                    <span className="ml-auto w-5 h-5 rounded-full bg-amber-400 text-black text-xs font-black flex items-center justify-center shrink-0">
+                      {rank + 1}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Other languages */}
+        <div className="mb-8">
+          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">Regional & Other Languages</p>
+          <div className="flex flex-wrap gap-2">
+            {otherLangs.map((lang) => {
+              const rank = languageRanking.indexOf(lang.code);
+              const selected = rank !== -1;
+              return (
+                <button
+                  key={lang.code}
+                  onClick={() => toggleLanguage(lang.code)}
+                  className={`relative flex items-center gap-2 px-3 py-2 rounded-full border text-sm transition-all ${
+                    selected
+                      ? "border-amber-400 bg-amber-400/10 text-white"
+                      : "border-white/10 bg-zinc-900 text-zinc-400 hover:border-white/30 hover:text-white"
+                  }`}
+                >
+                  {lang.label}
+                  {selected && (
+                    <span className="w-4 h-4 rounded-full bg-amber-400 text-black text-[10px] font-black flex items-center justify-center">
+                      {rank + 1}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <button
+          onClick={handleLanguageContinue}
+          disabled={languageRanking.length === 0}
+          className="w-full bg-amber-400 text-black font-bold py-3.5 rounded-full hover:bg-amber-300 transition-colors text-sm disabled:opacity-40"
+        >
+          {languageRanking.length > 0
+            ? `Continue with ${languageRanking.length} language${languageRanking.length !== 1 ? "s" : ""} →`
+            : "Select at least one language"}
+        </button>
+
+        <button
+          onClick={handleLanguageContinue}
+          className="w-full mt-3 text-zinc-600 text-xs hover:text-zinc-400 transition-colors"
+        >
+          Skip for now
+        </button>
+      </div>
+    );
+  }
+
+  // ── Step 1: Search + Rate ──
+  if (step === 1) {
     const ratedCount = selected.filter((s) => s.rating != null).length;
     const allRated   = selected.length > 0 && selected.every((s) => s.rating != null);
 
@@ -191,7 +351,7 @@ export default function OnboardingPage() {
       <div className="max-w-lg mx-auto px-4 py-10">
 
         <div className="mb-6">
-          <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-2">Step 1 of 3</p>
+          <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-2">Step 2 of 4</p>
           <h1 className="text-2xl font-black mb-1">Pick films you've seen</h1>
           <p className="text-zinc-500 text-sm">Search for up to 5 films and rate each one</p>
         </div>
@@ -320,13 +480,13 @@ export default function OnboardingPage() {
     );
   }
 
-  // ── Step 1: Compare within same bucket ──
-  if (step === 1) {
+  // ── Step 2: Compare within same bucket ──
+  if (step === 2) {
     const pair = pairs[pairIdx];
 
     return (
       <div className="max-w-lg mx-auto px-4 py-10 text-center">
-        <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-2">Step 2 of 3</p>
+        <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-2">Step 3 of 4</p>
         <h1 className="text-2xl font-black mb-1">Refine your ranking</h1>
         <p className="text-zinc-400 text-sm mb-1">You rated these the same — which did you prefer?</p>
         <p className="text-zinc-600 text-xs mb-8">{pairIdx + 1} of {pairs.length}</p>
@@ -372,10 +532,10 @@ export default function OnboardingPage() {
     );
   }
 
-  // ── Step 2: DNA ──
+  // ── Step 3: DNA ──
   return (
     <div className="max-w-sm mx-auto px-4 py-10 text-center">
-      <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-2">Step 3 of 3</p>
+      <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-2">Step 4 of 4</p>
       <div className="text-5xl mb-4">🧬</div>
       <h1 className="text-2xl font-black mb-2">Your Entertainment DNA</h1>
       <p className="text-zinc-400 text-sm mb-8">Based on your taste — evolves as you rate and compare more</p>

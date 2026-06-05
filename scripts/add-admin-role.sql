@@ -12,3 +12,7 @@ CREATE INDEX idx_user_profiles_role ON user_profiles(role);
 -- UPDATE user_profiles SET role = 'admin' WHERE user_id = 'YOUR_USER_ID';
 
 -- Note: After running this migration and setting yourself as admin, you'll be able to access /admin
+
+-- Add language_preferences column to user_profiles
+-- Stores an ordered array of language codes e.g. ["hi", "ta", "ml"]
+ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS language_preferences TEXT[] DEFAULT '{}';
