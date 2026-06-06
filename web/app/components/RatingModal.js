@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { createClient } from "../../lib/supabase-browser";
 import { updateStreak } from "../../lib/streak";
-import { checkAndAwardBadges } from "../../lib/badges";
+import { checkAndAwardBadges, BADGES } from "../../lib/badges";
 import CompareModal from "./CompareModal";
+import BadgeToast from "./BadgeToast";
 
 export const RATINGS = [
   { emoji: "😍", label: "Loved it",    value: 5, score: 90 },
@@ -29,6 +30,7 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
   const [notes,         setNotes]         = useState("");
   const [musicRating,   setMusicRating]   = useState(null);
   const [saving,        setSaving]        = useState(false);
+  const [newBadges,     setNewBadges]     = useState([]);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
@@ -68,7 +70,16 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
       });
     }
 
-    await Promise.all([updateStreak(supabase, user.id), checkAndAwardBadges(supabase, user.id)]);
+    const [, earnedIds] = await Promise.all([
+      updateStreak(supabase, user.id),
+      checkAndAwardBadges(supabase, user.id),
+    ]);
+
+    // Show toast for any newly earned badges
+    if (earnedIds?.length > 0) {
+      const earned = BADGES.filter((b) => earnedIds.includes(b.id));
+      if (earned.length > 0) setNewBadges(earned);
+    }
 
     setCurrentRating(pendingRating);
     setSaving(false);
@@ -80,10 +91,13 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
 
   if (step === "compare") {
     return (
-      <CompareModal
-        movieId={movieId} movieTitle={movieTitle} posterUrl={posterUrl}
-        rating={pendingRating} userId={user?.id} onClose={onClose}
-      />
+      <>
+        {newBadges.length > 0 && <BadgeToast badges={newBadges} />}
+        <CompareModal
+          movieId={movieId} movieTitle={movieTitle} posterUrl={posterUrl}
+          rating={pendingRating} userId={user?.id} onClose={onClose}
+        />
+      </>
     );
   }
 
