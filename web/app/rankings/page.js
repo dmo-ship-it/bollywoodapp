@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "../../lib/supabase-browser";
 import Link from "next/link";
+import RankingsShareCard from "../components/RankingsShareCard";
 
 const DECADES = [
   { label: "All time", min: 0,    max: 9999 },
@@ -25,6 +26,7 @@ export default function RankingsPage() {
   const [decade,    setDecade]    = useState(DECADES[0]);
   const [language,  setLanguage]  = useState("All");
   const [totalRatings, setTotalRatings] = useState(0);
+  const [showShareCard, setShowShareCard] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -85,19 +87,8 @@ export default function RankingsPage() {
 
   const isPersonal = mode === "personal" && !!user;
 
-  async function handleShare() {
-    const top5 = movies.slice(0, 5);
-    const lines = top5.map((m, i) => `${i + 1}. ${m.title} (${m.year}) — ${Math.round(isPersonal ? m.userScore : m.global_score)}`);
-    const text = `My top ${top5.length} ${language !== "All" ? language + " " : ""}films on Bolly 🎬\n\n${lines.join("\n")}\n\nbolly.app`;
-
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: "My Film Rankings", text });
-      } else {
-        await navigator.clipboard.writeText(text);
-        alert("Copied to clipboard!");
-      }
-    } catch (e) {}
+  function handleShare() {
+    setShowShareCard(true);
   }
 
   return (
@@ -277,6 +268,14 @@ export default function RankingsPage() {
             </div>
           )}
         </div>
+      )}
+      {showShareCard && (
+        <RankingsShareCard
+          movies={movies}
+          isPersonal={isPersonal}
+          language={language}
+          onClose={() => setShowShareCard(false)}
+        />
       )}
     </div>
   );
