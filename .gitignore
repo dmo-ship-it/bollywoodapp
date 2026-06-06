@@ -39,3 +39,4 @@ yarn-error.log*
 # OS
 Thumbs.db
 data/movies.json
+data/upcoming.json

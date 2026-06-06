@@ -37,3 +37,14 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: node scripts/import-movies.js --credits-only
+
+      - name: Fetch upcoming releases (Coming Soon)
+        env:
+          TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
+        run: node scripts/fetch-upcoming.js
+
+      - name: Import upcoming releases
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: node scripts/import-movies.js --file upcoming.json
