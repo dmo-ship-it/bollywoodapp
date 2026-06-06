@@ -14,21 +14,18 @@ export default function RankingsShareCard({ movies, isPersonal, language, onClos
     try {
       const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(cardRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: null,
+        scale: 3,
+        backgroundColor: "#111111",
+        logging: false,
+        imageTimeout: 0,
       });
 
       canvas.toBlob(async (blob) => {
         const file = new File([blob], "my-bolly-rankings.png", { type: "image/png" });
 
         if (navigator.share && navigator.canShare?.({ files: [file] })) {
-          await navigator.share({
-            title: "My Film Rankings",
-            files: [file],
-          });
+          await navigator.share({ title: "My Film Rankings", files: [file] });
         } else {
-          // Fallback: download the image
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
@@ -47,76 +44,77 @@ export default function RankingsShareCard({ movies, isPersonal, language, onClos
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/70 z-40 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-5">
         <div className="w-full max-w-xs">
 
-          {/* The card — this gets captured as image */}
+          {/* Card — captured as image */}
           <div
             ref={cardRef}
-            className="rounded-2xl overflow-hidden"
-            style={{ background: "linear-gradient(135deg, #1c1917 0%, #292524 60%, #1c1917 100%)" }}
+            style={{ backgroundColor: "#111111", borderRadius: "16px", padding: "28px" }}
           >
-            <div className="p-6">
-              {/* Logo */}
-              <div className="flex items-center gap-1 mb-5">
-                <span className="text-white font-black text-xl tracking-tighter">bolly</span>
-                <span className="text-orange-400 text-xl leading-none">•</span>
-              </div>
+            {/* Logo */}
+            <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "24px" }}>
+              <span style={{ color: "#ffffff", fontWeight: 900, fontSize: "22px", letterSpacing: "-0.5px", fontFamily: "system-ui, sans-serif" }}>bolly</span>
+              <span style={{ color: "#f97316", fontSize: "22px", lineHeight: 1, fontFamily: "system-ui, sans-serif" }}>•</span>
+            </div>
 
-              {/* Title */}
-              <p className="text-stone-400 text-[11px] uppercase tracking-widest mb-1">
-                {isPersonal ? "My Top Films" : "Top Films"}
-                {language !== "All" ? ` · ${language}` : ""}
+            {/* Title */}
+            <div style={{ marginBottom: "20px" }}>
+              <p style={{ color: "#6b7280", fontSize: "10px", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "4px", fontFamily: "system-ui, sans-serif" }}>
+                {isPersonal ? "My Top Films" : "Top Films"}{language !== "All" ? ` · ${language}` : ""}
               </p>
+            </div>
 
-              {/* Film list */}
-              <div className="space-y-3 mb-5">
-                {top5.map((movie, i) => {
-                  const score = Math.round(isPersonal ? movie.userScore : (movie.global_score ?? 0));
-                  return (
-                    <div key={movie.id} className="flex items-center gap-3">
-                      {/* Rank */}
-                      <div className="w-6 text-center shrink-0">
-                        {i < 3
-                          ? <span className="text-base">{MEDALS[i]}</span>
-                          : <span className="text-stone-500 text-xs font-bold">#{i + 1}</span>
-                        }
-                      </div>
-
-                      {/* Poster */}
-                      {movie.poster_url && (
-                        <img
-                          src={movie.poster_url}
-                          alt={movie.title}
-                          crossOrigin="anonymous"
-                          className="w-8 h-11 rounded-md object-cover object-top shrink-0"
-                        />
-                      )}
-
-                      {/* Title + year */}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-white text-sm font-semibold leading-tight truncate">{movie.title}</p>
-                        <p className="text-stone-500 text-[10px]">{movie.year}</p>
-                      </div>
-
-                      {/* Score circle */}
-                      <div className="w-9 h-9 rounded-full border border-orange-400 flex items-center justify-center shrink-0">
-                        <span className="text-orange-400 font-bold text-xs">{score}</span>
-                      </div>
+            {/* Films */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginBottom: "28px" }}>
+              {top5.map((movie, i) => {
+                const score = Math.round(isPersonal ? movie.userScore : (movie.global_score ?? 0));
+                return (
+                  <div key={movie.id} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    {/* Rank */}
+                    <div style={{ width: "24px", textAlign: "center", flexShrink: 0 }}>
+                      {i < 3
+                        ? <span style={{ fontSize: "16px", fontFamily: "system-ui, sans-serif" }}>{MEDALS[i]}</span>
+                        : <span style={{ color: "#6b7280", fontSize: "12px", fontWeight: 700, fontFamily: "system-ui, sans-serif" }}>#{i + 1}</span>
+                      }
                     </div>
-                  );
-                })}
-              </div>
 
-              {/* Footer */}
-              <p className="text-stone-600 text-[10px] text-center">bolly.app</p>
+                    {/* Title + year */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ color: "#ffffff", fontSize: "14px", fontWeight: 600, lineHeight: 1.3, fontFamily: "system-ui, sans-serif", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {movie.title}
+                      </p>
+                      <p style={{ color: "#6b7280", fontSize: "11px", marginTop: "2px", fontFamily: "system-ui, sans-serif" }}>
+                        {movie.year}
+                      </p>
+                    </div>
+
+                    {/* Score circle */}
+                    <div style={{
+                      width: "36px", height: "36px", borderRadius: "50%",
+                      border: "1.5px solid #f97316",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      flexShrink: 0
+                    }}>
+                      <span style={{ color: "#f97316", fontSize: "11px", fontWeight: 700, fontFamily: "system-ui, sans-serif" }}>{score}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Divider + footer */}
+            <div style={{ borderTop: "1px solid #27272a", paddingTop: "16px" }}>
+              <p style={{ color: "#3f3f46", fontSize: "10px", textAlign: "center", fontFamily: "system-ui, sans-serif", letterSpacing: "1px" }}>
+                BOLLY.APP
+              </p>
             </div>
           </div>
 
-          {/* Actions below card */}
+          {/* Actions */}
           <div className="flex gap-2 mt-3">
             <button
               onClick={handleShare}
