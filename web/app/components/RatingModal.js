@@ -6,18 +6,19 @@ import { updateStreak } from "../../lib/streak";
 import { checkAndAwardBadges } from "../../lib/badges";
 import CompareModal from "./CompareModal";
 
-const RATINGS = [
-  { emoji: "❤️", label: "Loved it",    value: 5, score: 90, color: "bg-rose-100",   ring: "ring-rose-300"   },
-  { emoji: "👍", label: "Liked it",    value: 4, score: 70, color: "bg-orange-100", ring: "ring-orange-300" },
-  { emoji: "😐", label: "It was okay", value: 3, score: 50, color: "bg-amber-100",  ring: "ring-amber-300"  },
-  { emoji: "👎", label: "Didn't like", value: 2, score: 30, color: "bg-stone-100",  ring: "ring-stone-300"  },
-  { emoji: "💔", label: "Disliked",    value: 1, score: 10, color: "bg-stone-100",  ring: "ring-stone-300"  },
+// No emojis — muted colored circles, Beli-style
+export const RATINGS = [
+  { label: "Loved it",    value: 5, score: 90, circle: "bg-emerald-300", selected: "bg-emerald-400", dot: "bg-emerald-400" },
+  { label: "Liked it",    value: 4, score: 70, circle: "bg-lime-300",    selected: "bg-lime-400",    dot: "bg-lime-400"    },
+  { label: "Okay",        value: 3, score: 50, circle: "bg-amber-300",   selected: "bg-amber-400",   dot: "bg-amber-400"   },
+  { label: "Didn't like", value: 2, score: 30, circle: "bg-orange-300",  selected: "bg-orange-400",  dot: "bg-orange-400"  },
+  { label: "Hated it",    value: 1, score: 10, circle: "bg-rose-300",    selected: "bg-rose-400",    dot: "bg-rose-400"    },
 ];
 
 const MUSIC_OPTIONS = [
-  { emoji: "🎵", label: "Bangers",     value: 3 },
-  { emoji: "🎶", label: "Pretty good", value: 2 },
-  { emoji: "🔇", label: "Forgettable", value: 1 },
+  { label: "Bangers",     value: 3 },
+  { label: "Pretty good", value: 2 },
+  { label: "Forgettable", value: 1 },
 ];
 
 export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, onRated }) {
@@ -108,19 +109,20 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
           {/* ── Rate step ── */}
           {step === "rate" && (
             <>
-              <p className="text-[11px] text-stone-400 uppercase tracking-widest mb-4">How was it?</p>
-              <div className="flex justify-between gap-1.5 mb-1">
+              <p className="text-[11px] text-stone-400 uppercase tracking-widest mb-5">How was it?</p>
+              <div className="flex justify-between gap-2 mb-2">
                 {RATINGS.map((r) => (
                   <button
                     key={r.value}
                     onClick={() => handlePick(r.value)}
-                    className={`flex-1 flex flex-col items-center gap-2 py-3 rounded-xl transition-all ${
-                      currentRating === r.value
-                        ? `${r.color} ring-2 ${r.ring}`
-                        : "bg-stone-50 hover:bg-stone-100"
-                    }`}
+                    className="flex flex-col items-center gap-2 flex-1"
                   >
-                    <span className="text-xl">{r.emoji}</span>
+                    {/* Circle */}
+                    <div className={`w-12 h-12 rounded-full transition-all ${
+                      currentRating === r.value
+                        ? `${r.selected} ring-2 ring-offset-2 ring-stone-300 scale-110`
+                        : `${r.circle} opacity-80 hover:opacity-100 hover:scale-105`
+                    }`} />
                     <span className="text-[9px] text-stone-400 leading-tight text-center">{r.label}</span>
                   </button>
                 ))}
@@ -131,12 +133,11 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
           {/* ── Extras step ── */}
           {step === "extras" && (
             <>
-              {/* Rating pill */}
+              {/* Selected rating indicator */}
               <div className="flex items-center gap-2 mb-5">
-                <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${ratingObj?.color}`}>
-                  {ratingObj?.emoji} {ratingObj?.label}
-                </span>
-                <button onClick={() => setStep("rate")} className="text-xs text-stone-400 hover:text-stone-600">change</button>
+                <div className={`w-4 h-4 rounded-full ${ratingObj?.dot}`} />
+                <span className="text-sm text-stone-700 font-medium">{ratingObj?.label}</span>
+                <button onClick={() => setStep("rate")} className="ml-auto text-xs text-stone-400 hover:text-stone-600">change</button>
               </div>
 
               {/* Notes */}
@@ -159,13 +160,12 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
                     <button
                       key={m.value}
                       onClick={() => setMusicRating(musicRating === m.value ? null : m.value)}
-                      className={`flex-1 flex flex-col items-center gap-1 py-2.5 rounded-xl text-[10px] transition-all ${
+                      className={`flex-1 py-2 rounded-xl text-[10px] font-medium transition-all ${
                         musicRating === m.value
                           ? "bg-stone-200 text-stone-700"
                           : "bg-stone-50 text-stone-400 hover:bg-stone-100"
                       }`}
                     >
-                      <span className="text-base">{m.emoji}</span>
                       {m.label}
                     </button>
                   ))}

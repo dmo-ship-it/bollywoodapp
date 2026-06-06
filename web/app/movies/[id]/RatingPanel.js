@@ -5,14 +5,7 @@ import { createClient } from "../../../lib/supabase-browser";
 import WatchlistButton from "../../components/WatchlistButton";
 import RatingModal from "../../components/RatingModal";
 import ScoreCircle from "../../components/ScoreCircle";
-
-const RATINGS = [
-  { emoji: "❤️", label: "Loved it",    value: 5 },
-  { emoji: "👍", label: "Liked it",    value: 4 },
-  { emoji: "😐", label: "It was okay", value: 3 },
-  { emoji: "👎", label: "Didn't like", value: 2 },
-  { emoji: "💔", label: "Disliked",    value: 1 },
-];
+import { RATINGS } from "../../components/RatingModal";
 
 async function computePrediction(supabase, userId, movieId) {
   const [{ data: myRatings }, { data: movieRatings }] = await Promise.all([
@@ -193,13 +186,18 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowModal(true)}
-            className={`flex items-center gap-1.5 text-xs rounded-lg px-3 py-1.5 transition-all border ${
+            className={`flex items-center gap-2 text-xs rounded-lg px-3 py-1.5 transition-all border ${
               currentRating
                 ? "border-stone-200 bg-stone-50 text-stone-700"
                 : "border-stone-300 text-stone-600 hover:bg-stone-50"
             }`}
           >
-            {currentRating ? <>{ratingObj?.emoji} {ratingObj?.label}</> : <>＋ Rate</>}
+            {currentRating ? (
+              <>
+                <div className={`w-2.5 h-2.5 rounded-full ${ratingObj?.dot}`} />
+                {ratingObj?.label}
+              </>
+            ) : <>＋ Rate</>}
           </button>
           <WatchlistButton movieId={movieId} movieTitle={movieTitle} />
         </div>
