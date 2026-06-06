@@ -14,9 +14,53 @@ const path = require("path");
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
+// Constrained classification works well on Haiku; override with MODEL=claude-opus-4-8 for max quality.
+const MODEL = process.env.MODEL || "claude-haiku-4-5-20251001";
 const DELAY_MS = 2000;
 const MAX_RETRIES = 4;
 const OUTPUT_LOG = path.join(__dirname, "../data/enrichment-log.json");
+
+// Canonical controlled vocabulary — shared with the taste engine (web/lib/taste.js).
+const TAXONOMY = require("../web/lib/taste-taxonomy.json");
+
+// Build a lookup of allowed values per dimension for post-validation.
+const ALLOWED = {
+  themes:           new Set(TAXONOMY.themes.values),
+  tone:             new Set(TAXONOMY.tone.values),
+  comedy_style:     new Set(TAXONOMY.comedy_style.values),
+  realism:          new Set(TAXONOMY.realism.values),
+  setting_tags:     new Set(TAXONOMY.setting_tags.values),
+  notable_elements: new Set(TAXONOMY.notable_elements.values),
+  vibe:             new Set(TAXONOMY.vibe.values),
+};
+
+// Dimensions where Claude must pick ONLY from the closed set (hallucinations dropped).
+const CLOSED = ["tone", "comedy_style", "realism", "notable_elements", "vibe"];
+// Dimensions that allow a small number of free-form additions.
+const OPEN = ["themes", "setting_tags"];
+
+function bullet(values) {
+  return values.join(", ");
+}
+
+// Keep only values that are in the allowed set (for closed dimensions),
+// or normalize to kebab-case (for open dimensions). Always returns an array.
+function filterTags(dimension, raw) {
+  if (!Array.isArray(raw)) raw = raw == null ? [] : [raw];
+  const normalized = raw
+    .filter((v) => typeof v === "string")
+    .map((v) => v.trim().toLowerCase().replace(/\s+/g, "-"));
+  if (CLOSED.includes(dimension)) {
+    return [...new Set(normalized.filter((v) => ALLOWED[dimension].has(v)))];
+  }
+  return [...new Set(normalized.filter(Boolean))];
+}
+
+// Single-value dimension (realism): return the first allowed value or null.
+function filterSingle(dimension, raw) {
+  const arr = filterTags(dimension, raw);
+  return arr[0] ?? null;
+}
 
 if (!SUPABASE_URL || !SUPABASE_KEY || !ANTHROPIC_KEY) {
   console.error("❌  Missing env vars. Need: SUPABASE_URL, SUPABASE_KEY, ANTHROPIC_API_KEY");
@@ -73,23 +117,47 @@ async function fetchWikipediaPlot(title, year) {
 // --- Claude ---
 
 async function extractThemesWithClaude(title, year, plot, existingGenres) {
-  const prompt = `You are a Bollywood film expert analyzing movies for a recommendation app.
+  const prompt = `You are a Bollywood film expert tagging movies for a recommendation engine.
 
 Film: "${title}" (${year})
-Genres from TMDB: ${existingGenres.join(", ")}
+Genres from TMDB: ${existingGenres.join(", ") || "unknown"}
 Wikipedia plot summary:
 """
 ${plot}
 """
 
-Extract structured tags for this film. Return ONLY valid JSON with these exact fields:
+Tag this film using ONLY the controlled vocabularies below. Choosing consistent tags across films is critical — the engine matches users to films by these exact tag strings, so do NOT invent synonyms or variants. Pick the closest-matching allowed value.
 
+THEMES (pick 2-5 core narrative themes; you may add at most 1 new kebab-case theme only if nothing below fits):
+${bullet(TAXONOMY.themes.values)}
+
+TONE (pick 1-3; CLOSED set — pick only from this list, no additions):
+${bullet(TAXONOMY.tone.values)}
+
+COMEDY_STYLE (pick exactly 1; CLOSED set; use "none" if the film has no significant comedic intent):
+${bullet(TAXONOMY.comedy_style.values)}
+
+REALISM (pick exactly 1; CLOSED set — how grounded the film feels):
+${bullet(TAXONOMY.realism.values)}
+
+SETTING (pick 1-3 setting/era tags; you may add at most 1 new kebab-case tag only if nothing below fits):
+${bullet(TAXONOMY.setting_tags.values)}
+
+NOTABLE_ELEMENTS (pick 2-4; CLOSED set — structural/production standouts):
+${bullet(TAXONOMY.notable_elements.values)}
+
+VIBE (pick 1-3 viewer-occasion tags; CLOSED set):
+${bullet(TAXONOMY.vibe.values)}
+
+Return ONLY valid JSON, no prose, with exactly these fields:
 {
-  "themes": [...],      // 2-5 core narrative themes. Examples: "star-crossed lovers", "revenge", "coming of age", "underdog sports", "political corruption", "identity crisis", "family drama", "heist", "supernatural horror"
-  "tone": [...],        // 1-3 tonal descriptors. Examples: "feel-good", "dark", "bittersweet", "laugh-out-loud comedy", "emotionally devastating", "edge-of-your-seat thriller", "slow burn", "high energy"
-  "setting": [...],     // 1-3 setting tags. Examples: "rural India", "NRI diaspora", "Mughal era", "Mumbai underworld", "small town", "foreign country", "partition era", "1990s nostalgia"
-  "notable_elements": [...], // 2-4 standout elements. Examples: "iconic songs", "twist ending", "based on true story", "ensemble cast", "unconventional narrative", "social message", "spectacular action", "tragic ending", "cult classic ending"
-  "vibe": [...],        // 1-3 viewer experience tags. Examples: "perfect date night", "watch with family", "cry guaranteed", "great for a rainy day", "timepass fun", "instant classic", "divisive", "comfort rewatch"
+  "themes": [...],
+  "tone": [...],
+  "comedy_style": ["..."],
+  "realism": "...",
+  "setting": [...],
+  "notable_elements": [...],
+  "vibe": [...],
   "is_based_on_true_story": true/false,
   "has_item_number": true/false,
   "has_intermission": true/false
@@ -111,8 +179,8 @@ Extract structured tags for this film. Return ONLY valid JSON with these exact f
           "anthropic-version": "2023-06-01",
         },
         body: JSON.stringify({
-          model: "claude-haiku-4-5-20251001",
-          max_tokens: 512,
+          model: MODEL,
+          max_tokens: 700,
           messages: [{ role: "user", content: prompt }],
         }),
       });
@@ -132,7 +200,21 @@ Extract structured tags for this film. Return ONLY valid JSON with these exact f
 
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error(`No JSON in response: ${text.slice(0, 100)}`);
-      return JSON.parse(jsonMatch[0]);
+      const parsed = JSON.parse(jsonMatch[0]);
+
+      // Validate against the controlled vocabulary — drop anything hallucinated.
+      return {
+        themes:                 filterTags("themes", parsed.themes),
+        tone:                   filterTags("tone", parsed.tone),
+        comedy_style:           filterSingle("comedy_style", parsed.comedy_style),
+        realism:                filterSingle("realism", parsed.realism),
+        setting:                filterTags("setting_tags", parsed.setting),
+        notable_elements:       filterTags("notable_elements", parsed.notable_elements),
+        vibe:                   filterTags("vibe", parsed.vibe),
+        is_based_on_true_story: parsed.is_based_on_true_story === true,
+        has_item_number:        parsed.has_item_number === true,
+        has_intermission:       parsed.has_intermission === true,
+      };
     } catch (err) {
       // Retry on JSON parse errors (may indicate a garbled/rate-limit response)
       if (attempt < MAX_RETRIES && (err instanceof SyntaxError || err.message.includes("rate"))) {
@@ -186,6 +268,8 @@ async function main() {
         alter table movies add column if not exists wikipedia_plot text;
         alter table movies add column if not exists themes text[];
         alter table movies add column if not exists tone text[];
+        alter table movies add column if not exists comedy_style text;
+        alter table movies add column if not exists realism text;
         alter table movies add column if not exists setting_tags text[];
         alter table movies add column if not exists notable_elements text[];
         alter table movies add column if not exists is_based_on_true_story boolean;
@@ -227,18 +311,20 @@ async function main() {
       // 3. Update the DB
       await updateMovie(m.id, {
         wikipedia_plot:        plot,
-        themes:                tags.themes ?? [],
-        tone:                  tags.tone ?? [],
-        setting_tags:          tags.setting ?? [],
-        notable_elements:      tags.notable_elements ?? [],
-        mood_tags:             tags.tone ?? [],   // also populate existing mood_tags field
-        vibe_tags:             tags.vibe ?? [],   // also populate existing vibe_tags field
-        is_based_on_true_story: tags.is_based_on_true_story ?? false,
-        has_item_number:       tags.has_item_number ?? false,
-        has_intermission:      tags.has_intermission ?? false,
+        themes:                tags.themes,
+        tone:                  tags.tone,
+        comedy_style:          tags.comedy_style,
+        realism:               tags.realism,
+        setting_tags:          tags.setting,
+        notable_elements:      tags.notable_elements,
+        mood_tags:             tags.tone,    // also populate existing mood_tags field
+        vibe_tags:             tags.vibe,    // also populate existing vibe_tags field
+        is_based_on_true_story: tags.is_based_on_true_story,
+        has_item_number:       tags.has_item_number,
+        has_intermission:      tags.has_intermission,
       });
 
-      console.log(`✓  [${tags.tone?.join(", ")}] ${tags.themes?.slice(0, 2).join(", ")}`);
+      console.log(`✓  [${tags.tone.join(", ")}] ${tags.themes.slice(0, 2).join(", ")}`);
       log.push({ title: m.title, status: "ok", tags });
       success++;
     } catch (err) {
