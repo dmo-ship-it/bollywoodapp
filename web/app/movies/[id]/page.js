@@ -1,23 +1,6 @@
 import { supabase } from "../../../lib/supabase";
 import Link from "next/link";
 import RatingPanel from "./RatingPanel";
-import MovieDiscussions from "./MovieDiscussions";
-
-// Emotional reactions — the core interaction
-const REACTIONS = [
-  { emoji: "🔥", label: "Hype",            key: "hype" },
-  { emoji: "😭", label: "Emotional",       key: "emotional" },
-  { emoji: "🫶", label: "Feel-Good",       key: "feel_good" },
-  { emoji: "😂", label: "Funny",           key: "funny" },
-  { emoji: "😰", label: "Edge-of-Seat",    key: "edge_of_seat" },
-  { emoji: "🤯", label: "Mind-Blown",      key: "mind_blown" },
-  { emoji: "💫", label: "Goosebumps",      key: "goosebumps" },
-  { emoji: "🌑", label: "Dark",            key: "dark" },
-  { emoji: "🎶", label: "Great Music",     key: "great_music" },
-  { emoji: "👨‍👩‍👧", label: "Family Watch",   key: "family" },
-  { emoji: "💑", label: "Date Night",      key: "date_night" },
-  { emoji: "🔁", label: "Rewatchable",     key: "rewatchable" },
-];
 
 const OTT_COLORS = {
   "Netflix":        "bg-red-600",
@@ -29,14 +12,6 @@ const OTT_COLORS = {
   "YouTube":        "bg-red-500",
 };
 
-// Generate mock reaction counts for demo (will be real user data later)
-function mockReactions(tmdbRating) {
-  const base = Math.floor((tmdbRating ?? 7) * 800);
-  return REACTIONS.map((r) => ({
-    ...r,
-    count: Math.floor(base * (0.2 + Math.random() * 0.8)),
-  })).sort((a, b) => b.count - a.count);
-}
 
 export default async function MoviePage({ params }) {
   const { id } = await params;
@@ -74,8 +49,7 @@ export default async function MoviePage({ params }) {
   const directors = credits?.filter((c) => c.role === "Director") ?? [];
   const cast      = credits?.filter((c) => c.role === "Actor").slice(0, 10) ?? [];
   const composers = credits?.filter((c) => c.role === "Music") ?? [];
-  const reactions = mockReactions(movie.tmdb_rating);
-  const topReactions = reactions.slice(0, 6);
+
 
   const allTags = [
     ...(movie.themes ?? []),
@@ -206,53 +180,18 @@ export default async function MoviePage({ params }) {
           </div>
         </div>
 
-        {/* ───── Audience Pulse ───── */}
-        <section className="mt-10">
-          <div className="flex items-center gap-3 mb-5">
-            <h2 className="text-lg font-bold">Audience Pulse</h2>
-            <span className="text-xs text-zinc-600 bg-zinc-900 px-2 py-1 rounded-full border border-zinc-800">
-              Based on {(movie.tmdb_votes ?? 0).toLocaleString()} ratings
-            </span>
-          </div>
-
-          {/* Top reactions */}
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-6">
-            {topReactions.map((r) => (
-              <button
-                key={r.key}
-                className="group flex flex-col items-center gap-2 bg-zinc-900 hover:bg-zinc-800 border border-white/5 hover:border-amber-400/30 rounded-2xl p-3 transition-all cursor-pointer"
-              >
-                <span className="text-2xl">{r.emoji}</span>
-                <span className="text-[10px] text-zinc-400 group-hover:text-zinc-200 font-medium text-center leading-tight">{r.label}</span>
-                <span className="text-xs text-zinc-600 font-mono">{(r.count).toLocaleString()}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Vibe / Theme tags from Wikipedia enrichment */}
-          {allTags.length > 0 && (
-            <div className="bg-zinc-900/50 rounded-2xl p-5 border border-white/5">
-              <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3 font-medium">What audiences say</p>
-              <div className="flex flex-wrap gap-2">
-                {allTags.slice(0, 14).map((tag) => (
-                  <span key={tag} className="bg-zinc-800 text-zinc-300 text-xs px-3 py-1.5 rounded-full border border-white/5 capitalize">
-                    {tag}
-                  </span>
-                ))}
-                {movie.is_based_on_true_story && (
-                  <span className="bg-amber-400/10 text-amber-400 text-xs px-3 py-1.5 rounded-full border border-amber-400/20">
-                    📖 Based on true story
-                  </span>
-                )}
-                {movie.has_item_number && (
-                  <span className="bg-pink-500/10 text-pink-400 text-xs px-3 py-1.5 rounded-full border border-pink-500/20">
-                    💃 Item number
-                  </span>
-                )}
-              </div>
+        {/* ───── Vibe Tags ───── */}
+        {allTags.length > 0 && (
+          <section className="mt-10">
+            <div className="flex flex-wrap gap-2">
+              {allTags.slice(0, 14).map((tag) => (
+                <span key={tag} className="bg-stone-100 text-stone-600 text-xs px-3 py-1.5 rounded-full border border-stone-200 capitalize">
+                  {tag}
+                </span>
+              ))}
             </div>
-          )}
-        </section>
+          </section>
+        )}
 
         {/* ───── Film Details ───── */}
         <section className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -336,9 +275,6 @@ export default async function MoviePage({ params }) {
             </div>
           </section>
         )}
-
-        {/* ───── Discussions ───── */}
-        <MovieDiscussions movieId={id} movieTitle={movie.title} />
 
       </div>
     </div>
