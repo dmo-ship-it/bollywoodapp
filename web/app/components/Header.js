@@ -43,13 +43,13 @@ export default function Header() {
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6 text-sm text-stone-500">
           {[
-            { href: "/",              label: "Discover"        },
-            { href: "/feed",          label: "Feed"            },
-            { href: "/taste-profile", label: "🧬 Taste"        },
-            { href: "/trivia",        label: "🎬 Trivia"       },
-            { href: "/leaderboards",  label: "🏆 Leaderboards" },
-            { href: "/community",     label: "Community"       },
-            { href: "/rankings",      label: "Rankings"        },
+            { href: "/",              label: "Discover"     },
+            { href: "/feed",          label: "Feed"         },
+            { href: "/taste-profile", label: "Taste"        },
+            { href: "/trivia",        label: "Trivia"       },
+            { href: "/leaderboards",  label: "Leaderboards" },
+            { href: "/community",     label: "Community"    },
+            { href: "/rankings",      label: "Rankings"     },
           ].map((item) => {
             const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             return (
