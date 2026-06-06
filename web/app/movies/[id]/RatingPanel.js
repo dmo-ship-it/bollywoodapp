@@ -96,16 +96,19 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
       const u = data.user;
       setUser(u);
 
-      // Average score — available to everyone
-      const { data: allScores } = await supabase
-        .from("user_reactions")
-        .select("score")
-        .eq("movie_id", movieId)
-        .not("score", "is", null);
+      // Average score — use real user scores if available, else TMDB × 10
+      const [{ data: allScores }, { data: movieData }] = await Promise.all([
+        supabase.from("user_reactions").select("score").eq("movie_id", movieId).not("score", "is", null),
+        supabase.from("movies").select("tmdb_rating, global_score").eq("id", movieId).single(),
+      ]);
 
-      if (allScores?.length) {
+      if (allScores?.length >= 3) {
         const avg = allScores.reduce((s, r) => s + r.score, 0) / allScores.length;
         setAvgScore(Math.round(avg));
+      } else if (movieData?.global_score) {
+        setAvgScore(Math.round(movieData.global_score));
+      } else if (movieData?.tmdb_rating > 0) {
+        setAvgScore(Math.round(movieData.tmdb_rating * 10));
       }
 
       if (u) {

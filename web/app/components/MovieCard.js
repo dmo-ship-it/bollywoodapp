@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import WatchlistButton from "./WatchlistButton";
 import RatingModal from "./RatingModal";
+import { displayScore } from "../../lib/score";
 
 const VIBE_ICONS = {
   "feel-good":                  "🫶",
@@ -80,17 +81,15 @@ export default function MovieCard({ movie, userScore }) {
           </p>
           <div className="flex items-center gap-1.5 mt-0.5">
             {movie.year && <span className="text-[10px] text-stone-400">{movie.year}</span>}
-            {scored ? (
-              <>
-                <span className="text-stone-300 text-[10px]">·</span>
-                <span className="text-[10px] text-stone-600 font-semibold">{scored}</span>
-              </>
-            ) : movie.tmdb_rating > 0 && (
-              <>
-                <span className="text-stone-300 text-[10px]">·</span>
-                <span className="text-[10px] text-stone-400">★ {movie.tmdb_rating.toFixed(1)}</span>
-              </>
-            )}
+            {(() => {
+              const s = scored ?? displayScore(movie);
+              return s ? (
+                <>
+                  <span className="text-stone-300 text-[10px]">·</span>
+                  <span className={`text-[10px] font-semibold ${scored ? "text-stone-700" : "text-stone-400"}`}>{s}</span>
+                </>
+              ) : null;
+            })()}
           </div>
         </Link>
       </div>

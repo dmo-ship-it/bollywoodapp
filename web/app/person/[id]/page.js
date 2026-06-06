@@ -281,7 +281,7 @@ export default function PersonPage() {
                   {film.tmdb_rating > 0 && (
                     <>
                       <span className="text-stone-300 text-[10px]">·</span>
-                      <span className="text-[10px] text-orange-500 font-semibold">★ {film.tmdb_rating.toFixed(1)}</span>
+                      <span className="text-[10px] text-stone-400 font-semibold">{Math.round(film.tmdb_rating * 10)}</span>
                     </>
                   )}
                 </div>

@@ -142,7 +142,7 @@ export default function ComparePage() {
                     <p className="font-semibold text-sm text-stone-900 leading-tight">{film.title}</p>
                     <p className="text-stone-400 text-xs mt-0.5">{film.year}</p>
                     {film.tmdb_rating > 0 && (
-                      <p className="text-orange-500 text-xs font-bold mt-1">★ {film.tmdb_rating?.toFixed(1)}</p>
+                      <p className="text-stone-400 text-xs mt-1">{Math.round(film.tmdb_rating * 10)}</p>
                     )}
                   </div>
                 </button>

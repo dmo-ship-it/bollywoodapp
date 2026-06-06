@@ -148,7 +148,7 @@ export default function PostPage() {
             <div>
               <p className="font-semibold text-stone-900 text-sm group-hover:text-orange-600 transition-colors">{movie.title}</p>
               <p className="text-xs text-stone-400">{movie.year} · {movie.genres?.slice(0,2).join(", ")}</p>
-              {movie.tmdb_rating > 0 && <p className="text-xs text-orange-500 font-semibold">★ {movie.tmdb_rating.toFixed(1)}</p>}
+              {movie.tmdb_rating > 0 && <p className="text-xs text-stone-400">{Math.round(movie.tmdb_rating * 10)}</p>}
             </div>
           </Link>
         )}

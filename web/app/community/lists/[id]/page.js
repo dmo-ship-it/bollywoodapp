@@ -146,7 +146,7 @@ export default function ListPage() {
                 <div className="shrink-0 flex items-center gap-2">
                   {userRating && <span className="text-base">{RATING_EMOJI[userRating]}</span>}
                   {score && <span className="text-xs font-bold text-stone-500">{score}</span>}
-                  {movie.tmdb_rating > 0 && <span className="text-[10px] text-orange-500 font-bold">★{movie.tmdb_rating.toFixed(1)}</span>}
+                  {!score && movie.tmdb_rating > 0 && <span className="text-[10px] text-stone-400">{Math.round(movie.tmdb_rating * 10)}</span>}
                 </div>
               </Link>
             );

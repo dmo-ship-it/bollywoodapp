@@ -119,7 +119,6 @@ export default async function MoviePage({ params }) {
               {movie.year && <span>{movie.year}</span>}
               {movie.runtime_minutes && <><span className="text-stone-200">·</span><span>{Math.floor(movie.runtime_minutes / 60)}h {movie.runtime_minutes % 60}m</span></>}
               {movie.certificate && <><span className="text-stone-200">·</span><span>{movie.certificate}</span></>}
-              {movie.tmdb_rating > 0 && <><span className="text-stone-200">·</span><span>★ {movie.tmdb_rating?.toFixed(1)}</span></>}
               {directors[0]?.people && (
                 <><span className="text-stone-200">·</span>
                 <Link href={`/person/${directors[0].people.id}`} className="hover:text-stone-700 transition-colors">

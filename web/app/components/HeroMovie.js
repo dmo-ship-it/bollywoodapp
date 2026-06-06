@@ -49,7 +49,7 @@ export default function HeroMovie({ movie }) {
             <div className="flex items-center gap-3 text-sm mb-4">
               {movie.year && <span className="text-white/70">{movie.year}</span>}
               {movie.tmdb_rating > 0 && (
-                <span className="text-orange-300 font-bold">★ {movie.tmdb_rating?.toFixed(1)}</span>
+                <span className="text-white/70 font-semibold">{Math.round(movie.tmdb_rating * 10)}</span>
               )}
               {movie.genres?.slice(0, 2).map((g) => (
                 <span key={g} className="text-white/50 text-xs">{g}</span>
