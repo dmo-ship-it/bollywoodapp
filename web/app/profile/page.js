@@ -25,8 +25,9 @@ export default function ProfilePage() {
   const [points,      setPoints]      = useState(null);  // { total_points, current_tier }
   const [rank,        setRank]        = useState(null);  // leaderboard rank
   const [loading,     setLoading]     = useState(true);
-  const [tab,         setTab]         = useState("Films");
-  const [filter,      setFilter]      = useState(0);
+  const [tab,          setTab]          = useState("Films");
+  const [filter,       setFilter]       = useState(0);
+  const [badgesOpen,   setBadgesOpen]   = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -105,26 +106,6 @@ export default function ProfilePage() {
         )}
       </div>
 
-      {/* Badges showcase */}
-      {badges.length > 0 && (
-        <div className="mb-8 bg-gradient-to-r from-orange-50 to-rose-50 border border-orange-200 rounded-2xl p-6">
-          <h2 className="text-lg font-bold text-stone-900 mb-4 flex items-center gap-2">
-            <span>🏆</span> Achievements ({badges.length})
-          </h2>
-          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
-            {badges.map(b => {
-              const badge = BADGES.find(bd => bd.id === b.badge_id);
-              return badge ? (
-                <div key={b.badge_id} title={badge.label} className="flex flex-col items-center gap-1">
-                  <div className="text-2xl">{badge.icon}</div>
-                  <p className="text-[8px] text-center text-stone-600 leading-tight font-semibold">{badge.label}</p>
-                </div>
-              ) : null;
-            })}
-          </div>
-        </div>
-      )}
-
       {/* Profile header */}
       <div className="flex items-start gap-4 mb-8">
         <div className="w-18 h-18 w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xl font-black shrink-0">
@@ -154,6 +135,16 @@ export default function ProfilePage() {
             <span><strong className="text-stone-900">{rated.length}</strong> <span className="text-stone-400">rated</span></span>
             <span><strong className="text-stone-900">{watchlist.length}</strong> <span className="text-stone-400">watchlist</span></span>
             <span><strong className="text-stone-900">{comparisons.length}</strong> <span className="text-stone-400">comparisons</span></span>
+            {badges.length > 0 && (
+              <button
+                onClick={() => setBadgesOpen((o) => !o)}
+                className="flex items-center gap-1 hover:opacity-70 transition-opacity"
+              >
+                <strong className="text-stone-900">{badges.length}</strong>
+                <span className="text-stone-400">badges</span>
+                <span className={`text-stone-300 text-xs transition-transform duration-200 ${badgesOpen ? "rotate-180" : ""}`}>▾</span>
+              </button>
+            )}
             {points?.total_points > 0 && (
               <Link href="/leaderboards" className="flex items-center gap-1.5 hover:opacity-70 transition-opacity">
                 <strong className="text-stone-900">{points.total_points.toLocaleString()}</strong>
@@ -164,6 +155,21 @@ export default function ProfilePage() {
               </Link>
             )}
           </div>
+
+          {/* Badges slide-down */}
+          {badgesOpen && badges.length > 0 && (
+            <div className="mt-4 grid grid-cols-4 sm:grid-cols-6 gap-3 animate-fade-in">
+              {badges.map(b => {
+                const badge = BADGES.find(bd => bd.id === b.badge_id);
+                return badge ? (
+                  <div key={b.badge_id} className="flex flex-col items-center gap-1 text-center">
+                    <div className="text-2xl">{badge.icon}</div>
+                    <p className="text-[9px] text-stone-500 leading-tight">{badge.label}</p>
+                  </div>
+                ) : null;
+              })}
+            </div>
+          )}
         </div>
         <Link href="/compare" className="shrink-0 bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-full hover:bg-orange-500 transition-colors">
           + Compare
