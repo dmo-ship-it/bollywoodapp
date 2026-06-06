@@ -85,15 +85,43 @@ export default function RankingsPage() {
 
   const isPersonal = mode === "personal" && !!user;
 
+  async function handleShare() {
+    const top5 = movies.slice(0, 5);
+    const lines = top5.map((m, i) => `${i + 1}. ${m.title} (${m.year}) — ${Math.round(isPersonal ? m.userScore : m.global_score)}`);
+    const text = `My top ${top5.length} ${language !== "All" ? language + " " : ""}films on Bolly 🎬\n\n${lines.join("\n")}\n\nbolly.app`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "My Film Rankings", text });
+      } else {
+        await navigator.clipboard.writeText(text);
+        alert("Copied to clipboard!");
+      }
+    } catch (e) {}
+  }
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
 
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-black text-stone-900 mb-1">Rankings</h1>
-        <p className="text-stone-500 text-sm">
-          {isPersonal ? "Your films ranked by personal score" : `Community's top films · ${totalRatings > 0 ? `${totalRatings.toLocaleString()} ratings` : ""}`}
-        </p>
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-black text-stone-900 mb-1">Rankings</h1>
+          <p className="text-stone-500 text-sm">
+            {isPersonal ? "Your films ranked by personal score" : `Community's top films · ${totalRatings > 0 ? `${totalRatings.toLocaleString()} ratings` : ""}`}
+          </p>
+        </div>
+        {movies.length > 0 && (
+          <button
+            onClick={handleShare}
+            className="flex items-center gap-1.5 text-xs text-stone-500 border border-stone-200 bg-white rounded-lg px-3 py-1.5 hover:bg-stone-50 transition-colors shrink-0"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            Share
+          </button>
+        )}
       </div>
 
       {/* Mode toggle */}
