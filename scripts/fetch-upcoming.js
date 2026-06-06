@@ -48,7 +48,24 @@ function fetchPage(language, page) {
 }
 
 function fetchDetails(id) {
-  return get(`${BASE}/movie/${id}?append_to_response=credits,videos`);
+  return get(`${BASE}/movie/${id}?append_to_response=credits,keywords,videos,watch%2Fproviders`);
+}
+
+function extractOTT(watchProviders) {
+  const inData = watchProviders?.results?.IN;
+  if (!inData) return [];
+  const flatrate = inData.flatrate || [];
+  return flatrate.map((p) => p.provider_name);
+}
+
+function extractTrailer(videos) {
+  const items = videos?.results || [];
+  const trailer =
+    items.find((v) => v.type === "Trailer" && v.site === "YouTube" && v.official) ||
+    items.find((v) => v.type === "Trailer" && v.site === "YouTube") ||
+    items.find((v) => v.type === "Teaser" && v.site === "YouTube") ||
+    items.find((v) => v.site === "YouTube");
+  return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : null;
 }
 
 function transform(raw) {
@@ -57,24 +74,28 @@ function transform(raw) {
     imdb_id: raw.imdb_id || null,
     title: raw.title,
     original_title: raw.original_title,
+    tagline: raw.tagline || null,
     overview: raw.overview,
     year: raw.release_date ? parseInt(raw.release_date.split("-")[0]) : null,
     release_date: raw.release_date || null,
     poster_url: raw.poster_path ? `https://image.tmdb.org/t/p/w500${raw.poster_path}` : null,
     backdrop_url: raw.backdrop_path ? `https://image.tmdb.org/t/p/w1280${raw.backdrop_path}` : null,
+    trailer_url: extractTrailer(raw.videos),
     runtime_minutes: raw.runtime || null,
     language: raw.original_language || "hi",
     genres: (raw.genres || []).map((g) => g.name),
+    keywords: (raw.keywords?.keywords || []).map((k) => k.name),
     production_houses: (raw.production_companies || []).map((c) => c.name),
     tmdb_rating: raw.vote_average || null,
     tmdb_votes: raw.vote_count || 0,
     tmdb_popularity: raw.popularity || 0,
+    ott_platforms: extractOTT(raw["watch/providers"]),
     cast: (raw.credits?.cast || []).slice(0, 10).map((c) => ({
       tmdb_id: c.id, name: c.name, character: c.character,
       photo_url: c.profile_path ? `https://image.tmdb.org/t/p/w185${c.profile_path}` : null,
       billing_order: c.order + 1,
     })),
-    crew: (raw.credits?.crew || []).filter((c) => ["Director", "Producer", "Music"].includes(c.job)).map((c) => ({
+    crew: (raw.credits?.crew || []).filter((c) => ["Director", "Producer", "Director of Photography", "Music"].includes(c.job)).map((c) => ({
       tmdb_id: c.id, name: c.name, job: c.job,
       photo_url: c.profile_path ? `https://image.tmdb.org/t/p/w185${c.profile_path}` : null,
     })),
