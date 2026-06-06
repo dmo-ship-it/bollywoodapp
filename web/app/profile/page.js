@@ -51,14 +51,12 @@ export default function ProfilePage() {
       setBadges(badgesRes.data ?? []);
       setPoints(pointsRes.data);
 
-      // Compute leaderboard rank (only if user has points)
-      if (pointsRes.data?.total_points > 0) {
-        const { count } = await supabase
-          .from("user_points")
-          .select("*", { count: "exact", head: true })
-          .gt("total_points", pointsRes.data.total_points);
-        setRank((count ?? 0) + 1);
-      }
+      // Compute leaderboard rank
+      const { count } = await supabase
+        .from("user_points")
+        .select("*", { count: "exact", head: true })
+        .gt("total_points", pointsRes.data?.total_points ?? 0);
+      setRank((count ?? 0) + 1);
       setLoading(false);
 
       if (!profileRes.data?.email) {
@@ -137,7 +135,7 @@ export default function ProfilePage() {
             <Link href="/leaderboards" className="flex items-center gap-1.5 hover:opacity-70 transition-opacity">
               <strong className="text-stone-900">{(points?.total_points ?? 0).toLocaleString()}</strong>
               <span className="text-stone-400">pts</span>
-              {rank && rank <= 500 && (
+              {rank && (
                 <span className="text-stone-400">· <strong className="text-stone-900">#{rank}</strong></span>
               )}
             </Link>
