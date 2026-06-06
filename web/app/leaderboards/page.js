@@ -33,21 +33,32 @@ export default function LeaderboardsPage() {
     let entries = [];
 
     if (type === "points") {
-      const { data } = await supabase
+      const { data: pointsData } = await supabase
         .from("user_points")
-        .select("user_id, total_points, is_founder, user_profiles(display_name, username)")
+        .select("user_id, total_points, is_founder")
         .order("total_points", { ascending: false })
         .limit(100);
 
-      entries = (data ?? []).map((item, i) => ({
-        rank:        i + 1,
-        userId:      item.user_id,
-        displayName: item.user_profiles?.display_name || "Member",
-        username:    item.user_profiles?.username,
-        score:       item.total_points,
-        sub:         `${item.total_points.toLocaleString()} pts`,
-        isFounder:   item.is_founder,
-      }));
+      if (pointsData?.length) {
+        const userIds = pointsData.map((p) => p.user_id);
+        const { data: profilesData } = await supabase
+          .from("user_profiles")
+          .select("user_id, display_name, username")
+          .in("user_id", userIds);
+
+        const profileMap = {};
+        (profilesData ?? []).forEach((p) => { profileMap[p.user_id] = p; });
+
+        entries = pointsData.map((item, i) => ({
+          rank:        i + 1,
+          userId:      item.user_id,
+          displayName: profileMap[item.user_id]?.display_name || "Member",
+          username:    profileMap[item.user_id]?.username,
+          score:       item.total_points,
+          sub:         `${item.total_points.toLocaleString()} pts`,
+          isFounder:   item.is_founder,
+        }));
+      }
 
     } else if (type === "friends") {
       // Get who the user follows
@@ -63,17 +74,19 @@ export default function LeaderboardsPage() {
       if (allIds.length === 0) {
         entries = [];
       } else {
-        const { data } = await supabase
-          .from("user_points")
-          .select("user_id, total_points, is_founder, user_profiles(display_name, username)")
-          .in("user_id", allIds)
-          .order("total_points", { ascending: false });
+        const [{ data: pointsData }, { data: profilesData }] = await Promise.all([
+          supabase.from("user_points").select("user_id, total_points, is_founder").in("user_id", allIds).order("total_points", { ascending: false }),
+          supabase.from("user_profiles").select("user_id, display_name, username").in("user_id", allIds),
+        ]);
 
-        entries = (data ?? []).map((item, i) => ({
+        const profileMap = {};
+        (profilesData ?? []).forEach((p) => { profileMap[p.user_id] = p; });
+
+        entries = (pointsData ?? []).map((item, i) => ({
           rank:        i + 1,
           userId:      item.user_id,
-          displayName: item.user_profiles?.display_name || "Member",
-          username:    item.user_profiles?.username,
+          displayName: profileMap[item.user_id]?.display_name || "Member",
+          username:    profileMap[item.user_id]?.username,
           score:       item.total_points,
           sub:         `${item.total_points.toLocaleString()} pts`,
           isFounder:   item.is_founder,
