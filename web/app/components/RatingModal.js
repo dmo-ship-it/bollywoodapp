@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "../../lib/supabase-browser";
 import { updateStreak } from "../../lib/streak";
 import { checkAndAwardBadges, BADGES } from "../../lib/badges";
+import { awardPoints } from "../../lib/points";
 import CompareModal from "./CompareModal";
 import BadgeToast from "./BadgeToast";
 
@@ -70,8 +71,9 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
       });
     }
 
-    const [, earnedIds] = await Promise.all([
+    const [, , earnedIds] = await Promise.all([
       updateStreak(supabase, user.id),
+      awardPoints(supabase, user.id, "RATE_FILM"),
       checkAndAwardBadges(supabase, user.id),
     ]);
 
