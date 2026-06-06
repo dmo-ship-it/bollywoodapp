@@ -128,22 +128,6 @@ export default function LeaderboardsPage() {
         ))}
       </div>
 
-      {/* Your position — pinned at top if not in view */}
-      {myEntry && (
-        <div className="mb-4 p-3 bg-orange-50 border border-orange-100 rounded-xl flex items-center gap-3">
-          <span className="text-xs text-stone-400 w-7 text-center font-bold">#{myEntry.rank}</span>
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xs font-black shrink-0">
-            {myEntry.displayName.slice(0, 2).toUpperCase()}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-stone-900">You</p>
-            <p className="text-[11px] text-stone-400">{myEntry.sub}</p>
-          </div>
-          <div className="w-9 h-9 rounded-full border border-orange-300 bg-white flex items-center justify-center shrink-0">
-            <span className="text-orange-500 font-bold text-xs">{myEntry.score.toLocaleString()}</span>
-          </div>
-        </div>
-      )}
 
       {/* List */}
       {loading ? (
