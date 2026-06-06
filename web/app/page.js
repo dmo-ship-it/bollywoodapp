@@ -33,13 +33,14 @@ const SECTIONS = [
 ];
 
 export default function HomePage() {
-  const [hero,    setHero]    = useState(null);
-  const [movies,  setMovies]  = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search,  setSearch]  = useState("");
-  const [vibe,    setVibe]    = useState(null);
-  const [decade,  setDecade]  = useState(null);
-  const [section, setSection] = useState(SECTIONS[0]);
+  const [hero,       setHero]       = useState(null);
+  const [movies,     setMovies]     = useState([]);
+  const [loading,    setLoading]    = useState(true);
+  const [search,     setSearch]     = useState("");
+  const [vibe,       setVibe]       = useState(null);
+  const [decade,     setDecade]     = useState(null);
+  const [section,    setSection]    = useState(SECTIONS[0]);
+  const [userScores, setUserScores] = useState({}); // movieId → score
 
   useEffect(() => {
     supabase
@@ -51,6 +52,21 @@ export default function HomePage() {
       .then(({ data }) => {
         if (data?.length) setHero(data[Math.floor(Math.random() * data.length)]);
       });
+
+    // Fetch user's scores for all movies in one query
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (!data.user) return;
+      const { data: reactions } = await supabase
+        .from("user_reactions")
+        .select("movie_id, score")
+        .eq("user_id", data.user.id)
+        .not("score", "is", null);
+      if (reactions) {
+        const map = {};
+        reactions.forEach((r) => { map[r.movie_id] = r.score; });
+        setUserScores(map);
+      }
+    });
   }, []);
 
   const fetchMovies = useCallback(async () => {
@@ -180,7 +196,7 @@ export default function HomePage() {
         ) : (
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">
             {movies.map((movie) => (
-              <MovieCard key={movie.id} movie={movie} />
+              <MovieCard key={movie.id} movie={movie} userScore={userScores[movie.id]} />
             ))}
           </div>
         )}

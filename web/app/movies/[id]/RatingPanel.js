@@ -45,25 +45,88 @@ async function computePrediction(supabase, userId, movieId) {
   return totalWeight === 0 ? null : Math.round(weightedSum / totalWeight);
 }
 
+async function computeFriendScore(supabase, userId, movieId) {
+  // Get who the user follows
+  const { data: follows } = await supabase
+    .from("user_follows")
+    .select("following_id")
+    .eq("follower_id", userId);
+
+  if (!follows?.length) return null;
+
+  const friendIds = follows.map((f) => f.following_id);
+
+  // Get their scores for this movie
+  const { data: friendRatings } = await supabase
+    .from("user_reactions")
+    .select("score")
+    .eq("movie_id", movieId)
+    .in("user_id", friendIds)
+    .not("score", "is", null);
+
+  if (!friendRatings?.length) return null;
+
+  const avg = friendRatings.reduce((sum, r) => sum + r.score, 0) / friendRatings.length;
+  return { score: Math.round(avg), count: friendRatings.length };
+}
+
+// Small score chip — Beli style
+function ScoreChip({ label, score, sub }) {
+  return (
+    <div className="text-center">
+      <div className="text-xl font-bold text-stone-900">{score ?? "—"}</div>
+      <div className="text-[10px] text-stone-500 leading-tight mt-0.5">{label}</div>
+      {sub && <div className="text-[9px] text-stone-400 leading-tight">{sub}</div>}
+    </div>
+  );
+}
+
 export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
   const supabase = createClient();
   const [user,          setUser]          = useState(null);
   const [currentRating, setCurrentRating] = useState(null);
+  const [yourScore,     setYourScore]     = useState(null);
+  const [avgScore,      setAvgScore]      = useState(null);
+  const [friendScore,   setFriendScore]   = useState(null); // { score, count }
   const [predicted,     setPredicted]     = useState(null);
-  const [communityScore,setCommunityScore]= useState(null);
   const [showModal,     setShowModal]     = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
-      setUser(data.user);
-      if (data.user) {
-        const [{ data: r }, { data: movie }] = await Promise.all([
-          supabase.from("user_reactions").select("rating").eq("user_id", data.user.id).eq("movie_id", movieId).single(),
-          supabase.from("movies").select("global_score").eq("id", movieId).single(),
-        ]);
-        if (r) setCurrentRating(r.rating);
-        if (movie?.global_score) setCommunityScore(Math.round(movie.global_score));
-        if (!r) computePrediction(supabase, data.user.id, movieId).then(setPredicted);
+      const u = data.user;
+      setUser(u);
+
+      // Average score — available to everyone
+      const { data: allScores } = await supabase
+        .from("user_reactions")
+        .select("score")
+        .eq("movie_id", movieId)
+        .not("score", "is", null);
+
+      if (allScores?.length) {
+        const avg = allScores.reduce((s, r) => s + r.score, 0) / allScores.length;
+        setAvgScore(Math.round(avg));
+      }
+
+      if (u) {
+        // Your rating + score
+        const { data: r } = await supabase
+          .from("user_reactions")
+          .select("rating, score")
+          .eq("user_id", u.id)
+          .eq("movie_id", movieId)
+          .single();
+
+        if (r) {
+          setCurrentRating(r.rating);
+          setYourScore(r.score);
+        } else {
+          // Predict if not yet rated
+          computePrediction(supabase, u.id, movieId).then(setPredicted);
+        }
+
+        // Friend score
+        computeFriendScore(supabase, u.id, movieId).then(setFriendScore);
       }
     });
   }, [movieId]);
@@ -71,63 +134,80 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
   function handleRated(rating) {
     setCurrentRating(rating);
     setPredicted(null);
+    // Re-fetch score after rating
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (!data.user) return;
+      const { data: r } = await supabase
+        .from("user_reactions")
+        .select("score")
+        .eq("user_id", data.user.id)
+        .eq("movie_id", movieId)
+        .single();
+      if (r) setYourScore(r.score);
+    });
   }
 
   const ratingObj = RATINGS.find((r) => r.value === currentRating);
 
-  // Not logged in — just show small icon buttons as placeholders
-  if (!user) {
-    return (
-      <div className="flex items-center gap-2">
-        <a
-          href="/login"
-          className="flex items-center gap-1.5 text-xs text-stone-500 border border-stone-200 rounded-lg px-3 py-1.5 hover:bg-stone-50 transition-colors"
-        >
-          <span>＋</span> Rate
-        </a>
-        <WatchlistButton movieId={movieId} movieTitle={movieTitle} />
-      </div>
-    );
-  }
-
   return (
     <>
-      <div className="flex items-center gap-3">
+      {/* ── Three scores ── */}
+      <div className="flex items-start gap-6 mb-4">
+        <ScoreChip
+          label={yourScore ? "Your Score" : predicted ? "Predicted for you" : "Your Score"}
+          score={yourScore ?? predicted}
+          sub={yourScore ? null : predicted ? "Based on your taste" : null}
+        />
 
-        {/* Rate icon button */}
-        <button
-          onClick={() => setShowModal(true)}
-          className={`flex items-center gap-1.5 text-xs rounded-lg px-3 py-1.5 transition-all border ${
-            currentRating
-              ? "border-stone-200 bg-stone-50 text-stone-700"
-              : "border-stone-300 text-stone-600 hover:bg-stone-50"
-          }`}
-        >
-          {currentRating ? (
-            <>{ratingObj?.emoji} {ratingObj?.label}</>
-          ) : (
-            <>＋ Rate</>
-          )}
-        </button>
-
-        {/* Bookmark */}
-        <WatchlistButton movieId={movieId} movieTitle={movieTitle} />
-
-        {/* Scores — inline, small */}
-        {communityScore && (
-          <span className="text-xs text-stone-400">
-            Community <span className="font-semibold text-stone-600">{communityScore}</span>
-            <span className="text-stone-300">/100</span>
-          </span>
-        )}
-        {predicted && !currentRating && (
-          <span className="text-xs text-stone-400">
-            Predicted <span className="font-semibold text-stone-600">{predicted}</span>
-            <span className="text-stone-300">/100</span>
-          </span>
+        {avgScore && (
+          <>
+            <div className="w-px bg-stone-100 self-stretch" />
+            <ScoreChip
+              label="Average Score"
+              score={avgScore}
+              sub="Amongst all users"
+            />
+          </>
         )}
 
+        {friendScore && (
+          <>
+            <div className="w-px bg-stone-100 self-stretch" />
+            <ScoreChip
+              label="Friend Score"
+              score={friendScore.score}
+              sub={`${friendScore.count} friend${friendScore.count !== 1 ? "s" : ""}`}
+            />
+          </>
+        )}
       </div>
+
+      {/* ── Rate + Bookmark ── */}
+      {user ? (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowModal(true)}
+            className={`flex items-center gap-1.5 text-xs rounded-lg px-3 py-1.5 transition-all border ${
+              currentRating
+                ? "border-stone-200 bg-stone-50 text-stone-700"
+                : "border-stone-300 text-stone-600 hover:bg-stone-50"
+            }`}
+          >
+            {currentRating ? <>{ratingObj?.emoji} {ratingObj?.label}</> : <>＋ Rate</>}
+          </button>
+          <WatchlistButton movieId={movieId} movieTitle={movieTitle} />
+        </div>
+      ) : (
+        <div className="flex items-center gap-2">
+          <a
+            href="/login"
+            className="flex items-center gap-1.5 text-xs text-stone-500 border border-stone-200 rounded-lg px-3 py-1.5 hover:bg-stone-50 transition-colors"
+          >
+            <span>＋</span> Rate
+          </a>
+          <WatchlistButton movieId={movieId} movieTitle={movieTitle} />
+        </div>
+      )}
 
       {showModal && (
         <RatingModal

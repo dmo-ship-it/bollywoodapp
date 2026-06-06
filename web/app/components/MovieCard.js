@@ -18,9 +18,9 @@ const VIBE_ICONS = {
   "emotional":                  "💙",
 };
 
-export default function MovieCard({ movie }) {
+export default function MovieCard({ movie, userScore }) {
   const [showRating, setShowRating] = useState(false);
-  const [rated,      setRated]      = useState(false);
+  const [scored,     setScored]     = useState(userScore ?? null);
 
   const allVibes = [...(movie.tone ?? []), ...(movie.mood_tags ?? [])];
   const topVibe  = allVibes.find((t) => VIBE_ICONS[t.toLowerCase()]);
@@ -50,10 +50,10 @@ export default function MovieCard({ movie }) {
               </div>
             )}
 
-            {/* Rated indicator */}
-            {rated && (
-              <div className="absolute top-2 left-2 text-sm leading-none drop-shadow-md">
-                ✅
+            {/* Your Score badge */}
+            {scored && (
+              <div className="absolute top-2 left-2 bg-white/95 rounded-md px-1.5 py-0.5 shadow-sm">
+                <span className="text-[10px] font-bold text-stone-700">{scored}</span>
               </div>
             )}
 
@@ -80,10 +80,15 @@ export default function MovieCard({ movie }) {
           </p>
           <div className="flex items-center gap-1.5 mt-0.5">
             {movie.year && <span className="text-[10px] text-stone-400">{movie.year}</span>}
-            {movie.tmdb_rating > 0 && (
+            {scored ? (
               <>
                 <span className="text-stone-300 text-[10px]">·</span>
-                <span className="text-[10px] text-orange-500 font-semibold">★ {movie.tmdb_rating.toFixed(1)}</span>
+                <span className="text-[10px] text-stone-600 font-semibold">{scored}</span>
+              </>
+            ) : movie.tmdb_rating > 0 && (
+              <>
+                <span className="text-stone-300 text-[10px]">·</span>
+                <span className="text-[10px] text-stone-400">★ {movie.tmdb_rating.toFixed(1)}</span>
               </>
             )}
           </div>
@@ -97,7 +102,11 @@ export default function MovieCard({ movie }) {
           movieTitle={movie.title}
           posterUrl={movie.poster_url}
           onClose={() => setShowRating(false)}
-          onRated={() => setRated(true)}
+          onRated={(rating) => {
+            // Provisional score based on rating until exact score is computed
+            const scores = { 5: 90, 4: 70, 3: 50, 2: 30, 1: 10 };
+            setScored(scores[rating] ?? 50);
+          }}
         />
       )}
     </>
