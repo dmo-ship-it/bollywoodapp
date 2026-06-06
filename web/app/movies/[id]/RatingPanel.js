@@ -193,10 +193,7 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
             }`}
           >
             {currentRating ? (
-              <>
-                <div className={`w-2.5 h-2.5 rounded-full ${ratingObj?.dot}`} />
-                {ratingObj?.label}
-              </>
+              <>{ratingObj?.emoji} {ratingObj?.label}</>
             ) : <>＋ Rate</>}
           </button>
           <WatchlistButton movieId={movieId} movieTitle={movieTitle} />

@@ -6,13 +6,12 @@ import { updateStreak } from "../../lib/streak";
 import { checkAndAwardBadges } from "../../lib/badges";
 import CompareModal from "./CompareModal";
 
-// No emojis — muted colored circles, Beli-style
 export const RATINGS = [
-  { label: "Loved it",    value: 5, score: 90, circle: "bg-emerald-300", selected: "bg-emerald-400", dot: "bg-emerald-400" },
-  { label: "Liked it",    value: 4, score: 70, circle: "bg-lime-300",    selected: "bg-lime-400",    dot: "bg-lime-400"    },
-  { label: "Okay",        value: 3, score: 50, circle: "bg-amber-300",   selected: "bg-amber-400",   dot: "bg-amber-400"   },
-  { label: "Didn't like", value: 2, score: 30, circle: "bg-orange-300",  selected: "bg-orange-400",  dot: "bg-orange-400"  },
-  { label: "Hated it",    value: 1, score: 10, circle: "bg-rose-300",    selected: "bg-rose-400",    dot: "bg-rose-400"    },
+  { emoji: "😍", label: "Loved it",    value: 5, score: 90 },
+  { emoji: "😊", label: "Liked it",    value: 4, score: 70 },
+  { emoji: "😐", label: "Okay",        value: 3, score: 50 },
+  { emoji: "😕", label: "Didn't like", value: 2, score: 30 },
+  { emoji: "😡", label: "Hated it",    value: 1, score: 10 },
 ];
 
 const MUSIC_OPTIONS = [
@@ -110,19 +109,18 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
           {step === "rate" && (
             <>
               <p className="text-[11px] text-stone-400 uppercase tracking-widest mb-5">How was it?</p>
-              <div className="flex justify-between gap-2 mb-2">
+              <div className="flex justify-between gap-1 mb-2">
                 {RATINGS.map((r) => (
                   <button
                     key={r.value}
                     onClick={() => handlePick(r.value)}
-                    className="flex flex-col items-center gap-2 flex-1"
-                  >
-                    {/* Circle */}
-                    <div className={`w-12 h-12 rounded-full transition-all ${
+                    className={`flex flex-col items-center gap-1.5 flex-1 py-2 rounded-xl transition-all ${
                       currentRating === r.value
-                        ? `${r.selected} ring-2 ring-offset-2 ring-stone-300 scale-110`
-                        : `${r.circle} opacity-80 hover:opacity-100 hover:scale-105`
-                    }`} />
+                        ? "bg-stone-100 scale-105"
+                        : "hover:bg-stone-50"
+                    }`}
+                  >
+                    <span className="text-3xl leading-none">{r.emoji}</span>
                     <span className="text-[9px] text-stone-400 leading-tight text-center">{r.label}</span>
                   </button>
                 ))}
@@ -135,7 +133,7 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
             <>
               {/* Selected rating indicator */}
               <div className="flex items-center gap-2 mb-5">
-                <div className={`w-4 h-4 rounded-full ${ratingObj?.dot}`} />
+                <span className="text-xl leading-none">{ratingObj?.emoji}</span>
                 <span className="text-sm text-stone-700 font-medium">{ratingObj?.label}</span>
                 <button onClick={() => setStep("rate")} className="ml-auto text-xs text-stone-400 hover:text-stone-600">change</button>
               </div>
