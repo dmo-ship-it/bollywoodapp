@@ -16,3 +16,7 @@ CREATE INDEX idx_user_profiles_role ON user_profiles(role);
 -- Add language_preferences column to user_profiles
 -- Stores an ordered array of language codes e.g. ["hi", "ta", "ml"]
 ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS language_preferences TEXT[] DEFAULT '{}';
+
+-- Add notes and music_rating to user_reactions
+ALTER TABLE user_reactions ADD COLUMN IF NOT EXISTS notes TEXT;
+ALTER TABLE user_reactions ADD COLUMN IF NOT EXISTS music_rating INT; -- 1=forgettable, 2=good, 3=bangers

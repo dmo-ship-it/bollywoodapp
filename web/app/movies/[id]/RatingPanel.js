@@ -15,6 +15,12 @@ const RATINGS = [
   { emoji: "💔", label: "Disliked",    value: 1, score: 10 },
 ];
 
+const MUSIC_OPTIONS = [
+  { emoji: "🎵", label: "Bangers",      value: 3 },
+  { emoji: "🎶", label: "Pretty good",  value: 2 },
+  { emoji: "🔇", label: "Forgettable",  value: 1 },
+];
+
 async function computePrediction(supabase, userId, movieId) {
   const [{ data: myRatings }, { data: movieRatings }] = await Promise.all([
     supabase.from("user_reactions").select("movie_id, score").eq("user_id", userId).not("score", "is", null),
@@ -47,6 +53,87 @@ async function computePrediction(supabase, userId, movieId) {
   return totalWeight === 0 ? null : Math.round(weightedSum / totalWeight);
 }
 
+// ── Extras Sheet (Beli-style) ──────────────────────────────────────────────
+function ExtrasSheet({ rating, onDone }) {
+  const [notes,        setNotes]        = useState("");
+  const [musicRating,  setMusicRating]  = useState(null);
+
+  const ratingObj = RATINGS.find((r) => r.value === rating);
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
+        onClick={() => onDone({ notes, musicRating })}
+      />
+
+      {/* Sheet */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl shadow-2xl p-6 pb-10 animate-slide-up max-w-lg mx-auto">
+
+        {/* Drag handle */}
+        <div className="w-10 h-1 bg-stone-200 rounded-full mx-auto mb-6" />
+
+        {/* Rating confirmation */}
+        <div className="flex items-center gap-3 mb-6">
+          <span className="text-3xl">{ratingObj?.emoji}</span>
+          <div>
+            <p className="font-black text-stone-900">{ratingObj?.label}</p>
+            <p className="text-xs text-stone-400">Anything to add? (optional)</p>
+          </div>
+        </div>
+
+        {/* Notes */}
+        <div className="mb-5">
+          <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-2">
+            Notes
+          </label>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="What did you think? Any standout scenes, performances..."
+            rows={3}
+            className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 resize-none"
+          />
+        </div>
+
+        {/* Music Rating */}
+        <div className="mb-8">
+          <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-3">
+            Soundtrack
+          </label>
+          <div className="flex gap-2">
+            {MUSIC_OPTIONS.map((m) => (
+              <button
+                key={m.value}
+                onClick={() => setMusicRating(musicRating === m.value ? null : m.value)}
+                className={`flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border transition-all ${
+                  musicRating === m.value
+                    ? "border-orange-400 bg-orange-50"
+                    : "border-stone-200 bg-white hover:border-orange-200"
+                }`}
+              >
+                <span className="text-xl">{m.emoji}</span>
+                <span className="text-[10px] text-stone-500 font-medium">{m.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Done button */}
+        <button
+          onClick={() => onDone({ notes, musicRating })}
+          className="w-full bg-stone-900 text-white font-bold py-4 rounded-2xl hover:bg-stone-700 transition-colors"
+        >
+          Done
+        </button>
+
+      </div>
+    </>
+  );
+}
+
+// ── Main Rating Panel ──────────────────────────────────────────────────────
 export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
   const supabase = createClient();
   const [user,           setUser]           = useState(null);
@@ -55,6 +142,7 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
   const [newBadges,      setNewBadges]      = useState([]);
   const [predicted,      setPredicted]      = useState(null);
   const [communityScore, setCommunityScore] = useState(null);
+  const [showExtras,     setShowExtras]     = useState(false);
   const [showCompare,    setShowCompare]    = useState(false);
   const [pendingRating,  setPendingRating]  = useState(null);
 
@@ -73,22 +161,37 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
     });
   }, [movieId]);
 
-  async function handleRate(rating) {
+  // Step 1: tap a rating → show extras sheet
+  function handleRate(rating) {
     if (!user || saving) return;
+    setPendingRating(rating);
+    setShowExtras(true);
+  }
+
+  // Step 2: extras done → save everything → show compare
+  async function handleExtrasDone({ notes, musicRating }) {
+    setShowExtras(false);
     setSaving(true);
 
-    // Save the rating with a provisional score first
-    const provisionalScore = RATINGS.find((r) => r.value === rating)?.score ?? 50;
+    const provisionalScore = RATINGS.find((r) => r.value === pendingRating)?.score ?? 50;
+
     await supabase.from("user_reactions").upsert(
-      { user_id: user.id, movie_id: movieId, rating, score: provisionalScore },
+      {
+        user_id:      user.id,
+        movie_id:     movieId,
+        rating:       pendingRating,
+        score:        provisionalScore,
+        notes:        notes || null,
+        music_rating: musicRating || null,
+      },
       { onConflict: "user_id,movie_id" }
     );
 
-    // Log to activity feed (first-time rating only)
+    // Activity feed
     if (!currentRating) {
       await supabase.from("activity_feed").insert({
         user_id: user.id, activity_type: "rated", movie_id: movieId,
-        metadata: { rating, title: movieTitle },
+        metadata: { rating: pendingRating, title: movieTitle },
       });
     }
 
@@ -102,12 +205,11 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
       setTimeout(() => setNewBadges([]), 4000);
     }
 
-    setCurrentRating(rating);
+    setCurrentRating(pendingRating);
     setPredicted(null);
     setSaving(false);
 
-    // Trigger compare modal to refine ranking
-    setPendingRating(rating);
+    // Step 3: show compare
     setShowCompare(true);
   }
 
@@ -201,7 +303,15 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
         </div>
       </section>
 
-      {/* Compare modal — appears after rating */}
+      {/* Extras sheet — slides up after rating */}
+      {showExtras && pendingRating && (
+        <ExtrasSheet
+          rating={pendingRating}
+          onDone={handleExtrasDone}
+        />
+      )}
+
+      {/* Compare modal — appears after extras */}
       {showCompare && pendingRating && (
         <CompareModal
           movieId={movieId}
