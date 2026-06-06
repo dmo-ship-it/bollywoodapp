@@ -194,7 +194,6 @@ export default function RankingsPage() {
             const score      = isPersonal ? movie.userScore : movie.global_score;
             const roundScore = score ? Math.round(score) : null;
             const rank       = i + 1;
-            const medal      = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : null;
             const scoreColor = !roundScore ? "text-stone-400"
               : roundScore >= 80 ? "text-rose-600"
               : roundScore >= 60 ? "text-orange-600"
@@ -212,10 +211,7 @@ export default function RankingsPage() {
               >
                 {/* Rank */}
                 <div className="w-8 text-center shrink-0">
-                  {medal
-                    ? <span className="text-xl">{medal}</span>
-                    : <span className="text-stone-400 text-sm font-bold">#{rank}</span>
-                  }
+                  <span className="text-stone-400 text-sm font-bold">#{rank}</span>
                 </div>
 
                 {/* Poster */}

@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 
-const MEDALS = ["🥇", "🥈", "🥉"];
 
 export default function RankingsShareCard({ movies, isPersonal, language, onClose }) {
   const cardRef = useRef(null);
@@ -76,10 +75,7 @@ export default function RankingsShareCard({ movies, isPersonal, language, onClos
                   <div key={movie.id} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                     {/* Rank */}
                     <div style={{ width: "24px", textAlign: "center", flexShrink: 0 }}>
-                      {i < 3
-                        ? <span style={{ fontSize: "16px", fontFamily: "system-ui, sans-serif" }}>{MEDALS[i]}</span>
-                        : <span style={{ color: "#6b7280", fontSize: "12px", fontWeight: 700, fontFamily: "system-ui, sans-serif" }}>#{i + 1}</span>
-                      }
+                      <span style={{ color: "#6b7280", fontSize: "12px", fontWeight: 700, fontFamily: "system-ui, sans-serif" }}>#{i + 1}</span>
                     </div>
 
                     {/* Title + year */}
