@@ -91,7 +91,7 @@ export default async function MoviePage({ params }) {
           <div className="w-44 md:w-52 shrink-0">
             <div className="aspect-[2/3] rounded-2xl overflow-hidden bg-zinc-800 shadow-2xl ring-1 ring-white/10">
               {movie.poster_url
-                ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" />
+                ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover object-top" />
                 : <div className="w-full h-full flex items-center justify-center text-5xl">🎬</div>
               }
             </div>

@@ -115,7 +115,7 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
         <div className="flex gap-2">
           <button
             onClick={() => setShowModal(true)}
-            className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-black text-base transition-all shadow-sm ${
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm ${
               currentRating
                 ? "bg-orange-50 border-2 border-orange-400 text-stone-900"
                 : "bg-orange-600 text-white hover:bg-orange-500 active:scale-95"
@@ -123,18 +123,18 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
           >
             {currentRating ? (
               <>
-                <span className="text-xl">{ratingObj?.emoji}</span>
+                <span>{ratingObj?.emoji}</span>
                 <span>{ratingObj?.label}</span>
               </>
             ) : (
               <>
-                <span className="text-xl">＋</span>
+                <span>＋</span>
                 <span>Rate this film</span>
               </>
             )}
           </button>
 
-          <div className="bg-white border border-stone-200 rounded-2xl px-4 flex items-center shadow-sm">
+          <div className="bg-white border border-stone-200 rounded-xl px-3 flex items-center shadow-sm">
             <WatchlistButton movieId={movieId} movieTitle={movieTitle} />
           </div>
         </div>
