@@ -73,75 +73,62 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
     setPredicted(null);
   }
 
+  const ratingObj = RATINGS.find((r) => r.value === currentRating);
+
+  // Not logged in — just show small icon buttons as placeholders
   if (!user) {
     return (
-      <section className="bg-orange-50 border border-orange-100 rounded-2xl p-6 text-center">
-        <p className="text-base font-bold text-stone-900 mb-1">Rate this film</p>
-        <p className="text-stone-500 text-xs mb-4">Sign up to rate films and build your personal ranking</p>
-        <a href="/login" className="inline-block bg-orange-600 text-white font-bold px-6 py-2.5 rounded-full hover:bg-orange-500 transition-colors text-sm">
-          Sign up free
+      <div className="flex items-center gap-2">
+        <a
+          href="/login"
+          className="flex items-center gap-1.5 text-xs text-stone-500 border border-stone-200 rounded-lg px-3 py-1.5 hover:bg-stone-50 transition-colors"
+        >
+          <span>＋</span> Rate
         </a>
-      </section>
+        <WatchlistButton movieId={movieId} movieTitle={movieTitle} />
+      </div>
     );
   }
 
-  const ratingObj = RATINGS.find((r) => r.value === currentRating);
-
   return (
     <>
-      <div className="space-y-3">
+      <div className="flex items-center gap-3">
 
-        {/* Community + Predicted scores */}
-        {(communityScore || predicted) && (
-          <div className="flex gap-3">
-            {communityScore && (
-              <div className="flex-1 bg-white border border-stone-200 rounded-xl p-3 text-center shadow-sm">
-                <p className="text-xs text-stone-400 mb-1">Community</p>
-                <p className="text-2xl font-black text-stone-900">{communityScore}</p>
-                <p className="text-[10px] text-stone-400">/ 100</p>
-              </div>
-            )}
-            {predicted && !currentRating && (
-              <div className="flex-1 bg-orange-50 border border-orange-100 rounded-xl p-3 text-center">
-                <p className="text-xs text-stone-400 mb-1">Predicted for you</p>
-                <p className="text-2xl font-black text-orange-600">{predicted}</p>
-                <p className="text-[10px] text-stone-400">/ 100</p>
-              </div>
-            )}
-          </div>
+        {/* Rate icon button */}
+        <button
+          onClick={() => setShowModal(true)}
+          className={`flex items-center gap-1.5 text-xs rounded-lg px-3 py-1.5 transition-all border ${
+            currentRating
+              ? "border-stone-200 bg-stone-50 text-stone-700"
+              : "border-stone-300 text-stone-600 hover:bg-stone-50"
+          }`}
+        >
+          {currentRating ? (
+            <>{ratingObj?.emoji} {ratingObj?.label}</>
+          ) : (
+            <>＋ Rate</>
+          )}
+        </button>
+
+        {/* Bookmark */}
+        <WatchlistButton movieId={movieId} movieTitle={movieTitle} />
+
+        {/* Scores — inline, small */}
+        {communityScore && (
+          <span className="text-xs text-stone-400">
+            Community <span className="font-semibold text-stone-600">{communityScore}</span>
+            <span className="text-stone-300">/100</span>
+          </span>
         )}
-
-        {/* Rate button + watchlist */}
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowModal(true)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-all ${
-              currentRating
-                ? "bg-stone-100 text-stone-700"
-                : "bg-stone-900 text-white hover:bg-stone-700"
-            }`}
-          >
-            {currentRating ? (
-              <>
-                <span>{ratingObj?.emoji}</span>
-                <span>{ratingObj?.label}</span>
-              </>
-            ) : (
-              <>
-                <span className="text-base">＋</span>
-                <span>Rate</span>
-              </>
-            )}
-          </button>
-
-          <div className="border border-stone-200 rounded-lg px-3 flex items-center bg-white">
-            <WatchlistButton movieId={movieId} movieTitle={movieTitle} />
-          </div>
-        </div>
+        {predicted && !currentRating && (
+          <span className="text-xs text-stone-400">
+            Predicted <span className="font-semibold text-stone-600">{predicted}</span>
+            <span className="text-stone-300">/100</span>
+          </span>
+        )}
 
       </div>
 
-      {/* Rating modal */}
       {showModal && (
         <RatingModal
           movieId={movieId}
@@ -151,7 +138,6 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
           onRated={handleRated}
         />
       )}
-
     </>
   );
 }
