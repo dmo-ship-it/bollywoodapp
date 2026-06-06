@@ -53,6 +53,53 @@ Screenshots and patterns from the Beli restaurant rating app to inspire the Boll
 
 ---
 
+## Visual Design Analysis (from viewing actual screenshots)
+
+### Palette — extremely restrained
+- **Background**: Pure white (#FFFFFF) — no off-whites, no tinted backgrounds
+- **Text**: Near-black for primary, medium gray for secondary — good contrast, no color
+- **Accent**: Dark teal-green, used ONLY for the logo, the + FAB button, and "Apply" — nowhere else
+- **Rating circles**: Muted pastels — soft green, soft yellow/cream, soft pink/salmon — NOT saturated
+- **No orange. No gradients. No glow effects.**
+
+### Buttons — barely there
+- Primary CTA ("Get Started"): small teal pill, normal font weight, no shadow
+- Action buttons ("Invite"): tiny blue pills — almost disappear into the UI
+- Filter chips: outlined, no fill, very light border
+- **Nothing is padded aggressively. py-2 at most.**
+
+### Rating options — circles not tiles
+- Three soft colored circles side by side: 🟢 "I liked it" / 🟡 "It was fine" / 🔴 "I didn't like it"
+- No borders, no shadows — just a muted fill color
+- Tap the circle, it gets a subtle ring — that's it
+
+### Cards / rows — minimal chrome
+- Feed items: avatar + "[Name] ranked [Restaurant]" + score badge (small, right-aligned)
+- Score badge: plain number "10.0" in a tiny outlined box — not colored, not bold
+- Heart/comment icons: outline only, light gray — not filled until interacted with
+- Thin hairline dividers between items — or no dividers at all, just spacing
+
+### Typography
+- Font weight: medium/semibold for names, regular for metadata — no "font-black" anywhere in UI chrome
+- Font size: small and controlled — nothing oversized except the restaurant name itself
+- Section labels: tiny uppercase tracking-widest, light gray — exactly like "How was it?"
+
+### Spacing
+- Generous padding inside screens (px-5 or more)
+- Modest internal padding on components (p-3 or p-4)
+- Items breathe — not crammed together
+
+### What to AVOID (what we were doing wrong)
+- ❌ Saturated orange everywhere
+- ❌ `font-black` on UI buttons
+- ❌ `bg-gradient-to-r from-orange-400 to-rose-400` 
+- ❌ `py-4` buttons
+- ❌ `border-2 border-orange-400` as selected state
+- ❌ Multiple competing accent colors
+- ❌ Shadows on everything
+
+---
+
 ## Key Design Patterns to Borrow
 
 ### Navigation

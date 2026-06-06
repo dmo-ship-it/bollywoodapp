@@ -62,13 +62,13 @@ export default function MovieCard({ movie }) {
               {/* Rate button */}
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowRating(true); }}
-                className="bg-white/90 backdrop-blur-sm rounded-lg p-1.5 shadow-sm hover:bg-orange-50 transition-colors"
+                className="bg-white/95 rounded-md p-1 shadow-sm hover:bg-stone-50 transition-colors"
                 title="Rate this film"
               >
-                <span className="text-sm leading-none">＋</span>
+                <span className="text-xs leading-none font-medium text-stone-600">＋</span>
               </button>
               {/* Watchlist button */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-1 shadow-sm">
+              <div className="bg-white/95 rounded-md p-0.5 shadow-sm">
                 <WatchlistButton movieId={movie.id} movieTitle={movie.title} />
               </div>
             </div>

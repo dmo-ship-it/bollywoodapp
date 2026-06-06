@@ -29,17 +29,17 @@ body {
   animation: shimmer 1.6s ease-in-out infinite;
 }
 
-/* Cinematic gradient for hero — fades to warm white */
+/* Cinematic gradient for hero */
 .hero-gradient {
   background: linear-gradient(
     to right,
-    rgba(0,0,0,0.90) 30%,
-    rgba(0,0,0,0.55) 65%,
-    rgba(0,0,0,0.10) 100%
+    rgba(0,0,0,0.85) 25%,
+    rgba(0,0,0,0.40) 60%,
+    rgba(0,0,0,0.05) 100%
   );
 }
 .hero-fade-bottom {
-  background: linear-gradient(to bottom, transparent 40%, #FAFAF8 100%);
+  background: linear-gradient(to bottom, transparent 50%, #FAFAF8 100%);
 }
 
 /* Slide-up sheet animation */
