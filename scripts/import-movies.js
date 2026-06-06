@@ -71,7 +71,9 @@ function buildMovieRow(m) {
     release_date:          toDate(m.release_date),
     poster_url:            m.poster_url,
     backdrop_url:          m.backdrop_url,
-    trailer_url:           m.trailer_url,
+    // Only include trailer_url if non-null so we don't overwrite
+    // a previously enriched trailer when TMDB has no video data
+    ...(m.trailer_url ? { trailer_url: m.trailer_url } : {}),
     runtime_minutes:       m.runtime_minutes,
     language:              m.language,
     genres:                m.genres,
