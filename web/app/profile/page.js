@@ -134,7 +134,13 @@ export default function ProfilePage() {
           <div className="flex gap-5 mt-3 text-sm flex-wrap">
             <span><strong className="text-stone-900">{rated.length}</strong> <span className="text-stone-400">rated</span></span>
             <span><strong className="text-stone-900">{watchlist.length}</strong> <span className="text-stone-400">watchlist</span></span>
-            <span><strong className="text-stone-900">{comparisons.length}</strong> <span className="text-stone-400">comparisons</span></span>
+            <Link href="/leaderboards" className="flex items-center gap-1.5 hover:opacity-70 transition-opacity">
+              <strong className="text-stone-900">{(points?.total_points ?? 0).toLocaleString()}</strong>
+              <span className="text-stone-400">pts</span>
+              {rank && rank <= 500 && (
+                <span className="text-stone-400">· <strong className="text-stone-900">#{rank}</strong></span>
+              )}
+            </Link>
             {badges.length > 0 && (
               <button
                 onClick={() => setBadgesOpen((o) => !o)}
@@ -144,15 +150,6 @@ export default function ProfilePage() {
                 <span className="text-stone-400">badges</span>
                 <span className={`text-stone-300 text-xs transition-transform duration-200 ${badgesOpen ? "rotate-180" : ""}`}>▾</span>
               </button>
-            )}
-            {points?.total_points > 0 && (
-              <Link href="/leaderboards" className="flex items-center gap-1.5 hover:opacity-70 transition-opacity">
-                <strong className="text-stone-900">{points.total_points.toLocaleString()}</strong>
-                <span className="text-stone-400">pts</span>
-                {rank && rank <= 500 && (
-                  <span className="text-stone-400">· <strong className="text-stone-900">#{rank}</strong></span>
-                )}
-              </Link>
             )}
           </div>
 
