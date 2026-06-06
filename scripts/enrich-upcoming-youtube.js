@@ -1,89 +1,56 @@
 // Enrich Upcoming Movies with YouTube Trailers
-// Searches YouTube for movie trailers and adds them to upcoming.json
-//
-// Requires YOUTUBE_API_KEY environment variable
-// Get your key at: https://console.cloud.google.com/
+// Searches YouTube for movie trailers without using an API key (no quota limits)
 //
 // Usage:
-//   YOUTUBE_API_KEY=your_key node scripts/enrich-upcoming-youtube.js
+//   node scripts/enrich-upcoming-youtube.js
+//   node scripts/enrich-upcoming-youtube.js --force   (re-search even if trailer already set)
 
 const fs = require("fs");
 const path = require("path");
-const https = require("https");
+const yts = require("yt-search");
 
-const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const INPUT_FILE = path.join(__dirname, "../data/upcoming.json");
 const OUTPUT_FILE = path.join(__dirname, "../data/upcoming.json");
-
-if (!YOUTUBE_API_KEY) {
-  console.error("❌  Missing YOUTUBE_API_KEY environment variable.");
-  console.error("    Get a key at: https://console.cloud.google.com/");
-  process.exit(1);
-}
+const FORCE = process.argv.includes("--force");
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-function get(url) {
-  return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
-      let data = "";
-      if (res.statusCode !== 200) {
-        reject(new Error(`HTTP ${res.statusCode}`));
-        res.resume();
-        return;
+async function searchYouTubeTrailer(title, year, language) {
+  const queries = [
+    `${title} official trailer`,
+    `${title} ${year} trailer`,
+    `${title} teaser trailer`,
+  ];
+
+  for (const query of queries) {
+    try {
+      const result = await yts(query);
+      const videos = result.videos || [];
+
+      // Prefer official/trailer results
+      const best =
+        videos.find(v =>
+          v.title.toLowerCase().includes("trailer") &&
+          (v.title.toLowerCase().includes("official") || v.author.name.toLowerCase().includes("official"))
+        ) ||
+        videos.find(v => v.title.toLowerCase().includes("trailer")) ||
+        videos.find(v => v.title.toLowerCase().includes("teaser")) ||
+        videos[0];
+
+      if (best) {
+        return `https://www.youtube.com/watch?v=${best.videoId}`;
       }
-      res.on("data", (c) => (data += c));
-      res.on("end", () => {
-        try {
-          resolve(JSON.parse(data));
-        } catch (e) {
-          reject(e);
-        }
-      });
-    }).on("error", reject);
-  });
-}
-
-async function searchYouTubeTrailer(title, releaseYear) {
-  try {
-    const query = `${title} ${releaseYear} trailer official`;
-    const url = `https://www.googleapis.com/youtube/v3/search?` +
-      `part=snippet&` +
-      `type=video&` +
-      `q=${encodeURIComponent(query)}&` +
-      `key=${YOUTUBE_API_KEY}&` +
-      `maxResults=5&` +
-      `order=relevance`;
-
-    const data = await get(url);
-
-    if (!data.items || data.items.length === 0) {
-      return null;
+    } catch (e) {
+      // try next query
     }
-
-    // Prefer official trailers
-    const official = data.items.find(item =>
-      item.snippet.title.toLowerCase().includes("official") &&
-      item.snippet.title.toLowerCase().includes("trailer")
-    );
-
-    if (official) {
-      return `https://www.youtube.com/watch?v=${official.id.videoId}`;
-    }
-
-    // Fall back to first result
-    if (data.items[0]) {
-      return `https://www.youtube.com/watch?v=${data.items[0].id.videoId}`;
-    }
-
-    return null;
-  } catch (e) {
-    return null;
+    await sleep(300);
   }
+
+  return null;
 }
 
 async function main() {
-  console.log("🎬  Upcoming Movies YouTube Trailer Enrichment\n");
+  console.log("🎬  Upcoming Movies YouTube Trailer Enrichment (no API key)\n");
 
   if (!fs.existsSync(INPUT_FILE)) {
     console.error(`❌  Input file not found: ${INPUT_FILE}`);
@@ -92,58 +59,41 @@ async function main() {
 
   const raw = JSON.parse(fs.readFileSync(INPUT_FILE, "utf8"));
   const movies = raw.movies || [];
+  const toEnrich = FORCE ? movies : movies.filter(m => !m.trailer_url);
 
-  console.log(`📊  Searching for trailers for ${movies.length} movies...\n`);
+  console.log(`📊  ${movies.length} total movies, ${toEnrich.length} need trailers\n`);
 
-  let trailerCount = 0;
-  let skippedCount = 0;
+  let added = 0;
+  let failed = 0;
 
-  for (let i = 0; i < movies.length; i++) {
-    const movie = movies[i];
+  for (let i = 0; i < toEnrich.length; i++) {
+    const movie = toEnrich[i];
+    process.stdout.write(`  [${i + 1}/${toEnrich.length}] ${movie.title.substring(0, 45).padEnd(45)} `);
 
-    process.stdout.write(
-      `  [${i + 1}/${movies.length}] ${movie.title.substring(0, 40).padEnd(40)} `
-    );
+    await sleep(500); // be polite to YouTube
 
-    // Skip if already has a trailer
-    if (movie.trailer_url) {
-      console.log("⊘ (already has trailer)");
-      skippedCount++;
-      continue;
-    }
+    const trailer = await searchYouTubeTrailer(movie.title, movie.year, movie.language);
 
-    // Rate limiting - YouTube API quota is tight
-    await sleep(400);
-
-    const trailer = await searchYouTubeTrailer(movie.title, movie.year);
-
+    // Update the movie in the original array
+    const idx = movies.findIndex(m => m.tmdb_id === movie.tmdb_id);
     if (trailer) {
-      movies[i].trailer_url = trailer;
-      trailerCount++;
-      console.log("✓ (trailer found)");
+      movies[idx].trailer_url = trailer;
+      added++;
+      console.log("✓");
     } else {
-      console.log("✗ (not found)");
+      failed++;
+      console.log("✗");
     }
   }
 
-  console.log(`\n✅  Enrichment complete`);
-  console.log(`  • ${trailerCount} trailers added`);
-  console.log(`  • ${skippedCount} movies skipped (already had trailers)`);
-  console.log(`  • ${movies.length - trailerCount - skippedCount} no trailer found`);
+  console.log(`\n✅  Done: ${added} trailers added, ${failed} not found`);
 
-  // Save enriched data
   fs.writeFileSync(
     OUTPUT_FILE,
-    JSON.stringify({
-      fetched_at: raw.fetched_at,
-      count: movies.length,
-      movies,
-      enriched_at: new Date().toISOString(),
-    }, null, 2)
+    JSON.stringify({ ...raw, movies, enriched_at: new Date().toISOString() }, null, 2)
   );
-
-  console.log(`\n💾  Saved to ${OUTPUT_FILE}\n`);
-  console.log("Next: SUPABASE_URL=xxx SUPABASE_KEY=xxx node scripts/import-movies.js --file upcoming.json");
+  console.log(`💾  Saved to ${OUTPUT_FILE}`);
+  console.log("\nNext: SUPABASE_URL=xxx SUPABASE_KEY=xxx node scripts/import-movies.js --file upcoming.json");
 }
 
 main().catch((e) => {

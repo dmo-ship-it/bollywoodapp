@@ -1,0 +1,24 @@
+{
+  "name": "bollywood-app",
+  "version": "1.0.0",
+  "description": "A Next.js web app for Indian cinema fans to rate films, discover recommendations, connect with other fans, and celebrate their unique taste in movies.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dmo-ship-it/bollywoodapp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/dmo-ship-it/bollywoodapp/issues"
+  },
+  "homepage": "https://github.com/dmo-ship-it/bollywoodapp#readme",
+  "dependencies": {
+    "yt-search": "^2.13.1"
+  }
+}
