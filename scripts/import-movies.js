@@ -130,10 +130,10 @@ async function main() {
     console.log("⏩  Skipping movies (--credits-only mode)");
   }
 
-  // 2. Fetch inserted movies to get their UUIDs (paginate in case > 1000)
+  // 2. Fetch inserted movies to get their UUIDs (paginate until exhausted)
   console.log("\n🔑  Fetching movie IDs...");
   const movieRows = [];
-  for (let offset = 0; offset < movies.length + 1000; offset += 1000) {
+  for (let offset = 0; ; offset += 1000) {
     const r = await fetch(
       `${SUPABASE_URL}/rest/v1/movies?select=id,tmdb_id&limit=1000&offset=${offset}`,
       { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
@@ -164,16 +164,17 @@ async function main() {
     console.log("⏩  Skipping people (--credits-only mode)");
   }
 
-  // 4. Fetch people UUIDs
+  // 4. Fetch people UUIDs (paginate until exhausted)
   console.log("\n🔑  Fetching people IDs...");
-  const pagesNeeded = Math.ceil(peopleArr.length / 1000);
   const personRows = [];
-  for (let p = 0; p < pagesNeeded; p++) {
+  for (let offset = 0; ; offset += 1000) {
     const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/people?select=id,tmdb_id&limit=1000&offset=${p * 1000}`,
+      `${SUPABASE_URL}/rest/v1/people?select=id,tmdb_id&limit=1000&offset=${offset}`,
       { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
     );
-    personRows.push(...(await r.json()));
+    const batch = await r.json();
+    if (!batch.length) break;
+    personRows.push(...batch);
   }
   const personTmdbToUuid = Object.fromEntries(personRows.map((r) => [r.tmdb_id, r.id]));
 
