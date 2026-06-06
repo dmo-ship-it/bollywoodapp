@@ -138,6 +138,11 @@ export default async function MoviePage({ params }) {
           {/* Info */}
           <div className="flex-1 min-w-0">
 
+            {/* Rate button — top of info */}
+            <div className="mb-5">
+              <RatingPanel movieId={movie.id} movieTitle={movie.title} posterUrl={movie.poster_url} />
+            </div>
+
             {/* Title row */}
             <div className="flex flex-wrap items-start gap-3 mb-2">
               <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight">{movie.title}</h1>
@@ -334,9 +339,6 @@ export default async function MoviePage({ params }) {
 
         {/* ───── Discussions ───── */}
         <MovieDiscussions movieId={id} movieTitle={movie.title} />
-
-        {/* ───── Rating ───── */}
-        <RatingPanel movieId={id} movieTitle={movie.title} posterUrl={movie.poster_url} />
 
       </div>
     </div>

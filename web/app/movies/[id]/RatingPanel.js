@@ -4,21 +4,14 @@ import { useEffect, useState } from "react";
 import { createClient } from "../../../lib/supabase-browser";
 import WatchlistButton from "../../components/WatchlistButton";
 import CompareModal from "../../components/CompareModal";
-import { updateStreak } from "../../../lib/streak";
-import { checkAndAwardBadges, BADGES } from "../../../lib/badges";
+import RatingModal from "../../components/RatingModal";
 
 const RATINGS = [
-  { emoji: "❤️", label: "Loved it",    value: 5, score: 90 },
-  { emoji: "👍", label: "Liked it",    value: 4, score: 70 },
-  { emoji: "😐", label: "It was okay", value: 3, score: 50 },
-  { emoji: "👎", label: "Didn't like", value: 2, score: 30 },
-  { emoji: "💔", label: "Disliked",    value: 1, score: 10 },
-];
-
-const MUSIC_OPTIONS = [
-  { emoji: "🎵", label: "Bangers",      value: 3 },
-  { emoji: "🎶", label: "Pretty good",  value: 2 },
-  { emoji: "🔇", label: "Forgettable",  value: 1 },
+  { emoji: "❤️", label: "Loved it",    value: 5 },
+  { emoji: "👍", label: "Liked it",    value: 4 },
+  { emoji: "😐", label: "It was okay", value: 3 },
+  { emoji: "👎", label: "Didn't like", value: 2 },
+  { emoji: "💔", label: "Disliked",    value: 1 },
 ];
 
 async function computePrediction(supabase, userId, movieId) {
@@ -53,98 +46,15 @@ async function computePrediction(supabase, userId, movieId) {
   return totalWeight === 0 ? null : Math.round(weightedSum / totalWeight);
 }
 
-// ── Extras Sheet (Beli-style) ──────────────────────────────────────────────
-function ExtrasSheet({ rating, onDone }) {
-  const [notes,        setNotes]        = useState("");
-  const [musicRating,  setMusicRating]  = useState(null);
-
-  const ratingObj = RATINGS.find((r) => r.value === rating);
-
-  return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
-        onClick={() => onDone({ notes, musicRating })}
-      />
-
-      {/* Sheet */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl shadow-2xl p-6 pb-10 animate-slide-up max-w-lg mx-auto">
-
-        {/* Drag handle */}
-        <div className="w-10 h-1 bg-stone-200 rounded-full mx-auto mb-6" />
-
-        {/* Rating confirmation */}
-        <div className="flex items-center gap-3 mb-6">
-          <span className="text-3xl">{ratingObj?.emoji}</span>
-          <div>
-            <p className="font-black text-stone-900">{ratingObj?.label}</p>
-            <p className="text-xs text-stone-400">Anything to add? (optional)</p>
-          </div>
-        </div>
-
-        {/* Notes */}
-        <div className="mb-5">
-          <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-2">
-            Notes
-          </label>
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="What did you think? Any standout scenes, performances..."
-            rows={3}
-            className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 resize-none"
-          />
-        </div>
-
-        {/* Music Rating */}
-        <div className="mb-8">
-          <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-3">
-            Soundtrack
-          </label>
-          <div className="flex gap-2">
-            {MUSIC_OPTIONS.map((m) => (
-              <button
-                key={m.value}
-                onClick={() => setMusicRating(musicRating === m.value ? null : m.value)}
-                className={`flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border transition-all ${
-                  musicRating === m.value
-                    ? "border-orange-400 bg-orange-50"
-                    : "border-stone-200 bg-white hover:border-orange-200"
-                }`}
-              >
-                <span className="text-xl">{m.emoji}</span>
-                <span className="text-[10px] text-stone-500 font-medium">{m.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Done button */}
-        <button
-          onClick={() => onDone({ notes, musicRating })}
-          className="w-full bg-stone-900 text-white font-bold py-4 rounded-2xl hover:bg-stone-700 transition-colors"
-        >
-          Done
-        </button>
-
-      </div>
-    </>
-  );
-}
-
-// ── Main Rating Panel ──────────────────────────────────────────────────────
 export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
   const supabase = createClient();
-  const [user,           setUser]           = useState(null);
-  const [currentRating,  setCurrentRating]  = useState(null);
-  const [saving,         setSaving]         = useState(false);
-  const [newBadges,      setNewBadges]      = useState([]);
-  const [predicted,      setPredicted]      = useState(null);
-  const [communityScore, setCommunityScore] = useState(null);
-  const [showExtras,     setShowExtras]     = useState(false);
-  const [showCompare,    setShowCompare]    = useState(false);
-  const [pendingRating,  setPendingRating]  = useState(null);
+  const [user,          setUser]          = useState(null);
+  const [currentRating, setCurrentRating] = useState(null);
+  const [predicted,     setPredicted]     = useState(null);
+  const [communityScore,setCommunityScore]= useState(null);
+  const [showModal,     setShowModal]     = useState(false);
+  const [showCompare,   setShowCompare]   = useState(false);
+  const [pendingRating, setPendingRating] = useState(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
@@ -161,94 +71,33 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
     });
   }, [movieId]);
 
-  // Step 1: tap a rating → show extras sheet
-  function handleRate(rating) {
-    if (!user || saving) return;
+  function handleRated(rating) {
+    setCurrentRating(rating);
     setPendingRating(rating);
-    setShowExtras(true);
-  }
-
-  // Step 2: extras done → save everything → show compare
-  async function handleExtrasDone({ notes, musicRating }) {
-    setShowExtras(false);
-    setSaving(true);
-
-    const provisionalScore = RATINGS.find((r) => r.value === pendingRating)?.score ?? 50;
-
-    await supabase.from("user_reactions").upsert(
-      {
-        user_id:      user.id,
-        movie_id:     movieId,
-        rating:       pendingRating,
-        score:        provisionalScore,
-        notes:        notes || null,
-        music_rating: musicRating || null,
-      },
-      { onConflict: "user_id,movie_id" }
-    );
-
-    // Activity feed
-    if (!currentRating) {
-      await supabase.from("activity_feed").insert({
-        user_id: user.id, activity_type: "rated", movie_id: movieId,
-        metadata: { rating: pendingRating, title: movieTitle },
-      });
-    }
-
-    // Streak + badges
-    const [, earnedIds] = await Promise.all([
-      updateStreak(supabase, user.id),
-      checkAndAwardBadges(supabase, user.id),
-    ]);
-    if (earnedIds.length > 0) {
-      setNewBadges(BADGES.filter((b) => earnedIds.includes(b.id)));
-      setTimeout(() => setNewBadges([]), 4000);
-    }
-
-    setCurrentRating(pendingRating);
     setPredicted(null);
-    setSaving(false);
-
-    // Step 3: show compare
+    setShowModal(false);
     setShowCompare(true);
-  }
-
-  function handleCompareClose() {
-    setShowCompare(false);
-    setPendingRating(null);
   }
 
   if (!user) {
     return (
-      <section className="mt-10 bg-orange-50 border border-orange-100 rounded-2xl p-8 text-center">
-        <p className="text-xl font-bold text-stone-900 mb-2">Rate this film</p>
-        <p className="text-stone-500 text-sm mb-5">Sign up to rate films and build your personal ranking</p>
-        <a href="/login" className="inline-block bg-orange-600 text-white font-bold px-8 py-3 rounded-full hover:bg-orange-500 transition-colors text-sm">
-          Sign up free — takes 30 seconds
+      <section className="bg-orange-50 border border-orange-100 rounded-2xl p-6 text-center">
+        <p className="text-base font-bold text-stone-900 mb-1">Rate this film</p>
+        <p className="text-stone-500 text-xs mb-4">Sign up to rate films and build your personal ranking</p>
+        <a href="/login" className="inline-block bg-orange-600 text-white font-bold px-6 py-2.5 rounded-full hover:bg-orange-500 transition-colors text-sm">
+          Sign up free
         </a>
       </section>
     );
   }
 
+  const ratingObj = RATINGS.find((r) => r.value === currentRating);
+
   return (
     <>
-      <section className="mt-10 space-y-4">
+      <div className="space-y-3">
 
-        {/* Badge toast */}
-        {newBadges.length > 0 && (
-          <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 text-center">
-            <p className="text-sm font-bold text-stone-900 mb-2">🎉 Badge{newBadges.length > 1 ? "s" : ""} unlocked!</p>
-            <div className="flex justify-center gap-3 flex-wrap">
-              {newBadges.map((b) => (
-                <span key={b.id} className="text-xs bg-white border border-orange-200 px-3 py-1.5 rounded-full text-stone-700 font-medium">
-                  {b.icon} {b.label}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Community + Predicted */}
+        {/* Community + Predicted scores */}
         {(communityScore || predicted) && (
           <div className="flex gap-3">
             {communityScore && (
@@ -268,58 +117,56 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
           </div>
         )}
 
-        {/* Rating panel */}
-        <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-semibold text-stone-500">
-              {currentRating ? "Your rating" : "Rate this film"}
-            </p>
+        {/* Rate button + watchlist */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowModal(true)}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all ${
+              currentRating
+                ? "bg-orange-50 border-2 border-orange-400 text-stone-900"
+                : "bg-orange-600 text-white hover:bg-orange-500"
+            }`}
+          >
+            {currentRating ? (
+              <>
+                <span className="text-lg">{ratingObj?.emoji}</span>
+                <span>{ratingObj?.label}</span>
+              </>
+            ) : (
+              <>
+                <span>＋</span>
+                <span>Rate this film</span>
+              </>
+            )}
+          </button>
+
+          <div className="bg-white border border-stone-200 rounded-xl px-3 flex items-center shadow-sm">
             <WatchlistButton movieId={movieId} movieTitle={movieTitle} />
           </div>
-
-          <div className="flex justify-center gap-2 flex-wrap">
-            {RATINGS.map((r) => (
-              <button
-                key={r.value}
-                onClick={() => handleRate(r.value)}
-                disabled={saving}
-                className={`flex flex-col items-center gap-1.5 px-4 py-3 rounded-xl border transition-all ${
-                  currentRating === r.value
-                    ? "bg-orange-50 border-orange-400 scale-105 shadow-sm"
-                    : "border-stone-200 bg-white hover:border-orange-300 hover:bg-orange-50"
-                } disabled:opacity-50`}
-              >
-                <span className="text-2xl">{r.emoji}</span>
-                <span className="text-[10px] text-stone-500 text-center leading-tight">{r.label}</span>
-              </button>
-            ))}
-          </div>
-
-          {currentRating && (
-            <p className="text-center text-xs text-stone-400 mt-3">
-              Tap to change your rating
-            </p>
-          )}
         </div>
-      </section>
 
-      {/* Extras sheet — slides up after rating */}
-      {showExtras && pendingRating && (
-        <ExtrasSheet
-          rating={pendingRating}
-          onDone={handleExtrasDone}
+      </div>
+
+      {/* Rating modal */}
+      {showModal && (
+        <RatingModal
+          movieId={movieId}
+          movieTitle={movieTitle}
+          posterUrl={posterUrl}
+          onClose={() => setShowModal(false)}
+          onRated={handleRated}
         />
       )}
 
-      {/* Compare modal — appears after extras */}
+      {/* Compare modal — after rating */}
       {showCompare && pendingRating && (
         <CompareModal
           movieId={movieId}
           movieTitle={movieTitle}
           posterUrl={posterUrl}
           rating={pendingRating}
-          userId={user.id}
-          onClose={handleCompareClose}
+          userId={user?.id}
+          onClose={() => { setShowCompare(false); setPendingRating(null); }}
         />
       )}
     </>
