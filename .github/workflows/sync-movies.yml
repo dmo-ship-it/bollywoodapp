@@ -1,0 +1,39 @@
+name: Weekly Movie Sync
+
+on:
+  schedule:
+    - cron: '0 2 * * 0'  # Every Sunday at 2am UTC
+  workflow_dispatch:       # Allow manual trigger from GitHub UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120   # 2 hour max (plenty for ~8k movies)
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch movies from TMDB
+        env:
+          TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
+        run: |
+          mkdir -p data
+          node scripts/fetch-movies.js
+
+      - name: Import movies to Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: node scripts/import-movies.js
+
+      - name: Import credits only (movies already upserted)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: node scripts/import-movies.js --credits-only
