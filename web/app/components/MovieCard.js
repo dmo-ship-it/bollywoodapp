@@ -20,7 +20,7 @@ const VIBE_ICONS = {
   "emotional":                  "💙",
 };
 
-export default function MovieCard({ movie, userScore }) {
+export default function MovieCard({ movie, userScore, isWatchlisted = false }) {
   const [showRating, setShowRating] = useState(false);
   const [scored,     setScored]     = useState(userScore ?? null);
 
@@ -65,7 +65,7 @@ export default function MovieCard({ movie, userScore }) {
               </button>
               {/* Watchlist button */}
               <div className="bg-white/95 rounded-md p-0.5 shadow-sm">
-                <WatchlistButton movieId={movie.id} movieTitle={movie.title} />
+                <WatchlistButton movieId={movie.id} movieTitle={movie.title} initialSaved={isWatchlisted} />
               </div>
             </div>
           </div>

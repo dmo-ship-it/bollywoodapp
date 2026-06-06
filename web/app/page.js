@@ -40,7 +40,8 @@ export default function HomePage() {
   const [vibe,       setVibe]       = useState(null);
   const [decade,     setDecade]     = useState(null);
   const [section,    setSection]    = useState(SECTIONS[0]);
-  const [userScores, setUserScores] = useState({}); // movieId → score
+  const [userScores,     setUserScores]     = useState({}); // movieId → score
+  const [userWatchlist,  setUserWatchlist]  = useState(new Set()); // Set of bookmarked movieIds
 
   useEffect(() => {
     supabase
@@ -53,18 +54,20 @@ export default function HomePage() {
         if (data?.length) setHero(data[Math.floor(Math.random() * data.length)]);
       });
 
-    // Fetch user's scores for all movies in one query
+    // Fetch user's scores and watchlist in one go
     supabase.auth.getUser().then(async ({ data }) => {
       if (!data.user) return;
-      const { data: reactions } = await supabase
-        .from("user_reactions")
-        .select("movie_id, score")
-        .eq("user_id", data.user.id)
-        .not("score", "is", null);
+      const [{ data: reactions }, { data: watchlist }] = await Promise.all([
+        supabase.from("user_reactions").select("movie_id, score").eq("user_id", data.user.id).not("score", "is", null),
+        supabase.from("user_watchlist").select("movie_id").eq("user_id", data.user.id),
+      ]);
       if (reactions) {
         const map = {};
         reactions.forEach((r) => { map[r.movie_id] = r.score; });
         setUserScores(map);
+      }
+      if (watchlist) {
+        setUserWatchlist(new Set(watchlist.map((w) => w.movie_id)));
       }
     });
   }, []);
@@ -196,7 +199,7 @@ export default function HomePage() {
         ) : (
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">
             {movies.map((movie) => (
-              <MovieCard key={movie.id} movie={movie} userScore={userScores[movie.id]} />
+              <MovieCard key={movie.id} movie={movie} userScore={userScores[movie.id]} isWatchlisted={userWatchlist.has(movie.id)} />
             ))}
           </div>
         )}

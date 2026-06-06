@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { createClient } from "../../lib/supabase-browser";
 
-export default function WatchlistButton({ movieId, movieTitle, className = "" }) {
+export default function WatchlistButton({ movieId, movieTitle, initialSaved = false, className = "" }) {
   const supabase  = createClient();
-  const [saved,   setSaved]   = useState(false);
+  const [saved,   setSaved]   = useState(initialSaved);
   const [user,    setUser]    = useState(null);
   const [loading, setLoading] = useState(false);
   const [pulse,   setPulse]   = useState(false);
@@ -13,7 +13,8 @@ export default function WatchlistButton({ movieId, movieTitle, className = "" })
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user);
-      if (data.user) {
+      // Only do DB check if we weren't given an initial value
+      if (data.user && !initialSaved) {
         supabase.from("user_watchlist").select("id")
           .eq("user_id", data.user.id).eq("movie_id", movieId).maybeSingle()
           .then(({ data: w }) => setSaved(!!w));
