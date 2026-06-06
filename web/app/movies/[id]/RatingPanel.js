@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "../../../lib/supabase-browser";
 import WatchlistButton from "../../components/WatchlistButton";
 import RatingModal from "../../components/RatingModal";
+import ScoreCircle from "../../components/ScoreCircle";
 
 const RATINGS = [
   { emoji: "❤️", label: "Loved it",    value: 5 },
@@ -70,13 +71,15 @@ async function computeFriendScore(supabase, userId, movieId) {
   return { score: Math.round(avg), count: friendRatings.length };
 }
 
-// Small score chip — Beli style
-function ScoreChip({ label, score, sub }) {
+// Score item — circle + label below, Beli style
+function ScoreItem({ label, score, sub }) {
   return (
-    <div className="text-center">
-      <div className="text-xl font-bold text-stone-900">{score ?? "—"}</div>
-      <div className="text-[10px] text-stone-500 leading-tight mt-0.5">{label}</div>
-      {sub && <div className="text-[9px] text-stone-400 leading-tight">{sub}</div>}
+    <div className="flex flex-col items-center gap-1.5">
+      <ScoreCircle score={score ?? "—"} size="md" />
+      <div className="text-center">
+        <div className="text-[10px] text-stone-500 leading-tight">{label}</div>
+        {sub && <div className="text-[9px] text-stone-400 leading-tight">{sub}</div>}
+      </div>
     </div>
   );
 }
@@ -155,28 +158,28 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
   return (
     <>
       {/* ── Three scores ── */}
-      <div className="flex items-start gap-6 mb-4">
-        <ScoreChip
-          label={yourScore ? "Your Score" : predicted ? "Predicted for you" : "Your Score"}
+      <div className="flex items-start gap-5 mb-5">
+        <ScoreItem
+          label={yourScore ? "Your Score" : predicted ? "Predicted" : "Your Score"}
           score={yourScore ?? predicted}
-          sub={yourScore ? null : predicted ? "Based on your taste" : null}
+          sub={!yourScore && predicted ? "Based on taste" : null}
         />
 
         {avgScore && (
           <>
-            <div className="w-px bg-stone-100 self-stretch" />
-            <ScoreChip
+            <div className="w-px bg-stone-100 self-stretch mt-1" />
+            <ScoreItem
               label="Average Score"
               score={avgScore}
-              sub="Amongst all users"
+              sub="All users"
             />
           </>
         )}
 
         {friendScore && (
           <>
-            <div className="w-px bg-stone-100 self-stretch" />
-            <ScoreChip
+            <div className="w-px bg-stone-100 self-stretch mt-1" />
+            <ScoreItem
               label="Friend Score"
               score={friendScore.score}
               sub={`${friendScore.count} friend${friendScore.count !== 1 ? "s" : ""}`}
