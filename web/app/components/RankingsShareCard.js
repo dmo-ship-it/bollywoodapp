@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 
 
-export default function RankingsShareCard({ movies, isPersonal, language, onClose }) {
+export default function RankingsShareCard({ movies, totalRated, isPersonal, language, onClose }) {
   const cardRef = useRef(null);
   const [sharing, setSharing] = useState(false);
   const top5 = movies.slice(0, 5);
@@ -60,10 +60,15 @@ export default function RankingsShareCard({ movies, isPersonal, language, onClos
               <span style={{ color: "#f97316", fontSize: "22px", lineHeight: 1, fontFamily: "system-ui, sans-serif" }}>•</span>
             </div>
 
-            {/* Title */}
+            {/* Headline */}
             <div style={{ marginBottom: "20px" }}>
-              <p style={{ color: "#6b7280", fontSize: "10px", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "4px", fontFamily: "system-ui, sans-serif" }}>
-                {isPersonal ? "My Top Films" : "Top Films"}{language !== "All" ? ` · ${language}` : ""}
+              {isPersonal && totalRated > 0 && (
+                <p style={{ color: "#ffffff", fontSize: "15px", fontWeight: 700, fontFamily: "system-ui, sans-serif", marginBottom: "4px", lineHeight: 1.3 }}>
+                  I've ranked {totalRated} movies on Bolly
+                </p>
+              )}
+              <p style={{ color: "#6b7280", fontSize: "11px", fontFamily: "system-ui, sans-serif", letterSpacing: "0.5px" }}>
+                My Top {top5.length}{language !== "All" ? ` ${language}` : ""}:
               </p>
             </div>
 

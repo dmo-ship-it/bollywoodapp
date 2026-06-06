@@ -25,7 +25,8 @@ export default function RankingsPage() {
   const [loading,   setLoading]   = useState(true);
   const [decade,    setDecade]    = useState(DECADES[0]);
   const [language,  setLanguage]  = useState("All");
-  const [totalRatings, setTotalRatings] = useState(0);
+  const [totalRatings,    setTotalRatings]    = useState(0);
+  const [personalTotal,   setPersonalTotal]   = useState(0);
   const [showShareCard, setShowShareCard] = useState(false);
 
   useEffect(() => {
@@ -55,6 +56,8 @@ export default function RankingsPage() {
 
       const { data } = await q;
       let results = (data ?? []).map((r) => ({ ...r.movies, userScore: r.score, userRating: r.rating })).filter(Boolean);
+
+      setPersonalTotal(results.length); // total before filters
 
       if (decade.min > 0)     results = results.filter((m) => m.year >= decade.min && m.year <= decade.max);
       if (decade.max === 1989) results = results.filter((m) => m.year <= 1989);
@@ -268,6 +271,7 @@ export default function RankingsPage() {
       {showShareCard && (
         <RankingsShareCard
           movies={movies}
+          totalRated={personalTotal}
           isPersonal={isPersonal}
           language={language}
           onClose={() => setShowShareCard(false)}
