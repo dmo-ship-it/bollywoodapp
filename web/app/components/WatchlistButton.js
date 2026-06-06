@@ -15,7 +15,7 @@ export default function WatchlistButton({ movieId, movieTitle, className = "" })
       setUser(data.user);
       if (data.user) {
         supabase.from("user_watchlist").select("id")
-          .eq("user_id", data.user.id).eq("movie_id", movieId).single()
+          .eq("user_id", data.user.id).eq("movie_id", movieId).maybeSingle()
           .then(({ data: w }) => setSaved(!!w));
       }
     });
