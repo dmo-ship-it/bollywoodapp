@@ -50,7 +50,6 @@ export default function Header() {
             { href: "/leaderboards",  label: "🏆 Leaderboards" },
             { href: "/community",     label: "Community"       },
             { href: "/rankings",      label: "Rankings"        },
-            { href: "/people",        label: "People"          },
           ].map((item) => {
             const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             return (
