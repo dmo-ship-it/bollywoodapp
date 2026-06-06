@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../lib/supabase";
+import { createClient } from "../lib/supabase-browser";
 import MovieCard from "./components/MovieCard";
 import HeroMovie from "./components/HeroMovie";
 
@@ -54,12 +55,13 @@ export default function HomePage() {
         if (data?.length) setHero(data[Math.floor(Math.random() * data.length)]);
       });
 
-    // Fetch user's scores and watchlist in one go
-    supabase.auth.getUser().then(async ({ data }) => {
+    // Use SSR-aware client so we get the logged-in user's session
+    const browserSupabase = createClient();
+    browserSupabase.auth.getUser().then(async ({ data }) => {
       if (!data.user) return;
       const [{ data: reactions }, { data: watchlist }] = await Promise.all([
-        supabase.from("user_reactions").select("movie_id, score").eq("user_id", data.user.id).not("score", "is", null),
-        supabase.from("user_watchlist").select("movie_id").eq("user_id", data.user.id),
+        browserSupabase.from("user_reactions").select("movie_id, score").eq("user_id", data.user.id).not("score", "is", null),
+        browserSupabase.from("user_watchlist").select("movie_id").eq("user_id", data.user.id),
       ]);
       if (reactions) {
         const map = {};
