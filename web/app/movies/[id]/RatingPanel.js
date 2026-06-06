@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { createClient } from "../../../lib/supabase-browser";
 import WatchlistButton from "../../components/WatchlistButton";
-import CompareModal from "../../components/CompareModal";
 import RatingModal from "../../components/RatingModal";
 
 const RATINGS = [
@@ -53,8 +52,6 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
   const [predicted,     setPredicted]     = useState(null);
   const [communityScore,setCommunityScore]= useState(null);
   const [showModal,     setShowModal]     = useState(false);
-  const [showCompare,   setShowCompare]   = useState(false);
-  const [pendingRating, setPendingRating] = useState(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
@@ -73,10 +70,7 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
 
   function handleRated(rating) {
     setCurrentRating(rating);
-    setPendingRating(rating);
     setPredicted(null);
-    setShowModal(false);
-    setShowCompare(true);
   }
 
   if (!user) {
@@ -158,17 +152,6 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
         />
       )}
 
-      {/* Compare modal — after rating */}
-      {showCompare && pendingRating && (
-        <CompareModal
-          movieId={movieId}
-          movieTitle={movieTitle}
-          posterUrl={posterUrl}
-          rating={pendingRating}
-          userId={user?.id}
-          onClose={() => { setShowCompare(false); setPendingRating(null); }}
-        />
-      )}
     </>
   );
 }

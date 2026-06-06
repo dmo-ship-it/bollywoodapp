@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "../../lib/supabase-browser";
 import { updateStreak } from "../../lib/streak";
 import { checkAndAwardBadges } from "../../lib/badges";
+import CompareModal from "./CompareModal";
 
 const RATINGS = [
   { emoji: "❤️", label: "Loved it",    value: 5, score: 90 },
@@ -19,98 +20,14 @@ const MUSIC_OPTIONS = [
   { emoji: "🔇", label: "Forgettable", value: 1 },
 ];
 
-// Step 1: Pick a rating
-function StepRate({ currentRating, onPick }) {
-  return (
-    <div>
-      <p className="text-center text-sm font-semibold text-stone-500 mb-5">How was it?</p>
-      <div className="flex justify-center gap-3">
-        {RATINGS.map((r) => (
-          <button
-            key={r.value}
-            onClick={() => onPick(r.value)}
-            className={`flex flex-col items-center gap-2 px-4 py-4 rounded-2xl border-2 transition-all ${
-              currentRating === r.value
-                ? "border-orange-400 bg-orange-50 scale-105 shadow-sm"
-                : "border-stone-200 bg-white hover:border-orange-300 hover:bg-orange-50"
-            }`}
-          >
-            <span className="text-3xl">{r.emoji}</span>
-            <span className="text-[10px] text-stone-500 font-medium leading-tight text-center">{r.label}</span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// Step 2: Optional extras
-function StepExtras({ rating, onDone }) {
-  const [notes,       setNotes]       = useState("");
-  const [musicRating, setMusicRating] = useState(null);
-  const ratingObj = RATINGS.find((r) => r.value === rating);
-
-  return (
-    <div>
-      {/* Rating confirmation */}
-      <div className="flex items-center gap-3 mb-6">
-        <span className="text-3xl">{ratingObj?.emoji}</span>
-        <div>
-          <p className="font-black text-stone-900">{ratingObj?.label}</p>
-          <p className="text-xs text-stone-400">Anything to add? (optional)</p>
-        </div>
-      </div>
-
-      {/* Notes */}
-      <div className="mb-5">
-        <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-2">Notes</label>
-        <textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="What did you think? Any standout scenes, performances..."
-          rows={3}
-          className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 resize-none"
-        />
-      </div>
-
-      {/* Soundtrack */}
-      <div className="mb-8">
-        <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-3">Soundtrack</label>
-        <div className="flex gap-2">
-          {MUSIC_OPTIONS.map((m) => (
-            <button
-              key={m.value}
-              onClick={() => setMusicRating(musicRating === m.value ? null : m.value)}
-              className={`flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border transition-all ${
-                musicRating === m.value
-                  ? "border-orange-400 bg-orange-50"
-                  : "border-stone-200 bg-white hover:border-orange-200"
-              }`}
-            >
-              <span className="text-xl">{m.emoji}</span>
-              <span className="text-[10px] text-stone-500 font-medium">{m.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <button
-        onClick={() => onDone({ notes, musicRating })}
-        className="w-full bg-stone-900 text-white font-bold py-4 rounded-2xl hover:bg-stone-700 transition-colors"
-      >
-        Done
-      </button>
-    </div>
-  );
-}
-
-// Main modal — reusable across MovieCard and movie detail page
 export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, onRated }) {
   const supabase = createClient();
   const [user,          setUser]          = useState(null);
-  const [step,          setStep]          = useState("rate"); // "rate" | "extras"
+  const [step,          setStep]          = useState("rate");   // "rate" | "extras" | "compare"
   const [currentRating, setCurrentRating] = useState(null);
   const [pendingRating, setPendingRating] = useState(null);
+  const [notes,         setNotes]         = useState("");
+  const [musicRating,   setMusicRating]   = useState(null);
   const [saving,        setSaving]        = useState(false);
 
   useEffect(() => {
@@ -133,7 +50,7 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
     setStep("extras");
   }
 
-  async function handleExtrasDone({ notes, musicRating }) {
+  async function handleDone() {
     if (!user || saving) return;
     setSaving(true);
 
@@ -165,39 +82,140 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
 
     setCurrentRating(pendingRating);
     setSaving(false);
-    onClose();
+
+    // Immediately go to compare
+    setStep("compare");
     if (onRated) onRated(pendingRating);
+  }
+
+  const ratingObj = RATINGS.find((r) => r.value === pendingRating);
+
+  // Compare step — hand off to CompareModal which handles its own UI
+  if (step === "compare") {
+    return (
+      <CompareModal
+        movieId={movieId}
+        movieTitle={movieTitle}
+        posterUrl={posterUrl}
+        rating={pendingRating}
+        userId={user?.id}
+        onClose={onClose}
+      />
+    );
   }
 
   return (
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Sheet */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl shadow-2xl p-6 pb-10 animate-slide-up max-w-lg mx-auto">
+      {/* Centered floating modal */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 relative">
 
-        {/* Drag handle */}
-        <div className="w-10 h-1 bg-stone-200 rounded-full mx-auto mb-5" />
+          {/* Close */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-xl leading-none transition-colors"
+          >
+            ×
+          </button>
 
-        {/* Movie title */}
-        <div className="flex items-center gap-3 mb-6">
-          {posterUrl && (
-            <img src={posterUrl} alt={movieTitle} className="w-10 h-14 rounded-lg object-cover shrink-0" />
+          {/* Movie title */}
+          <div className="flex items-center gap-3 mb-6 pr-6">
+            {posterUrl && (
+              <img src={posterUrl} alt={movieTitle} className="w-9 h-12 rounded-lg object-cover shrink-0" />
+            )}
+            <p className="font-black text-stone-900 leading-tight">{movieTitle}</p>
+          </div>
+
+          {/* ── Step: Rate ── */}
+          {step === "rate" && (
+            <>
+              <p className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4">How was it?</p>
+              <div className="flex justify-between gap-2">
+                {RATINGS.map((r) => (
+                  <button
+                    key={r.value}
+                    onClick={() => handlePick(r.value)}
+                    className={`flex-1 flex flex-col items-center gap-2 py-4 rounded-2xl border-2 transition-all ${
+                      currentRating === r.value
+                        ? "border-orange-400 bg-orange-50 scale-105 shadow-sm"
+                        : "border-stone-100 bg-stone-50 hover:border-orange-300 hover:bg-orange-50"
+                    }`}
+                  >
+                    <span className="text-2xl">{r.emoji}</span>
+                    <span className="text-[9px] text-stone-500 font-medium leading-tight text-center">{r.label}</span>
+                  </button>
+                ))}
+              </div>
+            </>
           )}
-          <p className="font-black text-stone-900 text-lg leading-tight">{movieTitle}</p>
+
+          {/* ── Step: Extras ── */}
+          {step === "extras" && (
+            <>
+              {/* Rating confirmation */}
+              <div className="flex items-center gap-3 mb-5 p-3 bg-stone-50 rounded-xl">
+                <span className="text-2xl">{ratingObj?.emoji}</span>
+                <div>
+                  <p className="font-bold text-stone-900 text-sm">{ratingObj?.label}</p>
+                  <p className="text-xs text-stone-400">Anything to add? (optional)</p>
+                </div>
+                <button
+                  onClick={() => setStep("rate")}
+                  className="ml-auto text-xs text-orange-600 font-semibold hover:underline"
+                >
+                  Change
+                </button>
+              </div>
+
+              {/* Notes */}
+              <div className="mb-4">
+                <label className="block text-xs font-bold text-stone-400 uppercase tracking-widest mb-2">Notes</label>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="What did you think?"
+                  rows={2}
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 resize-none"
+                />
+              </div>
+
+              {/* Soundtrack */}
+              <div className="mb-6">
+                <label className="block text-xs font-bold text-stone-400 uppercase tracking-widest mb-2">Soundtrack</label>
+                <div className="flex gap-2">
+                  {MUSIC_OPTIONS.map((m) => (
+                    <button
+                      key={m.value}
+                      onClick={() => setMusicRating(musicRating === m.value ? null : m.value)}
+                      className={`flex-1 flex flex-col items-center gap-1 py-2.5 rounded-xl border transition-all ${
+                        musicRating === m.value
+                          ? "border-orange-400 bg-orange-50"
+                          : "border-stone-200 bg-stone-50 hover:border-orange-200"
+                      }`}
+                    >
+                      <span className="text-lg">{m.emoji}</span>
+                      <span className="text-[9px] text-stone-500 font-medium">{m.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={handleDone}
+                disabled={saving}
+                className="w-full bg-stone-900 text-white font-bold py-3.5 rounded-2xl hover:bg-stone-700 transition-colors disabled:opacity-50"
+              >
+                {saving ? "Saving…" : "Done →"}
+              </button>
+            </>
+          )}
         </div>
-
-        {step === "rate" && (
-          <StepRate currentRating={currentRating} onPick={handlePick} />
-        )}
-
-        {step === "extras" && (
-          <StepExtras rating={pendingRating} onDone={handleExtrasDone} />
-        )}
       </div>
     </>
   );
