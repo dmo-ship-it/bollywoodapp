@@ -10,16 +10,22 @@ export default function WatchlistButton({ movieId, movieTitle, initialSaved = fa
   const [loading, setLoading] = useState(false);
   const [pulse,   setPulse]   = useState(false);
 
-  // Sync when parent passes down a known saved state
-  useEffect(() => {
-    if (initialSaved) setSaved(true);
-  }, [initialSaved]);
-
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user);
+      // If parent didn't tell us the saved state, check DB ourselves
+      if (data.user && !initialSaved) {
+        supabase.from("user_watchlist").select("id")
+          .eq("user_id", data.user.id).eq("movie_id", movieId).maybeSingle()
+          .then(({ data: w }) => setSaved(!!w));
+      }
     });
-  }, []);
+  }, [movieId]);
+
+  // Sync if parent later passes initialSaved=true (e.g. home page fetch completes)
+  useEffect(() => {
+    if (initialSaved) setSaved(true);
+  }, [initialSaved]);
 
   async function toggle(e) {
     e.preventDefault();
