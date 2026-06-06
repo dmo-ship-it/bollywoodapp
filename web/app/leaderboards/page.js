@@ -49,31 +49,36 @@ export default function LeaderboardsPage() {
         isFounder:   item.is_founder,
       }));
 
-    } else if (type === "films") {
-      const { data } = await supabase
-        .from("user_reactions")
-        .select("user_id, user_profiles!inner(display_name, username)")
-        .gt("rating", 0);
+    } else if (type === "friends") {
+      // Get who the user follows
+      const { data: follows } = await supabase
+        .from("user_follows")
+        .select("following_id")
+        .eq("follower_id", userId);
 
-      // Group by user and count
-      const counts = {};
-      const profiles = {};
-      (data ?? []).forEach((r) => {
-        counts[r.user_id]   = (counts[r.user_id] ?? 0) + 1;
-        profiles[r.user_id] = r.user_profiles;
-      });
+      const friendIds = (follows ?? []).map((f) => f.following_id);
+      // Include yourself in friends ranking
+      const allIds = [userId, ...friendIds];
 
-      entries = Object.entries(counts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 100)
-        .map(([uid, count], i) => ({
+      if (allIds.length === 0) {
+        entries = [];
+      } else {
+        const { data } = await supabase
+          .from("user_points")
+          .select("user_id, total_points, is_founder, user_profiles(display_name, username)")
+          .in("user_id", allIds)
+          .order("total_points", { ascending: false });
+
+        entries = (data ?? []).map((item, i) => ({
           rank:        i + 1,
-          userId:      uid,
-          displayName: profiles[uid]?.display_name || "Member",
-          username:    profiles[uid]?.username,
-          score:       count,
-          sub:         `${count} films rated`,
+          userId:      item.user_id,
+          displayName: item.user_profiles?.display_name || "Member",
+          username:    item.user_profiles?.username,
+          score:       item.total_points,
+          sub:         `${item.total_points.toLocaleString()} pts`,
+          isFounder:   item.is_founder,
         }));
+      }
     }
 
     setLeaderboard(entries);
@@ -82,8 +87,8 @@ export default function LeaderboardsPage() {
   }
 
   const tabs = [
-    { id: "points", label: "Points" },
-    { id: "films",  label: "Films Rated" },
+    { id: "points",  label: "Global" },
+    { id: "friends", label: "Friends" },
   ];
 
   return (
@@ -136,8 +141,15 @@ export default function LeaderboardsPage() {
         </div>
       ) : leaderboard.length === 0 ? (
         <div className="text-center py-20 text-stone-400">
-          <p className="text-4xl mb-3">🏆</p>
-          <p className="text-sm">No rankings yet — be the first!</p>
+          <p className="text-4xl mb-3">{tab === "friends" ? "👥" : "🏆"}</p>
+          <p className="text-sm text-stone-500 mb-1">
+            {tab === "friends" ? "No friends yet" : "No rankings yet"}
+          </p>
+          {tab === "friends" && (
+            <Link href="/taste-profile" className="text-orange-600 text-sm hover:underline">
+              Find people to follow →
+            </Link>
+          )}
         </div>
       ) : (
         <div className="space-y-1">
