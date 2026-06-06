@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import { createClient } from "../lib/supabase-browser";
 import MovieCard from "./components/MovieCard";
+import MovieRow from "./components/MovieRow";
 import HeroMovie from "./components/HeroMovie";
 
 const VIBES = [
@@ -18,44 +19,55 @@ const VIBES = [
   { label: "💎 Hidden Gem",  tag: "underrated"                   },
 ];
 
-const DECADES = [
-  { label: "2020s",    min: 2020, max: 2029 },
-  { label: "2010s",    min: 2010, max: 2019 },
-  { label: "2000s",    min: 2000, max: 2009 },
-  { label: "90s",      min: 1990, max: 1999 },
-  { label: "Classics", min: 1900, max: 1989 },
-];
+const TODAY = new Date().toISOString().split("T")[0];
+// New releases = released in the last ~120 days
+const NEW_CUTOFF = new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
-const SECTIONS = [
-  { id: "popular", label: "Most Loved",  sort: "tmdb_popularity", ascending: false },
-  { id: "rated",   label: "Top Rated",   sort: "tmdb_rating",     ascending: false },
-  { id: "newest",  label: "New",         sort: "year",            ascending: false },
-  { id: "classic", label: "Classics",    sort: "year",            ascending: true  },
-];
+const MOVIE_COLS = "id, title, year, release_date, poster_url, tmdb_rating, tmdb_popularity, genres, verdict, tone, mood_tags";
 
 export default function HomePage() {
-  const [hero,       setHero]       = useState(null);
-  const [movies,     setMovies]     = useState([]);
-  const [loading,    setLoading]    = useState(true);
-  const [search,     setSearch]     = useState("");
-  const [vibe,       setVibe]       = useState(null);
-  const [decade,     setDecade]     = useState(null);
-  const [section,    setSection]    = useState(SECTIONS[0]);
-  const [userScores,     setUserScores]     = useState({}); // movieId → score
-  const [userWatchlist,  setUserWatchlist]  = useState(new Set()); // Set of bookmarked movieIds
+  const [hero,          setHero]          = useState(null);
+  const [newReleases,   setNewReleases]   = useState([]);
+  const [trending,      setTrending]      = useState([]);
+  const [comingSoon,    setComingSoon]    = useState([]);
+  const [curatedLoading,setCuratedLoading]= useState(true);
 
+  const [movies,        setMovies]        = useState([]);
+  const [loading,       setLoading]       = useState(false);
+  const [search,        setSearch]        = useState("");
+  const [vibe,          setVibe]          = useState(null);
+  const [seeAll,        setSeeAll]        = useState(null); // "new" | "trending" | null
+  const [userScores,    setUserScores]    = useState({});
+  const [userWatchlist, setUserWatchlist] = useState(new Set());
+
+  // Initial load — hero, curated sections, user data
   useEffect(() => {
-    supabase
-      .from("movies")
-      .select("id, title, year, overview, backdrop_url, poster_url, tmdb_rating, genres, ott_platforms, mood_tags, tone")
-      .not("backdrop_url", "is", null)
-      .order("tmdb_popularity", { ascending: false })
-      .limit(8)
-      .then(({ data }) => {
-        if (data?.length) setHero(data[Math.floor(Math.random() * data.length)]);
-      });
+    async function loadCurated() {
+      const [heroRes, newRes, trendRes, soonRes] = await Promise.all([
+        supabase.from("movies").select("id, title, year, overview, backdrop_url, poster_url, tmdb_rating, genres, ott_platforms, mood_tags, tone")
+          .not("backdrop_url", "is", null).order("tmdb_popularity", { ascending: false }).limit(8),
+        // New releases — recent, by release date
+        supabase.from("movies").select(MOVIE_COLS)
+          .lte("release_date", TODAY).gte("release_date", NEW_CUTOFF)
+          .order("release_date", { ascending: false }).limit(20),
+        // Trending — older films, high popularity
+        supabase.from("movies").select(MOVIE_COLS)
+          .lt("release_date", NEW_CUTOFF)
+          .order("tmdb_popularity", { ascending: false }).limit(20),
+        // Coming soon — future releases
+        supabase.from("movies").select(MOVIE_COLS)
+          .gt("release_date", TODAY)
+          .order("release_date", { ascending: true }).limit(20),
+      ]);
 
-    // Use SSR-aware client so we get the logged-in user's session
+      if (heroRes.data?.length) setHero(heroRes.data[Math.floor(Math.random() * heroRes.data.length)]);
+      setNewReleases(newRes.data ?? []);
+      setTrending(trendRes.data ?? []);
+      setComingSoon(soonRes.data ?? []);
+      setCuratedLoading(false);
+    }
+    loadCurated();
+
     const browserSupabase = createClient();
     browserSupabase.auth.getUser().then(async ({ data }) => {
       if (!data.user) return;
@@ -68,40 +80,47 @@ export default function HomePage() {
         reactions.forEach((r) => { map[r.movie_id] = r.score; });
         setUserScores(map);
       }
-      if (watchlist) {
-        setUserWatchlist(new Set(watchlist.map((w) => w.movie_id)));
-      }
+      if (watchlist) setUserWatchlist(new Set(watchlist.map((w) => w.movie_id)));
     });
   }, []);
 
+  // Grid fetch — only when searching, filtering by vibe, or "see all"
   const fetchMovies = useCallback(async () => {
     setLoading(true);
-    let query = supabase
-      .from("movies")
-      .select("id, title, year, poster_url, tmdb_rating, tmdb_popularity, genres, verdict, tone, mood_tags")
-      .limit(60);
+    let query = supabase.from("movies").select(MOVIE_COLS).limit(60);
 
     if (search) query = query.ilike("title", `%${search}%`);
-    if (decade) query = query.gte("year", decade.min).lte("year", decade.max);
     if (vibe)   query = query.overlaps("tone", [vibe.tag]).or(`mood_tags.ov.{${vibe.tag}}`);
-    query = query.order(section.sort, { ascending: section.ascending });
+
+    if (seeAll === "new") {
+      query = query.lte("release_date", TODAY).gte("release_date", NEW_CUTOFF).order("release_date", { ascending: false });
+    } else if (seeAll === "trending") {
+      query = query.lt("release_date", NEW_CUTOFF).order("tmdb_popularity", { ascending: false });
+    } else {
+      query = query.order("tmdb_popularity", { ascending: false });
+    }
 
     const { data } = await query;
     setMovies(data ?? []);
     setLoading(false);
-  }, [search, vibe, decade, section]);
+  }, [search, vibe, seeAll]);
+
+  const isGridMode = search || vibe || seeAll;
 
   useEffect(() => {
+    if (!isGridMode) return;
     const t = setTimeout(fetchMovies, 150);
     return () => clearTimeout(t);
-  }, [fetchMovies]);
+  }, [fetchMovies, isGridMode]);
 
-  const isFiltered = search || vibe || decade;
+  function clearAll() {
+    setSearch(""); setVibe(null); setSeeAll(null);
+  }
 
   return (
     <div className="min-h-screen bg-stone-50">
 
-      {!isFiltered && hero && <HeroMovie movie={hero} />}
+      {!isGridMode && hero && <HeroMovie movie={hero} />}
 
       <div className="max-w-7xl mx-auto px-4 pt-6 pb-4">
 
@@ -114,7 +133,7 @@ export default function HomePage() {
             type="text"
             placeholder="Search any Indian film…"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setSeeAll(null); }}
             className="w-full bg-white border border-stone-200 rounded-xl pl-10 pr-10 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all text-sm shadow-sm"
           />
           {search && (
@@ -124,12 +143,12 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Vibe filters — horizontal scroll */}
-        <div className="flex gap-2 overflow-x-auto scroll-hide pb-1 mb-5 -mx-4 px-4">
+        {/* Vibe filters */}
+        <div className="flex gap-2 overflow-x-auto scroll-hide pb-1 mb-6 -mx-4 px-4">
           {VIBES.map((v) => (
             <button
               key={v.tag}
-              onClick={() => setVibe(vibe?.tag === v.tag ? null : v)}
+              onClick={() => { setVibe(vibe?.tag === v.tag ? null : v); setSeeAll(null); }}
               className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all border ${
                 vibe?.tag === v.tag
                   ? "bg-orange-600 text-white border-orange-600 shadow-sm"
@@ -141,69 +160,82 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Section + Decade row */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex gap-1">
-            {SECTIONS.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => setSection(s)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
-                  section.id === s.id
-                    ? "text-stone-900 bg-stone-200"
-                    : "text-stone-400 hover:text-stone-700"
-                }`}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-          <div className="flex gap-1 overflow-x-auto scroll-hide">
-            {DECADES.map((d) => (
-              <button
-                key={d.label}
-                onClick={() => setDecade(decade?.label === d.label ? null : d)}
-                className={`shrink-0 px-2.5 py-1 text-[11px] font-medium rounded-md transition-all ${
-                  decade?.label === d.label
-                    ? "text-orange-600 bg-orange-50"
-                    : "text-stone-400 hover:text-stone-600"
-                }`}
-              >
-                {d.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Results count */}
-        {!loading && isFiltered && (
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-stone-400 text-xs">{movies.length} film{movies.length !== 1 ? "s" : ""}</p>
-            <button onClick={() => { setSearch(""); setVibe(null); setDecade(null); }} className="text-xs text-orange-600 hover:text-orange-500 transition-colors font-medium">
-              Clear filters
-            </button>
-          </div>
+        {/* ── Curated view ── */}
+        {!isGridMode && (
+          <>
+            {curatedLoading ? (
+              <div className="space-y-8">
+                {[1, 2].map((s) => (
+                  <div key={s}>
+                    <div className="h-5 w-40 bg-stone-200 rounded mb-3 shimmer" />
+                    <div className="flex gap-3 overflow-hidden">
+                      {Array.from({ length: 8 }).map((_, i) => (
+                        <div key={i} className="shrink-0 w-28 sm:w-32 md:w-36 aspect-[2/3] rounded-xl shimmer" />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <>
+                <MovieRow
+                  title="New Releases"
+                  subtitle="Fresh in cinemas"
+                  movies={newReleases}
+                  userScores={userScores}
+                  userWatchlist={userWatchlist}
+                  onSeeAll={newReleases.length >= 20 ? () => setSeeAll("new") : null}
+                />
+                <MovieRow
+                  title="Trending"
+                  subtitle="What everyone's watching"
+                  movies={trending}
+                  userScores={userScores}
+                  userWatchlist={userWatchlist}
+                  onSeeAll={() => setSeeAll("trending")}
+                />
+                <MovieRow
+                  title="Coming Soon"
+                  subtitle="On the way"
+                  movies={comingSoon}
+                  userWatchlist={userWatchlist}
+                  comingSoon
+                />
+              </>
+            )}
+          </>
         )}
 
-        {/* Grid */}
-        {loading ? (
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">
-            {Array.from({ length: 21 }).map((_, i) => (
-              <div key={i} className="aspect-[2/3] rounded-xl shimmer" />
-            ))}
-          </div>
-        ) : movies.length === 0 ? (
-          <div className="text-center py-28">
-            <p className="text-4xl mb-3">🎬</p>
-            <p className="text-stone-500 font-medium">No films found</p>
-            <p className="text-stone-400 text-sm mt-1">Try a different mood or search term</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">
-            {movies.map((movie) => (
-              <MovieCard key={movie.id} movie={movie} userScore={userScores[movie.id]} isWatchlisted={userWatchlist.has(movie.id)} />
-            ))}
-          </div>
+        {/* ── Grid view (search / vibe / see all) ── */}
+        {isGridMode && (
+          <>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-stone-500 text-sm font-medium">
+                {seeAll === "new" ? "New Releases" : seeAll === "trending" ? "Trending" : `${movies.length} film${movies.length !== 1 ? "s" : ""}`}
+              </p>
+              <button onClick={clearAll} className="text-xs text-orange-600 hover:text-orange-500 transition-colors font-medium">
+                ← Back to Discover
+              </button>
+            </div>
+
+            {loading ? (
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">
+                {Array.from({ length: 21 }).map((_, i) => <div key={i} className="aspect-[2/3] rounded-xl shimmer" />)}
+              </div>
+            ) : movies.length === 0 ? (
+              <div className="text-center py-28">
+                <p className="text-4xl mb-3">🎬</p>
+                <p className="text-stone-500 font-medium">No films found</p>
+                <p className="text-stone-400 text-sm mt-1">Try a different mood or search term</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">
+                {movies.map((movie) => (
+                  <MovieCard key={movie.id} movie={movie} userScore={userScores[movie.id]} isWatchlisted={userWatchlist.has(movie.id)} />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

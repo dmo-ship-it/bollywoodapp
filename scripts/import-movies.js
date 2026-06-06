@@ -8,7 +8,9 @@ const path = require("path");
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
-const DATA_FILE = path.join(__dirname, "../data/movies.json");
+const fileArg = process.argv.indexOf("--file");
+const FILE_NAME = fileArg !== -1 ? process.argv[fileArg + 1] : "movies.json";
+const DATA_FILE = path.join(__dirname, `../data/${FILE_NAME}`);
 const BATCH_SIZE = 50;
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {

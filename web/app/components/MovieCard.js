@@ -20,7 +20,13 @@ const VIBE_ICONS = {
   "emotional":                  "💙",
 };
 
-export default function MovieCard({ movie, userScore, isWatchlisted = false }) {
+function formatReleaseDate(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+export default function MovieCard({ movie, userScore, isWatchlisted = false, comingSoon = false }) {
   const [showRating, setShowRating] = useState(false);
   const [scored,     setScored]     = useState(userScore ?? null);
 
@@ -55,14 +61,16 @@ export default function MovieCard({ movie, userScore, isWatchlisted = false }) {
   
             {/* Action buttons — top right on hover */}
             <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col gap-1">
-              {/* Rate button */}
-              <button
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowRating(true); }}
-                className="bg-white/95 rounded-md p-1 shadow-sm hover:bg-stone-50 transition-colors"
-                title="Rate this film"
-              >
-                <span className="text-xs leading-none font-medium text-stone-600">＋</span>
-              </button>
+              {/* Rate button — hidden for unreleased films */}
+              {!comingSoon && (
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowRating(true); }}
+                  className="bg-white/95 rounded-md p-1 shadow-sm hover:bg-stone-50 transition-colors"
+                  title="Rate this film"
+                >
+                  <span className="text-xs leading-none font-medium text-stone-600">＋</span>
+                </button>
+              )}
               {/* Watchlist button */}
               <div className="bg-white/95 rounded-md p-0.5 shadow-sm">
                 <WatchlistButton movieId={movie.id} movieTitle={movie.title} initialSaved={isWatchlisted} />
@@ -76,9 +84,11 @@ export default function MovieCard({ movie, userScore, isWatchlisted = false }) {
               <p className="text-[11px] font-semibold text-stone-800 leading-tight line-clamp-1 group-hover:text-orange-600 transition-colors">
                 {movie.title}
               </p>
-              <p className="text-[10px] text-stone-400 mt-0.5">{movie.year}</p>
+              <p className="text-[10px] text-stone-400 mt-0.5">
+                {comingSoon ? formatReleaseDate(movie.release_date) : movie.year}
+              </p>
             </div>
-            <ScoreCircle score={scored ?? displayScore(movie)} size="sm" />
+            {!comingSoon && <ScoreCircle score={scored ?? displayScore(movie)} size="sm" />}
           </div>
         </Link>
       </div>
