@@ -61,6 +61,19 @@ export default function MovieCard({ movie, userScore, isWatchlisted = false, com
   
             {/* Action buttons — top right on hover */}
             <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col gap-1">
+              {/* Trailer button — for coming soon */}
+              {comingSoon && movie.trailer_url && (
+                <a
+                  href={movie.trailer_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="bg-white/95 rounded-md p-1 shadow-sm hover:bg-stone-50 transition-colors"
+                  title="Watch trailer"
+                >
+                  <span className="text-xs leading-none">▶</span>
+                </a>
+              )}
               {/* Rate button — hidden for unreleased films */}
               {!comingSoon && (
                 <button
@@ -80,13 +93,18 @@ export default function MovieCard({ movie, userScore, isWatchlisted = false, com
 
           {/* Text + Score */}
           <div className="flex items-start justify-between gap-1 mt-1">
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="text-[11px] font-semibold text-stone-800 leading-tight line-clamp-1 group-hover:text-orange-600 transition-colors">
                 {movie.title}
               </p>
-              <p className="text-[10px] text-stone-400 mt-0.5">
-                {comingSoon ? formatReleaseDate(movie.release_date) : movie.year}
-              </p>
+              <div className="flex items-center gap-1 mt-0.5">
+                <p className="text-[10px] text-stone-400">
+                  {comingSoon ? formatReleaseDate(movie.release_date) : movie.year}
+                </p>
+                {comingSoon && movie.trailer_url && (
+                  <span className="inline-block text-[10px] text-orange-500 font-medium">🎬</span>
+                )}
+              </div>
             </div>
             {!comingSoon && <ScoreCircle score={scored ?? displayScore(movie)} size="sm" />}
           </div>

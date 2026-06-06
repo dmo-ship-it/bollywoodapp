@@ -55,8 +55,8 @@ export default function HomePage() {
         supabase.from("movies").select(MOVIE_COLS)
           .lt("release_date", NEW_CUTOFF)
           .order("tmdb_popularity", { ascending: false }).limit(20),
-        // Coming soon — future releases
-        supabase.from("movies").select(MOVIE_COLS)
+        // Coming soon — future releases (with trailers)
+        supabase.from("movies").select(MOVIE_COLS + ", trailer_url")
           .gt("release_date", TODAY)
           .order("release_date", { ascending: true }).limit(20),
       ]);
