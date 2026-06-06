@@ -6,10 +6,9 @@ import Link from "next/link";
 import { createClient } from "../../lib/supabase-browser";
 import { BADGES } from "../../lib/badges";
 import WatchlistButton from "../components/WatchlistButton";
-import PointsCard from "../components/PointsCard";
 
-const RATING_LABELS = { 5: "Loved", 4: "Liked", 3: "Okay", 2: "Didn't like", 1: "Disliked" };
-const RATING_EMOJI  = { 5: "❤️", 4: "👍", 3: "😐", 2: "👎", 1: "💔" };
+const RATING_LABELS = { 5: "Loved", 4: "Liked", 3: "Okay", 2: "Didn't like", 1: "Hated" };
+const RATING_EMOJI  = { 5: "😍", 4: "😊", 3: "😐", 2: "😕", 1: "😡" };
 const TABS = ["Films", "Watchlist", "Rankings", "DNA", "Stats"];
 const COUNTRY_FLAGS = { IN:"🇮🇳",US:"🇺🇸",GB:"🇬🇧",CA:"🇨🇦",AU:"🇦🇺",AE:"🇦🇪",SG:"🇸🇬",NZ:"🇳🇿",ZA:"🇿🇦",MY:"🇲🇾",QA:"🇶🇦" };
 
@@ -23,6 +22,8 @@ export default function ProfilePage() {
   const [comparisons, setComparisons] = useState([]);
   const [watchlist,   setWatchlist]   = useState([]);
   const [badges,      setBadges]      = useState([]);
+  const [points,      setPoints]      = useState(null);  // { total_points, current_tier }
+  const [rank,        setRank]        = useState(null);  // leaderboard rank
   const [loading,     setLoading]     = useState(true);
   const [tab,         setTab]         = useState("Films");
   const [filter,      setFilter]      = useState(0);
@@ -33,12 +34,13 @@ export default function ProfilePage() {
       if (!user) { router.push("/login"); return; }
       setUser(user);
 
-      const [profileRes, reactionsRes, comparisonsRes, watchlistRes, badgesRes] = await Promise.all([
+      const [profileRes, reactionsRes, comparisonsRes, watchlistRes, badgesRes, pointsRes] = await Promise.all([
         supabase.from("user_profiles").select("*").eq("user_id", user.id).single(),
         supabase.from("user_reactions").select("rating, score, created_at, movies(id, title, year, poster_url, genres, tmdb_rating)").eq("user_id", user.id).order("created_at", { ascending: false }),
         supabase.from("user_comparisons").select("id, comparison_type, created_at").eq("user_id", user.id),
         supabase.from("user_watchlist").select("created_at, movies(id, title, year, poster_url, tmdb_rating)").eq("user_id", user.id).order("created_at", { ascending: false }),
         supabase.from("user_badges").select("badge_id, earned_at").eq("user_id", user.id),
+        supabase.from("user_points").select("total_points, current_tier, is_founder").eq("user_id", user.id).single(),
       ]);
 
       setProfile(profileRes.data);
@@ -46,6 +48,16 @@ export default function ProfilePage() {
       setComparisons(comparisonsRes.data ?? []);
       setWatchlist(watchlistRes.data ?? []);
       setBadges(badgesRes.data ?? []);
+      setPoints(pointsRes.data);
+
+      // Compute leaderboard rank (only if user has points)
+      if (pointsRes.data?.total_points > 0) {
+        const { count } = await supabase
+          .from("user_points")
+          .select("*", { count: "exact", head: true })
+          .gt("total_points", pointsRes.data.total_points);
+        setRank((count ?? 0) + 1);
+      }
       setLoading(false);
 
       if (!profileRes.data?.email) {
@@ -93,11 +105,6 @@ export default function ProfilePage() {
         )}
       </div>
 
-      {/* Points & Referral */}
-      <div className="mb-8">
-        <PointsCard userId={user.id} displayName={displayName} />
-      </div>
-
       {/* Badges showcase */}
       {badges.length > 0 && (
         <div className="mb-8 bg-gradient-to-r from-orange-50 to-rose-50 border border-orange-200 rounded-2xl p-6">
@@ -143,10 +150,19 @@ export default function ProfilePage() {
               ))}
             </div>
           )}
-          <div className="flex gap-5 mt-3 text-sm">
+          <div className="flex gap-5 mt-3 text-sm flex-wrap">
             <span><strong className="text-stone-900">{rated.length}</strong> <span className="text-stone-400">rated</span></span>
             <span><strong className="text-stone-900">{watchlist.length}</strong> <span className="text-stone-400">watchlist</span></span>
             <span><strong className="text-stone-900">{comparisons.length}</strong> <span className="text-stone-400">comparisons</span></span>
+            {points?.total_points > 0 && (
+              <Link href="/leaderboards" className="flex items-center gap-1.5 hover:opacity-70 transition-opacity">
+                <strong className="text-stone-900">{points.total_points.toLocaleString()}</strong>
+                <span className="text-stone-400">pts</span>
+                {rank && rank <= 500 && (
+                  <span className="text-stone-400">· <strong className="text-stone-900">#{rank}</strong></span>
+                )}
+              </Link>
+            )}
           </div>
         </div>
         <Link href="/compare" className="shrink-0 bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-full hover:bg-orange-500 transition-colors">
