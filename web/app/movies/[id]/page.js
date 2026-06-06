@@ -112,11 +112,6 @@ export default async function MoviePage({ params }) {
           {/* Info */}
           <div className="flex-1 min-w-0">
 
-            {/* Rate button — top of info */}
-            <div className="mb-5">
-              <RatingPanel movieId={movie.id} movieTitle={movie.title} posterUrl={movie.poster_url} />
-            </div>
-
             {/* Title row */}
             <div className="flex flex-wrap items-start gap-3 mb-2">
               <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight">{movie.title}</h1>
@@ -133,7 +128,7 @@ export default async function MoviePage({ params }) {
             </div>
 
             {/* Meta row */}
-            <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-400 mb-4">
+            <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-400 mb-5">
               {movie.year && <span>{movie.year}</span>}
               {movie.runtime_minutes && <span>{Math.floor(movie.runtime_minutes / 60)}h {movie.runtime_minutes % 60}m</span>}
               {movie.certificate && <span className="border border-zinc-700 px-1.5 py-0.5 rounded text-xs">{movie.certificate}</span>}
@@ -148,6 +143,11 @@ export default async function MoviePage({ params }) {
                   dir. <span className="text-stone-700">{directors[0].people.name}</span>
                 </Link>
               )}
+            </div>
+
+            {/* ── Rate + Bookmark ── */}
+            <div className="mb-6">
+              <RatingPanel movieId={movie.id} movieTitle={movie.title} posterUrl={movie.poster_url} />
             </div>
 
             {/* Genres */}
