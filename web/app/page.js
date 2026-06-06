@@ -27,6 +27,7 @@ const MOVIE_COLS = "id, title, year, release_date, poster_url, tmdb_rating, tmdb
 
 export default function HomePage() {
   const [hero,          setHero]          = useState(null);
+  const [recommended,   setRecommended]   = useState([]);
   const [newReleases,   setNewReleases]   = useState([]);
   const [trending,      setTrending]      = useState([]);
   const [comingSoon,    setComingSoon]    = useState([]);
@@ -71,18 +72,63 @@ export default function HomePage() {
     const browserSupabase = createClient();
     browserSupabase.auth.getUser().then(async ({ data }) => {
       if (!data.user) return;
-      const [{ data: reactions }, { data: watchlist }] = await Promise.all([
-        browserSupabase.from("user_reactions").select("movie_id, score").eq("user_id", data.user.id).not("score", "is", null),
+      const [{ data: reactions }, { data: watchlist }, { data: profile }] = await Promise.all([
+        browserSupabase.from("user_reactions").select("movie_id, rating, score, movies(genres, language)").eq("user_id", data.user.id),
         browserSupabase.from("user_watchlist").select("movie_id").eq("user_id", data.user.id),
+        browserSupabase.from("user_profiles").select("language_preferences").eq("user_id", data.user.id).single(),
       ]);
+
+      const ratedIds = new Set();
       if (reactions) {
         const map = {};
-        reactions.forEach((r) => { map[r.movie_id] = r.score; });
+        reactions.forEach((r) => {
+          ratedIds.add(r.movie_id);
+          if (r.score != null) map[r.movie_id] = r.score;
+        });
         setUserScores(map);
       }
       if (watchlist) setUserWatchlist(new Set(watchlist.map((w) => w.movie_id)));
+
+      // Build recommendations from taste
+      buildRecommendations(reactions ?? [], profile, ratedIds);
     });
   }, []);
+
+  async function buildRecommendations(reactions, profile, ratedIds) {
+    // Tally loved genres (rating >= 4)
+    const genreCount = {};
+    reactions.filter((r) => r.rating >= 4).forEach((r) => {
+      (r.movies?.genres ?? []).forEach((g) => { genreCount[g] = (genreCount[g] ?? 0) + 1; });
+    });
+    const topGenres = Object.entries(genreCount).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([g]) => g);
+    const langs = profile?.language_preferences ?? [];
+
+    // Not enough signal yet — skip personalized row
+    if (topGenres.length === 0 && langs.length === 0) {
+      setRecommended([]);
+      return;
+    }
+
+    let q = supabase.from("movies").select(MOVIE_COLS)
+      .lte("release_date", TODAY)
+      .order("tmdb_popularity", { ascending: false })
+      .limit(40);
+
+    if (topGenres.length > 0) q = q.overlaps("genres", topGenres);
+
+    const { data } = await q;
+    // Exclude already-rated, prefer preferred languages, cap at 20
+    const filtered = (data ?? [])
+      .filter((m) => !ratedIds.has(m.id))
+      .sort((a, b) => {
+        const aLang = langs.includes(a.language) ? 1 : 0;
+        const bLang = langs.includes(b.language) ? 1 : 0;
+        return bLang - aLang;
+      })
+      .slice(0, 20);
+
+    setRecommended(filtered);
+  }
 
   // Grid fetch — only when searching, filtering by vibe, or "see all"
   const fetchMovies = useCallback(async () => {
@@ -178,6 +224,13 @@ export default function HomePage() {
               </div>
             ) : (
               <>
+                <MovieRow
+                  title="Recommended for You"
+                  subtitle="Based on your taste"
+                  movies={recommended}
+                  userScores={userScores}
+                  userWatchlist={userWatchlist}
+                />
                 <MovieRow
                   title="New Releases"
                   subtitle="Fresh in cinemas"
