@@ -11,6 +11,20 @@
 const fs = require("fs");
 const path = require("path");
 
+// Load .env.local if it exists
+try {
+  const envPath = path.join(__dirname, "../.env.local");
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, "utf8");
+    envContent.split("\n").forEach((line) => {
+      const [key, value] = line.split("=");
+      if (key && value) process.env[key.trim()] = value.trim();
+    });
+  }
+} catch (e) {
+  // Ignore if .env.local doesn't exist or can't be read
+}
+
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
@@ -171,6 +185,10 @@ Return ONLY valid JSON, no prose, with exactly these fields:
 
     let rawText = "";
     try {
+      // Add 60-second timeout to prevent infinite hangs
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
+
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: {
@@ -183,7 +201,10 @@ Return ONLY valid JSON, no prose, with exactly these fields:
           max_tokens: 700,
           messages: [{ role: "user", content: prompt }],
         }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       rawText = await res.text();
 
@@ -228,20 +249,33 @@ Return ONLY valid JSON, no prose, with exactly these fields:
 // --- Supabase ---
 
 async function fetchMoviesToEnrich() {
-  // Fetch movies that haven't been enriched yet (no plot stored)
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/movies?select=id,title,year,genres,mood_tags,vibe_tags&wikipedia_plot=is.null&limit=500`,
-    { headers: SUPABASE_HEADERS }
-  );
-  if (!res.ok) {
-    // Column might not exist yet — fetch all and filter in memory
-    const all = await fetch(
-      `${SUPABASE_URL}/rest/v1/movies?select=id,title,year,genres,mood_tags,vibe_tags&limit=500`,
+  const SELECT = "select=id,title,year,genres,overview,mood_tags,vibe_tags";
+  const BATCH_SIZE = 1000;
+  let allMovies = [];
+  let offset = 0;
+
+  // Supabase REST API caps at 1000 per request, so paginate through all movies
+  // Skip films already enriched (have comedy_style) to avoid redundant processing
+  while (true) {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/movies?${SELECT}&comedy_style=is.null&order=id.asc&limit=${BATCH_SIZE}&offset=${offset}`,
       { headers: SUPABASE_HEADERS }
     );
-    return all.json();
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch movies: ${await res.text()}`);
+    }
+
+    const batch = await res.json();
+    if (batch.length === 0) break;
+
+    allMovies = allMovies.concat(batch);
+    offset += BATCH_SIZE;
+
+    console.log(`  Fetched batch: ${allMovies.length} total unenriched movies loaded`);
   }
-  return res.json();
+
+  return allMovies;
 }
 
 async function updateMovie(id, fields) {
@@ -293,12 +327,10 @@ async function main() {
     process.stdout.write(`[${i + 1}/${movies.length}] ${m.title} (${m.year})... `);
 
     try {
-      await sleep(DELAY_MS);
-
-      // 1. Get Wikipedia plot
-      const plot = await fetchWikipediaPlot(m.title, m.year);
+      // 1. Use TMDB overview (already in database). If missing, skip.
+      let plot = m.overview;
       if (!plot) {
-        console.log("⚠️  No Wikipedia plot found");
+        console.log("⚠️  No TMDB overview found");
         log.push({ title: m.title, status: "no_plot" });
         failed++;
         continue;
@@ -310,7 +342,6 @@ async function main() {
 
       // 3. Update the DB
       await updateMovie(m.id, {
-        wikipedia_plot:        plot,
         themes:                tags.themes,
         tone:                  tags.tone,
         comedy_style:          tags.comedy_style,

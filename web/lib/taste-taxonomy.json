@@ -1,0 +1,192 @@
+{
+  "_meta": {
+    "description": "Canonical controlled vocabulary for Bollywood taste/theme analysis. Derived from cross-platform research (Netflix story-attribute tagging, Prime mood detection, academic film-mood work) and tuned for Indian cinema. The enrichment pipeline (scripts/enrich-plots.js) constrains Claude to these tags so they align across films; the taste engine (web/lib/taste.js) scores user affinity against them.",
+    "version": 2,
+    "conventions": "All tags are lowercase kebab-case. Enrichment should pick ONLY from these lists, except `themes` and `setting_tags` which allow a small number of free-form additions when nothing fits. `tone`, `comedy_style`, and `notable_elements` are strictly closed sets."
+  },
+
+  "themes": {
+    "_note": "2-5 core narrative themes per film. Union of high-level + granular tags covering emotional, thematic, and biographical dimensions.",
+    "values": [
+      "star-crossed-lovers",
+      "forbidden-love",
+      "love-triangle",
+      "arranged-marriage",
+      "second-chance-romance",
+      "long-distance-love",
+      "epic-romance",
+      "grand-gesture",
+      "trust-and-intimacy",
+      "coming-of-age",
+      "self-discovery",
+      "midlife-reinvention",
+      "underdog-triumph",
+      "rags-to-riches",
+      "revenge",
+      "redemption",
+      "betrayal",
+      "sacrifice",
+      "family-saga",
+      "family-drama",
+      "generational-conflict",
+      "parent-child-bond",
+      "sibling-rivalry",
+      "friendship",
+      "social-justice",
+      "caste-class-conflict",
+      "female-empowerment",
+      "religious-harmony",
+      "freedom-struggle",
+      "patriotism",
+      "political-corruption",
+      "courtroom-justice",
+      "action-thriller",
+      "crime-underworld",
+      "heist",
+      "con-artist",
+      "whodunit",
+      "survival",
+      "war",
+      "sports-glory",
+      "biographical-journey",
+      "immigrant-experience",
+      "diaspora-identity",
+      "tradition-vs-modernity",
+      "mental-health",
+      "addiction-recovery",
+      "disability-resilience",
+      "grief-and-loss",
+      "supernatural-horror",
+      "mythological",
+      "reincarnation",
+      "road-trip",
+      "ensemble-slice-of-life",
+      "workplace-ambition",
+      "small-town-aspiration"
+    ]
+  },
+
+  "tone": {
+    "_note": "1-3 tonal descriptors. STRICTLY closed set — covers emotional tones + thematic mood.",
+    "values": [
+      "feel-good",
+      "heartwarming",
+      "heartfelt",
+      "inspirational",
+      "romantic",
+      "escapist",
+      "nostalgic",
+      "bittersweet",
+      "melancholic",
+      "emotionally-devastating",
+      "dark",
+      "gritty-realism",
+      "hard-hitting",
+      "intense",
+      "suspenseful",
+      "high-energy",
+      "slow-burn",
+      "satirical",
+      "whimsical",
+      "campy"
+    ]
+  },
+
+  "comedy_style": {
+    "_note": "Comedy register, if any. STRICTLY closed set. Use `none` for films with no significant comedic intent. This dimension lets users distinguish e.g. slapstick from witty satire.",
+    "values": [
+      "none",
+      "slapstick",
+      "situational-comedy",
+      "romantic-comedy",
+      "satire",
+      "dark-comedy",
+      "witty-wordplay",
+      "dramedy"
+    ]
+  },
+
+  "realism": {
+    "_note": "Single value. How grounded the film is, on a spectrum. STRICTLY closed set.",
+    "values": [
+      "grounded-realistic",
+      "heightened-dramatic",
+      "stylized-masala",
+      "fantastical"
+    ]
+  },
+
+  "setting_tags": {
+    "_note": "1-3 setting/era tags. Closed set preferred; up to 1 free-form addition allowed.",
+    "values": [
+      "rural-india",
+      "small-town-india",
+      "mumbai",
+      "delhi",
+      "south-india",
+      "kashmir",
+      "hill-station",
+      "nri-diaspora",
+      "foreign-country",
+      "mumbai-underworld",
+      "village",
+      "contemporary-urban",
+      "1970s-80s-era",
+      "1990s-era",
+      "partition-era",
+      "colonial-india",
+      "mughal-era",
+      "ancient-mythic",
+      "period-historical",
+      "wartime"
+    ]
+  },
+
+  "notable_elements": {
+    "_note": "2-4 standout structural/production/biographical elements. STRICTLY closed set.",
+    "values": [
+      "based-on-true-story",
+      "true-story-with-artistic-license",
+      "biopic",
+      "military-biopic",
+      "political-biopic",
+      "sports-biopic",
+      "ensemble-cast",
+      "multi-starrer",
+      "twist-ending",
+      "tragic-ending",
+      "non-linear-narrative",
+      "anthology",
+      "song-driven",
+      "iconic-soundtrack",
+      "item-number",
+      "dialogue-driven",
+      "action-spectacle",
+      "visually-striking",
+      "strong-social-message",
+      "remake",
+      "sequel-franchise",
+      "female-led",
+      "slow-paced",
+      "cult-classic"
+    ]
+  },
+
+  "vibe": {
+    "_note": "1-3 viewer-experience / occasion tags. STRICTLY closed set. Used for occasion-based discovery, not core taste matching.",
+    "values": [
+      "date-night",
+      "family-watch",
+      "tearjerker",
+      "comfort-rewatch",
+      "edge-of-seat",
+      "timepass-fun",
+      "thought-provoking",
+      "instant-classic",
+      "divisive",
+      "rainy-day",
+      "group-watch",
+      "solo-deep-dive"
+    ]
+  }
+}

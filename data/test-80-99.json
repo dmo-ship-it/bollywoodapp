@@ -1,0 +1,1732 @@
+{
+  "fetched_at": "2026-06-06T12:35:49.921Z",
+  "count": 20,
+  "movies": [
+    {
+      "tmdb_id": 1408170,
+      "imdb_id": "tt5256640",
+      "title": "Lenin",
+      "original_title": "లెనిన్",
+      "overview": "The life of Russian communist revolutionary, Vladimir Lenin.",
+      "year": 2026,
+      "release_date": "2026-06-26",
+      "poster_url": "https://image.tmdb.org/t/p/w500/rAHQviBq8Fxi20hNtHPGLnr4L0f.jpg",
+      "backdrop_url": null,
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Drama"
+      ],
+      "production_houses": [
+        "Sithara Entertainments",
+        "Manam Enterprises",
+        "Annapurna Studios",
+        "Trikita Entertainment"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 1.4852,
+      "cast": [
+        {
+          "tmdb_id": 1544304,
+          "name": "Akhil Akkineni",
+          "character": "Lenin",
+          "photo_url": "https://image.tmdb.org/t/p/w185/uErlyTiIXxTA0Qd7UTtYukOD51O.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 4485095,
+          "name": "Bhagyashri Borse",
+          "character": "Bharathi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/z1q1PEKFHVdKrBzD1Wk2q2WQMrj.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 935915,
+          "name": "Sivaji Sontineni",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/rYttVZsngTbaS2ElxDiIiQ32RbL.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 1275608,
+          "name": "Easwari Rao",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/fjyvQ45YZcovy2Egj2eux8UiuHU.jpg",
+          "billing_order": 4
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1790294,
+          "name": "Suryadevara Naga Vamsi",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/hLJpBV45WFqS3sYxS3zmBhcHAoq.jpg"
+        },
+        {
+          "tmdb_id": 3628328,
+          "name": "Murali Kishor Abburu",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 149958,
+          "name": "Nagarjuna Akkineni",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/i42K59YZY2NbNfqxfo78YoFz6Bv.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:37.812Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=iFv3N9mX5gU",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1442396,
+      "imdb_id": "tt32065777",
+      "title": "Nagabandham",
+      "original_title": "నాగబంధం",
+      "overview": "",
+      "year": 2026,
+      "release_date": "2026-07-03",
+      "poster_url": "https://image.tmdb.org/t/p/w500/7r4QUxZ454CSIRLWa1vjNyBG5xk.jpg",
+      "backdrop_url": null,
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [],
+      "production_houses": [
+        "Abhishek Pictures",
+        "NIK Studios"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.3943,
+      "cast": [
+        {
+          "tmdb_id": 4254066,
+          "name": "Virat Karrna",
+          "character": "Rudhra",
+          "photo_url": null,
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1559686,
+          "name": "Nabha Natesh",
+          "character": "Parvathi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/4XK99gs2ytNft59xgsw2WPGcPkF.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 2252345,
+          "name": "Daksha Nagarkar",
+          "character": "Priyamani",
+          "photo_url": "https://image.tmdb.org/t/p/w185/vnYsR2Vynqx21pMwRBCxm0CsUmh.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 1587861,
+          "name": "Anasuya Bharadwaj",
+          "character": "Leelavathi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/adfyR0yHuTdj3sMiJQNDtBBXz9Q.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 85456,
+          "name": "Mahesh Manjrekar",
+          "character": "Suvarna",
+          "photo_url": "https://image.tmdb.org/t/p/w185/4lFytre6m4SruIUpUIoyNjsMo7F.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 465273,
+          "name": "Jagapati Babu",
+          "character": "Prabhakar",
+          "photo_url": "https://image.tmdb.org/t/p/w185/bm72k6FmDxhxtZsl1xvxoz88Hkm.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 85588,
+          "name": "Murali Sharma",
+          "character": "Achyutha Chary",
+          "photo_url": "https://image.tmdb.org/t/p/w185/8m4L7L9lK4Z2YK4Jg97pMbA0Le5.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 2262423,
+          "name": "Ramachandra Raju",
+          "character": "Bhairagi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/kU1a4H8o1IQA25Lyq3cW70aufhT.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 584504,
+          "name": "Saranya Ponvannan",
+          "character": "Padmamma",
+          "photo_url": "https://image.tmdb.org/t/p/w185/iFKB2AQi0iL78HykQlaSFLxErfA.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 4485567,
+          "name": "Rishabh Sawhney",
+          "character": "Abdali",
+          "photo_url": "https://image.tmdb.org/t/p/w185/muNoUZDZfP1iuN8tYOuh3FJCM6U.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 2190917,
+          "name": "Abhishek Nama",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 5762763,
+          "name": "Kishore Annapureddy",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 6008537,
+          "name": "Nishitha Nagireddy",
+          "job": "Producer",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:38.136Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=BMdL_8Bzt0k",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1229939,
+      "imdb_id": "tt27670706",
+      "title": "Vishwambhara",
+      "original_title": "విశ్వంభర",
+      "overview": "",
+      "year": 2026,
+      "release_date": "2026-07-10",
+      "poster_url": "https://image.tmdb.org/t/p/w500/ygmxv156YvURmnFN6eG3i2dIg4U.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/lGcndSIRbY3CDZiekSWiAahIju.jpg",
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Fantasy",
+        "Drama"
+      ],
+      "production_houses": [
+        "UV Creations"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.3871,
+      "cast": [
+        {
+          "tmdb_id": 147079,
+          "name": "Chiranjeevi",
+          "character": "Vishwambhara 'Vishwa'",
+          "photo_url": "https://image.tmdb.org/t/p/w185/jRCxnhftb7NprH92cdfah8KoAHg.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 116925,
+          "name": "Trisha Krishnan",
+          "character": "Avani",
+          "photo_url": "https://image.tmdb.org/t/p/w185/jfeAV0VeAQhKONzIv1UEYbklJGn.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 2015323,
+          "name": "Ashika Ranganath",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/wzmnd0YpIKSLLa1bjRa7C3Tbww8.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 53675,
+          "name": "Kunal Kapoor",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/i6NhU7lFjT5BIO8Bb014xnx9W62.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 2504878,
+          "name": "Meenakshi Chaudhary",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/vXrZJrt6qKEgUOEvmFTSh3F0FDp.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 1046889,
+          "name": "Surbhi",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/oVdvoiFu6JFkSnmCgTSPM3KsUXj.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 3645630,
+          "name": "Isha Chawla",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ziYHfxfqYVpIcMOmi5hilYMFaRG.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 544980,
+          "name": "Subhalekha Sudhakar",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/euDijVOTT0dbI3mWBOvU4q4RCk1.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 559738,
+          "name": "Rajiv Kanakala",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/29Czs1esSU744TOe3ddDzCuCa0g.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 1251224,
+          "name": "Mouni Roy",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/cKkVgHMSzJd9swrYQ7k2a1j0LfW.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1543647,
+          "name": "Vamsi Krishna Reddy",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 3288997,
+          "name": "Malladi Vassishta",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1543646,
+          "name": "Pramod Uppalapati",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 4547358,
+          "name": "Vikram Reddy",
+          "job": "Producer",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:38.463Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=6440OgpawuA",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1376856,
+      "imdb_id": "tt31969655",
+      "title": "The Paradise",
+      "original_title": "ది ప్యారడైస్",
+      "overview": "In 1980s Secunderabad, a marginalized tribe battles discrimination and fights for citizenship under an unexpected leader's guidance, challenging systemic oppression.",
+      "year": 2026,
+      "release_date": "2026-08-21",
+      "poster_url": "https://image.tmdb.org/t/p/w500/smghVMoMWSIFi5dgIz4w1UIcEcY.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/7AcH5TFppoMusNkCBLaQP6UOODp.jpg",
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Drama"
+      ],
+      "production_houses": [
+        "Sri Lakshmi Venkateswara Cinemas"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 1.6916,
+      "cast": [
+        {
+          "tmdb_id": 225387,
+          "name": "Nani",
+          "character": "Jadal Zamana",
+          "photo_url": "https://image.tmdb.org/t/p/w185/csRjrh58D90LhFNiqNEUTohzoIK.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 2578168,
+          "name": "Kayadu Lohar",
+          "character": "Subbu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/pHaMPnrfnWvTPZA4IOmZk8BHY0U.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1374676,
+          "name": "Raghav Juyal",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ncJa8IBYfDknQLpjeciaQy6dXkH.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 585268,
+          "name": "Mohan Babu",
+          "character": "Shikanja Maalik",
+          "photo_url": "https://image.tmdb.org/t/p/w185/zwqcXtnk0ju0nhuhvZXSLL2nLIy.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 78920,
+          "name": "Sonali Kulkarni",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/aQeM6N2JgGFbI5VoltWhkxw6OQC.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 1418726,
+          "name": "Sampoornesh Babu",
+          "character": "Biriyani",
+          "photo_url": "https://image.tmdb.org/t/p/w185/8LUNhS7JGsv5YDIX3qBPJP3f1BI.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 584675,
+          "name": "Babu Mohan",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/v6p1UjzbjGmkTf0yI2hz44GZbxc.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 565890,
+          "name": "Tanikella Bharani",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/zRjr0F64Eznbliz1RvN9icj3Lq1.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 4432743,
+          "name": "Vishika",
+          "character": "",
+          "photo_url": null,
+          "billing_order": 9
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 3271589,
+          "name": "Srikanth Odela",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/6C019f5EkYasOwksCXjr8vxkRa4.jpg"
+        },
+        {
+          "tmdb_id": 2187318,
+          "name": "Sudhakar Cherukuri",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/4PRVTmhpCsnGwfNkQynyNDWznAo.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:38.788Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=tCObCpYScdE",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1450342,
+      "imdb_id": "tt33056753",
+      "title": "Bhogi",
+      "original_title": "భోగి",
+      "overview": "",
+      "year": 2026,
+      "release_date": "2026-08-28",
+      "poster_url": "https://image.tmdb.org/t/p/w500/iZohKbCpE79UcpfaieWzyk5Uu08.jpg",
+      "backdrop_url": null,
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Action",
+        "Drama"
+      ],
+      "production_houses": [
+        "Sri Sathya Sai Arts"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.3571,
+      "cast": [
+        {
+          "tmdb_id": 588007,
+          "name": "Sharwanand",
+          "character": "Ganga",
+          "photo_url": "https://image.tmdb.org/t/p/w185/n3unOPLUbyRdSnXUbF6qwVgsnhY.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1470724,
+          "name": "Anupama Parameswaran",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/iA8NAbwIKTbA8fKTNtXsAiBcC4W.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1906653,
+          "name": "Dimple Hayathi",
+          "character": "Mandaram",
+          "photo_url": "https://image.tmdb.org/t/p/w185/6vreBkqWxRX5zaJSY2GKBPTFxES.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 2103238,
+          "name": "Rohit Pathak",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/j2tcAbQxjtErT6gtnWgmh2VQdUt.jpg",
+          "billing_order": 4
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1139361,
+          "name": "Sampath Nandi",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1543625,
+          "name": "K.K. Radha Mohan",
+          "job": "Producer",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:39.112Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=Ep879Ad-tzw",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1389379,
+      "imdb_id": "tt32324552",
+      "title": "Ranabaali",
+      "original_title": "రణబాలి",
+      "overview": "",
+      "year": 2026,
+      "release_date": "2026-09-11",
+      "poster_url": "https://image.tmdb.org/t/p/w500/rMg3BFUKs8IaekSJgMT1IYmypk.jpg",
+      "backdrop_url": null,
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "History",
+        "Action",
+        "Drama",
+        "War"
+      ],
+      "production_houses": [
+        "Mythri Movie Makers",
+        "T-Series"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 1.1075,
+      "cast": [
+        {
+          "tmdb_id": 1508809,
+          "name": "Vijay Deverakonda",
+          "character": "Ranabaali",
+          "photo_url": "https://image.tmdb.org/t/p/w185/8oVIWyIoFUal8SJFnmCUtkkm1HP.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 16743,
+          "name": "Arnold Vosloo",
+          "character": "Sir Theodre Hector",
+          "photo_url": "https://image.tmdb.org/t/p/w185/o23Z1EvWEYR7PArq2w5UpreVipV.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1752056,
+          "name": "Rashmika Mandanna",
+          "character": "Jayamma",
+          "photo_url": "https://image.tmdb.org/t/p/w185/c1wQq0OAzU9nFhGYn4iOoi7dmqD.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 2131567,
+          "name": "Vinod Sagar",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/1TPybIW2ncqrA9G4q03R3MhUP0B.jpg",
+          "billing_order": 4
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1647434,
+          "name": "Rahul Sankrityan",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/eAhTumxcmBhKf6ZFwzN67zXneHJ.jpg"
+        },
+        {
+          "tmdb_id": 1648660,
+          "name": "Naveen Yerneni",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/iestiUKLGHblxeQtI0DF5ENCxLW.jpg"
+        },
+        {
+          "tmdb_id": 1648659,
+          "name": "Y. Ravi Shankar",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/stZ6Fzi96nUlWyomx7hhXcqBQiX.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:39.434Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=5P86n6ZisiA",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1628882,
+      "imdb_id": null,
+      "title": "Shabara",
+      "original_title": "Shabara",
+      "overview": "An adventure written in the stars and across time.",
+      "year": 2026,
+      "release_date": "2026-10-02",
+      "poster_url": "https://image.tmdb.org/t/p/w500/7jTgFnZi7dlsVTvFH5LffUPXPZq.jpg",
+      "backdrop_url": null,
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Adventure"
+      ],
+      "production_houses": [
+        "Visramm Film Fraternity"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.1686,
+      "cast": [
+        {
+          "tmdb_id": 2536188,
+          "name": "Dheekshith Shetty",
+          "character": "Arjun",
+          "photo_url": "https://image.tmdb.org/t/p/w185/f0MzEH6dmEZiXuZ78ycDKgxECbD.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 2556771,
+          "name": "Misha Narang",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/uF31Nab0WAtoipXuPYL4UKhr5rj.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 2115740,
+          "name": "Mohan Bhagath",
+          "character": "",
+          "photo_url": null,
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 2251782,
+          "name": "Bhushan Kalyan",
+          "character": "",
+          "photo_url": null,
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 1172297,
+          "name": "Rajeev Pillai",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/vQyenV68LqIHf2e74eeWQd6pnyl.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 5985494,
+          "name": "Kritika singh",
+          "character": "",
+          "photo_url": null,
+          "billing_order": 6
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 5985500,
+          "name": "Kilaru Prem Chand",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 5985525,
+          "name": "Harshitha Chadalavada",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 5985526,
+          "name": "Durga Chunchu",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 5985527,
+          "name": "Ramadevi Kilaru",
+          "job": "Producer",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:39.777Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=5Ivqf2fj-Qo",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1580533,
+      "imdb_id": "tt38960903",
+      "title": "#Untitled Sangeeth Shobhan - Palnati Surya Pratap Project",
+      "original_title": "#Untitled Sangeeth Shobhan - Palnati Surya Pratap Project",
+      "overview": "",
+      "year": 2026,
+      "release_date": "2026-10-16",
+      "poster_url": null,
+      "backdrop_url": null,
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Romance",
+        "Drama"
+      ],
+      "production_houses": [
+        "Dheeraj Mogilineni Entertainment"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.2191,
+      "cast": [
+        {
+          "tmdb_id": 3234630,
+          "name": "Sangeeth Shobhan",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/7Vox31bH7XmgPNJzMKGa4uGyjW8.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1899034,
+          "name": "Anaswara Rajan",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/zWy5AjnXf7sm60X5PVa0mWDaFsp.jpg",
+          "billing_order": 2
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 3313125,
+          "name": "Dheeraj Mogilineni",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1095498,
+          "name": "Palnati Surya Pratap",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 5998477,
+          "name": "Giribabu Vallabhaneni,",
+          "job": "Producer",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:40.095Z",
+      "is_verified": false,
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1544325,
+      "imdb_id": "tt38263122",
+      "title": "Vayuputra",
+      "original_title": "వాయుపుత్ర",
+      "overview": "",
+      "year": 2026,
+      "release_date": "2026-10-16",
+      "poster_url": "https://image.tmdb.org/t/p/w500/8uCuTRuvN619sl00NTkLPOthN6T.jpg",
+      "backdrop_url": null,
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Animation",
+        "Action",
+        "Adventure",
+        "Drama",
+        "Fantasy"
+      ],
+      "production_houses": [
+        "Sithara Entertainments",
+        "Fortune Four Cinemas"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.0896,
+      "cast": [],
+      "crew": [
+        {
+          "tmdb_id": 1380060,
+          "name": "Chandoo Mondeti",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 3355377,
+          "name": "Sai Soujanya",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1790294,
+          "name": "Suryadevara Naga Vamsi",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/hLJpBV45WFqS3sYxS3zmBhcHAoq.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:40.415Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=_NJvncbpcCA",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1257973,
+      "imdb_id": "tt29295821",
+      "title": "Fauzi",
+      "original_title": "ఫౌజి",
+      "overview": "",
+      "year": 2026,
+      "release_date": "2026-10-20",
+      "poster_url": "https://image.tmdb.org/t/p/w500/xWHolsIDUSvWngeFfeZi52A7W7P.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/z1Es5M643hfdW0tIJbdqnSS6rv2.jpg",
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "War",
+        "History",
+        "Drama",
+        "Romance",
+        "Action"
+      ],
+      "production_houses": [
+        "Mythri Movie Makers",
+        "T-Series"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 1.3288,
+      "cast": [
+        {
+          "tmdb_id": 237045,
+          "name": "Prabhas",
+          "character": "Fauzi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/u6RVP8ukgLaymeoi5VmX0JRAcCn.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 4892151,
+          "name": "Iman Esmail",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/5aizDjOp3KJNvLcMLMRacX6j0AV.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 85450,
+          "name": "Mithun Chakraborty",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/4z8c5YAe0TCkEZNHXWlKxNTD8sV.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 238016,
+          "name": "Jaya Prada",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/jD3BDABDH36vYPaQrI3PFWM9KJ9.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 6217,
+          "name": "Anupam Kher",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/kgU5Ap1Kf9RnicB5DMcXEZqed2f.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 2488387,
+          "name": "Chaithra J Achar",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/mCpqijk7HhguNYcffPhprGVHts5.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 1052322,
+          "name": "Rahul Ravindran",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ejAiUB2QUhiOaGfDPgAM505R5uY.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 1855721,
+          "name": "Master Dharshan",
+          "character": "Young Fauzi",
+          "photo_url": null,
+          "billing_order": 8
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1135092,
+          "name": "Hanu Raghavapudi",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/7tizD44Jp35OLykxEQlMxKOjuTz.jpg"
+        },
+        {
+          "tmdb_id": 1648660,
+          "name": "Naveen Yerneni",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/iestiUKLGHblxeQtI0DF5ENCxLW.jpg"
+        },
+        {
+          "tmdb_id": 1648659,
+          "name": "Y. Ravi Shankar",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/stZ6Fzi96nUlWyomx7hhXcqBQiX.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:40.738Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=2LMuC5mRwyM",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1443958,
+      "imdb_id": null,
+      "title": "Emo Emo Idi",
+      "original_title": "Emo Emo Idi",
+      "overview": "",
+      "year": 2026,
+      "release_date": "2026-10-23",
+      "poster_url": null,
+      "backdrop_url": null,
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Romance",
+        "Drama"
+      ],
+      "production_houses": [
+        "Sithara Entertainments"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.3569,
+      "cast": [
+        {
+          "tmdb_id": 3270697,
+          "name": "Roshan Meka",
+          "character": "Abhay",
+          "photo_url": "https://image.tmdb.org/t/p/w185/nuwKLExCflAJFHCymjcaNeIzPGR.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 4550863,
+          "name": "Preity Mukhundhan",
+          "character": "Apoorva",
+          "photo_url": "https://image.tmdb.org/t/p/w185/m3qGm6zD2MIye4PB0OaeaS6wc9v.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 4103536,
+          "name": "Yukti Thareja",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/aUcMSWJMz5ur0AagUYC8jQBsV32.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 237689,
+          "name": "Devadarshini",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/gSq4nM6z82LfI4yjL116P1RDkb0.jpg",
+          "billing_order": 4
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 2551825,
+          "name": "Sailesh Kolanu",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/phjFUbCMwOfGqyPQqRDoGQyNLAV.jpg"
+        },
+        {
+          "tmdb_id": 1790294,
+          "name": "Suryadevara Naga Vamsi",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/hLJpBV45WFqS3sYxS3zmBhcHAoq.jpg"
+        },
+        {
+          "tmdb_id": 3355377,
+          "name": "Sai Soujanya",
+          "job": "Producer",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:41.061Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=xbW086g1pf8",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1389373,
+      "imdb_id": "tt29308495",
+      "title": "Rowdy Janardhana",
+      "original_title": "రౌడీ జనార్ధన",
+      "overview": "",
+      "year": 2026,
+      "release_date": "2026-12-25",
+      "poster_url": "https://image.tmdb.org/t/p/w500/cq0cz2Sw0ACgwgTBpg3vHnC6yni.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/iWThZpTUx8SVCmxlW33E2H1IhYn.jpg",
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama"
+      ],
+      "production_houses": [
+        "Sri Venkateswara Creations"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.7283,
+      "cast": [
+        {
+          "tmdb_id": 1508809,
+          "name": "Vijay Deverakonda",
+          "character": "Rowdy Janardhana",
+          "photo_url": "https://image.tmdb.org/t/p/w185/8oVIWyIoFUal8SJFnmCUtkkm1HP.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1295762,
+          "name": "Keerthy Suresh",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/fTdgSinsAitdujBBEUEA72GY0pv.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 590744,
+          "name": "Dr. Rajasekhar",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/98rWmf6KpB7SvQMuJm0pl9au0ud.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 585397,
+          "name": "Samuthirakani",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/hicCPOdDfSRCEYkeb9g53FOY19A.jpg",
+          "billing_order": 4
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 2369182,
+          "name": "Ravikiran Kola",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 230013,
+          "name": "Dil Raju",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/rKATd51tomVLWw7EjjNgM7uAQCW.jpg"
+        },
+        {
+          "tmdb_id": 1765041,
+          "name": "Shirish",
+          "job": "Producer",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:41.386Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=mWmxx6qZUVk",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1533741,
+      "imdb_id": "tt37727259",
+      "title": "MEGA 158",
+      "original_title": "MEGA 158",
+      "overview": "",
+      "year": 2027,
+      "release_date": "2027-01-13",
+      "poster_url": null,
+      "backdrop_url": null,
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Action",
+        "Drama"
+      ],
+      "production_houses": [
+        "KVN Productions"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.2625,
+      "cast": [
+        {
+          "tmdb_id": 147079,
+          "name": "Chiranjeevi",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/jRCxnhftb7NprH92cdfah8KoAHg.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1107197,
+          "name": "Priyamani",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/zB365nF9wec5KBczviUTAX9MwHj.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1899034,
+          "name": "Anaswara Rajan",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/zWy5AjnXf7sm60X5PVa0mWDaFsp.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 82732,
+          "name": "Mohanlal",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/qQLZgSwskFW7VxSVfyZMV933jUU.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 1053174,
+          "name": "Bandla Ganesh",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/874gkTlQBZRawZbvF28bslX09KJ.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 85670,
+          "name": "Anurag Kashyap",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/wS1aF7dFDnKC44ZbFkbDcIpmFq5.jpg",
+          "billing_order": 6
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1186625,
+          "name": "Bobby Kolli",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/b0vOz06sawC4MQ4pdg0JboXqqTk.jpg"
+        },
+        {
+          "tmdb_id": 4421534,
+          "name": "Venkat K Narayana",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/6oYkELlw7tlnJPoFLHhjK0L52IJ.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:41.777Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=qhttb8TDCdM",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1618208,
+      "imdb_id": null,
+      "title": "George Krish",
+      "original_title": "George Krish",
+      "overview": "Action comedy entertainer",
+      "year": 2027,
+      "release_date": "2027-01-14",
+      "poster_url": null,
+      "backdrop_url": null,
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [],
+      "production_houses": [
+        "Mythri Movie Makers"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.0704,
+      "cast": [
+        {
+          "tmdb_id": 588007,
+          "name": "Sharwanand",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/n3unOPLUbyRdSnXUbF6qwVgsnhY.jpg",
+          "billing_order": 1
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1107021,
+          "name": "Sreenu Vaitla",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/dj1i0r5wQ5biXWz7HUpi9PYhx1z.jpg"
+        },
+        {
+          "tmdb_id": 1648660,
+          "name": "Naveen Yerneni",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/iestiUKLGHblxeQtI0DF5ENCxLW.jpg"
+        },
+        {
+          "tmdb_id": 1648659,
+          "name": "Y. Ravi Shankar",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/stZ6Fzi96nUlWyomx7hhXcqBQiX.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:42.097Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=aijsFlq6QKE",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1631474,
+      "imdb_id": null,
+      "title": "Vaasivaadi Tassadiyya",
+      "original_title": "వాసివాడి తస్సాదియ్యా",
+      "overview": "",
+      "year": 2027,
+      "release_date": "2027-01-15",
+      "poster_url": null,
+      "backdrop_url": null,
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Drama",
+        "Family"
+      ],
+      "production_houses": [
+        "Annapurna Studios"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.104,
+      "cast": [
+        {
+          "tmdb_id": 149958,
+          "name": "Nagarjuna Akkineni",
+          "character": "Bangarraju & Dr. Ram Mohan",
+          "photo_url": "https://image.tmdb.org/t/p/w185/i42K59YZY2NbNfqxfo78YoFz6Bv.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 237052,
+          "name": "Naga Chaitanya Akkineni",
+          "character": "Chinna Bangarraju",
+          "photo_url": "https://image.tmdb.org/t/p/w185/pcGTJvzIC3JzcfNVzdA6IHo3e8k.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1544304,
+          "name": "Akhil Akkineni",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/uErlyTiIXxTA0Qd7UTtYukOD51O.jpg",
+          "billing_order": 3
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1566963,
+          "name": "Kalyan Krishna",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/gc8p7K3wp5UixGIkyD35qE2NXqt.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:42.418Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=b7pFO681HKs",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 881903,
+      "imdb_id": "tt15547882",
+      "title": "Spirit",
+      "original_title": "స్పిరిట్",
+      "overview": "",
+      "year": 2027,
+      "release_date": "2027-03-05",
+      "poster_url": "https://image.tmdb.org/t/p/w500/5N3e8nCYZdOyEyh1IuQDdkKF9sQ.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/yzu6Gb2fbC8GPxSKIn9BAHt9hFw.jpg",
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Action",
+        "Drama",
+        "Crime",
+        "Thriller"
+      ],
+      "production_houses": [
+        "T-Series",
+        "Bhadrakali Pictures"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 1.4145,
+      "cast": [
+        {
+          "tmdb_id": 237045,
+          "name": "Prabhas",
+          "character": "Ajanubahudu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/u6RVP8ukgLaymeoi5VmX0JRAcCn.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 85668,
+          "name": "Vivek Oberoi",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/60T3Q8CsxF4kF6RIHZ1yis2Q0wA.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 2100209,
+          "name": "Triptii Dimri",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/rGyxSvRhohagcF7lutUUQ2ARD5X.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 1473118,
+          "name": "Madonna Sebastian",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/2mC5mrsWPHVBXG5UvbHy4pOmdh1.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 89153,
+          "name": "Prakash Raj",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/dJvFZOXmZdkYCOUcKTXQAhBcAoH.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 1047330,
+          "name": "Kanchana",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/5MIFRK08ooRWugaZbhDKoWilmx6.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 2707240,
+          "name": "Aishwarya Desai",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/kWRXmtBnQ2mlSXnvGqnLypoXYh2.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 4412296,
+          "name": "Manjjot Singhh",
+          "character": "",
+          "photo_url": null,
+          "billing_order": 8
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 83595,
+          "name": "Bhushan Kumar",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/luUFnGoGwjwZ5CHAePRIQpAwT5b.jpg"
+        },
+        {
+          "tmdb_id": 1879517,
+          "name": "Sandeep Reddy Vanga",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ik1rXY6ci6i7LDm9cV178W3txgb.jpg"
+        },
+        {
+          "tmdb_id": 1877793,
+          "name": "Pranay Reddy Vanga",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 141882,
+          "name": "Krishan Kumar",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/gw2jzzkdRyIHglwieCiFSQ9cLZZ.jpg"
+        },
+        {
+          "tmdb_id": 5768287,
+          "name": "Prabhakar Reddy Vanga",
+          "job": "Producer",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:42.755Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=LQBx3OYqSTw",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1606091,
+      "imdb_id": null,
+      "title": "Rambo",
+      "original_title": "Rambo",
+      "overview": "An action entertainer",
+      "year": 2027,
+      "release_date": "2027-03-26",
+      "poster_url": "https://image.tmdb.org/t/p/w500/7IXWIJhySHMe6rxML5NiWtGhlj4.jpg",
+      "backdrop_url": null,
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Action",
+        "Drama"
+      ],
+      "production_houses": [
+        "Sithara Entertainments"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.111,
+      "cast": [
+        {
+          "tmdb_id": 931864,
+          "name": "Siddhu Jonnalagadda",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/6B8PzdF7BkyABUoWJZZgn8IuZkn.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 4485095,
+          "name": "Bhagyashri Borse",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/z1q1PEKFHVdKrBzD1Wk2q2WQMrj.jpg",
+          "billing_order": 2
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 2344374,
+          "name": "Swaroop RSJ",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/7EARyxm8tezmwSY9CcneyUDTY0z.jpg"
+        },
+        {
+          "tmdb_id": 1790294,
+          "name": "Suryadevara Naga Vamsi",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/hLJpBV45WFqS3sYxS3zmBhcHAoq.jpg"
+        },
+        {
+          "tmdb_id": 3355377,
+          "name": "Sai Soujanya",
+          "job": "Producer",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:43.147Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=t1huaCOto2k",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 920708,
+      "imdb_id": "tt21438726",
+      "title": "Vāranāsi",
+      "original_title": "వారణాసి",
+      "overview": "Follows Rudhra's perilous adventures as ancient Varanasi stands on the brink of catastrophe from a looming asteroid in 2027 CE, unfolding across multiple timelines and distant continents.",
+      "year": 2027,
+      "release_date": "2027-04-07",
+      "poster_url": "https://image.tmdb.org/t/p/w500/bBl3z0bMqt9piOmLDzgbKR8RECJ.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/iZbZjYflt859q8hR7bsvApeDLr5.jpg",
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Adventure",
+        "Action",
+        "Fantasy"
+      ],
+      "production_houses": [
+        "Sri Durga Arts",
+        "Showing Business"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 2.9028,
+      "cast": [
+        {
+          "tmdb_id": 116924,
+          "name": "Mahesh Babu",
+          "character": "Rudhra / Lord Rama",
+          "photo_url": "https://image.tmdb.org/t/p/w185/fcxgYi1h6vywacUg8asM6S0IIhf.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 77234,
+          "name": "Priyanka Chopra Jonas",
+          "character": "Mandakini",
+          "photo_url": "https://image.tmdb.org/t/p/w185/9n2n3fUFI553HKH0CEAb2TPLtCx.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 117690,
+          "name": "Prithviraj Sukumaran",
+          "character": "Kumbha",
+          "photo_url": "https://image.tmdb.org/t/p/w185/oxLS80XtmMJVHbTfFCfXMJvE5i9.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 89153,
+          "name": "Prakash Raj",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/dJvFZOXmZdkYCOUcKTXQAhBcAoH.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 2225027,
+          "name": "Raja Chembolu",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/hWYmCpzj6MeuCUVxBCoK2Gbd6ge.jpg",
+          "billing_order": 5
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 147021,
+          "name": "S. S. Rajamouli",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/g7jXGAVT8T5vq81fO5JWDleDc75.jpg"
+        },
+        {
+          "tmdb_id": 1314993,
+          "name": "K. L. Narayana",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 2162371,
+          "name": "S. S. Karthikeya",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/vj5NZIzc4tXZjOyNOdCupcbBmQt.jpg"
+        },
+        {
+          "tmdb_id": 1337585,
+          "name": "S. Gopala Reddy",
+          "job": "Producer",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:43.481Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=DMD2uthghWE",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1570976,
+      "imdb_id": "tt38807583",
+      "title": "Baahubali: The Eternal War – Part 1",
+      "original_title": "Bāhubali: The Eternal War — Part 1",
+      "overview": "The murdered Prince Baahubali enters the afterlife and joins an eternal war between gods and demons across 14 realms.",
+      "year": 2027,
+      "release_date": "2027-06-10",
+      "poster_url": "https://image.tmdb.org/t/p/w500/n1KLxyMDfktpfFxv3X35OiA9IzF.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/m8bM4y7hMKq3AOeaGtQiY2UHLe6.jpg",
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Animation",
+        "Action",
+        "Drama"
+      ],
+      "production_houses": [
+        "Arka Media Works",
+        "Aniventure Studios",
+        "Zaratan Studios"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 1.3375,
+      "cast": [
+        {
+          "tmdb_id": 237045,
+          "name": "Prabhas",
+          "character": "Amarendra Baahubali (voice)",
+          "photo_url": "https://image.tmdb.org/t/p/w185/u6RVP8ukgLaymeoi5VmX0JRAcCn.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 141701,
+          "name": "Ramya Krishnan",
+          "character": "Sivagami (voice)",
+          "photo_url": "https://image.tmdb.org/t/p/w185/5cWImxBdNn5eIKOinZHZhya3Bbn.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1040493,
+          "name": "Sahil Vaid",
+          "character": "Indra (voice - Hindi)",
+          "photo_url": "https://image.tmdb.org/t/p/w185/cDMYHIBwtto2VoECGrXjzhJkKYh.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 6144963,
+          "name": "Mohak Ninad",
+          "character": "Vishasura/Amarendra Baahubali  (voice - Hindi)",
+          "photo_url": null,
+          "billing_order": 4
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1488791,
+          "name": "Shobu Yarlagadda",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1748367,
+          "name": "Ishan Shukla",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/bDtBhhz0R1JT0ZfBpFRcu4S6dVg.jpg"
+        },
+        {
+          "tmdb_id": 1488790,
+          "name": "Prasad Devineni",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 5796158,
+          "name": "Kaustubh Govind Borwankar",
+          "job": "Producer",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:43.805Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=iDqSKfIQ-q4",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    },
+    {
+      "tmdb_id": 1547881,
+      "imdb_id": null,
+      "title": "VENDETTA-BEAST MODE",
+      "original_title": "వెండెట్టా-బీస్ట్ మోడ్",
+      "overview": "From pain to power, hero evolves into deadly Beast Mode.",
+      "year": 2027,
+      "release_date": "2027-06-10",
+      "poster_url": "https://image.tmdb.org/t/p/w500/uEwVdKC6uGJxfeZfCSSBQKTwG3d.jpg",
+      "backdrop_url": null,
+      "runtime_minutes": 30,
+      "language": "te",
+      "genres": [
+        "Action",
+        "Crime"
+      ],
+      "production_houses": [
+        "SK FILM FACTORY"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.0368,
+      "cast": [],
+      "crew": [
+        {
+          "tmdb_id": 5688232,
+          "name": "Satheesh Kumar G",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/tuq70O37SKH7t0YbKE9Y0bIiPPB.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-06T12:35:44.136Z",
+      "is_verified": false,
+      "trailer_url": "https://www.youtube.com/watch?v=JejhAW68SRA",
+      "tagline": null,
+      "keywords": [],
+      "ott_platforms": []
+    }
+  ]
+}

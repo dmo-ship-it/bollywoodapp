@@ -96,7 +96,7 @@ export default function TasteDiscoveryPage() {
 
                     {/* Taste Match Score */}
                     <div className="absolute bottom-1.5 right-1.5 bg-orange-600 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-sm">
-                      {Math.round(film.tasteMatchScore)}
+                      {film.matchPct}% match
                     </div>
 
                     {/* Watchlist on hover */}
@@ -120,6 +120,11 @@ export default function TasteDiscoveryPage() {
                       </>
                     )}
                   </div>
+                  {film.matchReasons?.length > 0 && (
+                    <p className="text-[10px] text-stone-400 mt-0.5 line-clamp-1">
+                      {film.matchReasons.join(" · ")}
+                    </p>
+                  )}
                 </Link>
               </div>
             );

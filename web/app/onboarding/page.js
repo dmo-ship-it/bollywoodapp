@@ -192,13 +192,21 @@ export default function OnboardingPage() {
       if (reactions.length) {
         await supabase.from("user_reactions").upsert(reactions, { onConflict: "user_id,movie_id" });
       }
+      // Extract country from Google OAuth metadata if available
+      const userMetadata = user.user_metadata || {};
+      const googleLocale = userMetadata.locale || ""; // e.g., "en-US", "hi-IN"
+      const countryCode = googleLocale.includes("-") ? googleLocale.split("-")[1] : null;
+
       await supabase.from("user_profiles").upsert(
         {
           user_id: user.id,
           dna,
           onboarding_complete: true,
           email: user.email,
-          language_preferences: languageRanking, // ordered array e.g. ["hi","ta","ml"]
+          full_name: userMetadata.full_name || userMetadata.name || user.email?.split("@")[0],
+          profile_picture_url: userMetadata.avatar_url || userMetadata.picture,
+          country: countryCode,
+          preferred_languages: languageRanking.length > 0 ? languageRanking : null,
         },
         { onConflict: "user_id" }
       );

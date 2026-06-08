@@ -40,3 +40,7 @@ yarn-error.log*
 Thumbs.db
 data/movies.json
 data/upcoming.json
+
+# Agent tooling + local cleanup backups (not app code)
+.claude/
+.cleanup-backup-*/
