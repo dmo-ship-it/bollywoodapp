@@ -44,3 +44,5 @@ data/upcoming.json
 # Agent tooling + local cleanup backups (not app code)
 .claude/
 .cleanup-backup-*/
+
+data/archive/

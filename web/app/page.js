@@ -90,12 +90,27 @@ export default function HomePage() {
       if (watchlist) setUserWatchlist(new Set(watchlist.map((w) => w.movie_id)));
 
       // Build recommendations from taste
-      buildRecommendations(reactions ?? [], profile, ratedIds);
+      buildRecommendations(reactions ?? [], profile, ratedIds, data.user.id, browserSupabase);
     });
   }, []);
 
-  async function buildRecommendations(reactions, profile, ratedIds) {
-    // Tally loved genres (rating >= 4)
+  async function buildRecommendations(reactions, profile, ratedIds, userId, authSupabase) {
+    // Try precomputed matrix-factorization recommendations first
+    if (userId) {
+      const { data: precomputed } = await authSupabase
+        .from("user_recommendations")
+        .select("movie_id, score, rank, movies(" + MOVIE_COLS + ")")
+        .eq("user_id", userId)
+        .order("rank", { ascending: true })
+        .limit(20);
+
+      if (precomputed?.length) {
+        setRecommended(precomputed.map((r) => r.movies).filter(Boolean));
+        return;
+      }
+    }
+
+    // Fallback: simple genre/language-based recommendations
     const genreCount = {};
     reactions.filter((r) => r.rating >= 4).forEach((r) => {
       (r.movies?.genres ?? []).forEach((g) => { genreCount[g] = (genreCount[g] ?? 0) + 1; });
