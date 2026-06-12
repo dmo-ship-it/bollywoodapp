@@ -5,6 +5,8 @@ import { createClient } from "../../lib/supabase-browser";
 import { BADGES } from "../../lib/badges";
 import WahWahButton from "../components/WahWahButton";
 import Link from "next/link";
+import { FeedContent } from "../feed/page";
+import { LeaderboardsContent } from "../leaderboards/page";
 
 function timeAgo(d) {
   const s = Math.floor((Date.now() - new Date(d)) / 1000);
@@ -57,7 +59,7 @@ const FAN_COMMUNITIES = [
 export default function CommunityPage() {
   const supabase = createClient();
   const [user,       setUser]       = useState(null);
-  const [tab,        setTab]        = useState("discussions");
+  const [tab,        setTab]        = useState("feed");
   const [sort,       setSort]       = useState("new");
   const [posts,      setPosts]      = useState([]);
   const [lists,      setLists]      = useState([]);
@@ -84,6 +86,7 @@ export default function CommunityPage() {
   }, []);
 
   useEffect(() => {
+    if (tab === "feed" || tab === "leaderboards") return;
     if (tab === "communities") {
       loadCommunityStats();
     } else {
@@ -195,16 +198,22 @@ export default function CommunityPage() {
 
       {/* Tabs + Sort */}
       <div className="flex items-center justify-between mb-5">
-        <div className="flex gap-1 bg-stone-100 rounded-xl p-1">
-          {["discussions", "lists", "communities"].map(t => (
-            <button key={t} onClick={() => setTab(t)}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all capitalize ${tab === t ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}>
-              {t === "communities" ? "🎭 Communities" : t}
+        <div className="flex gap-1 bg-stone-100 rounded-xl p-1 flex-wrap">
+          {[
+            { id: "feed",         label: "Feed"         },
+            { id: "discussions",  label: "Discussions"  },
+            { id: "lists",        label: "Lists"        },
+            { id: "leaderboards", label: "Leaderboards" },
+            { id: "communities",  label: "🎭 Communities" },
+          ].map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${tab === t.id ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}>
+              {t.label}
             </button>
           ))}
         </div>
-        {tab !== "communities" && (
-          <div className="flex gap-1">
+        {(tab === "discussions" || tab === "lists") && (
+          <div className="flex gap-1 mt-2">
             {["new","hot"].map(s => (
               <button key={s} onClick={() => setSort(s)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sort === s ? "bg-stone-200 text-stone-900" : "text-stone-400 hover:text-stone-700"}`}>
@@ -215,7 +224,11 @@ export default function CommunityPage() {
         )}
       </div>
 
-      {loading ? (
+      {tab === "feed" ? (
+        <FeedContent />
+      ) : tab === "leaderboards" ? (
+        <LeaderboardsContent />
+      ) : loading ? (
         <div className="space-y-3">{Array.from({length:5}).map((_,i) => <div key={i} className="h-24 rounded-2xl shimmer"/>)}</div>
       ) : tab === "communities" ? (
         <div className="space-y-8">

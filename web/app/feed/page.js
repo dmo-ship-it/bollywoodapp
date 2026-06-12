@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { createClient } from "../../lib/supabase-browser";
 import Link from "next/link";
 
@@ -13,7 +12,7 @@ function timeAgo(d) {
   return `${Math.floor(s/86400)}d ago`;
 }
 
-export default function FeedPage() {
+export function FeedContent() {
   const supabase = createClient();
 
   const [user,       setUser]       = useState(null);
@@ -25,16 +24,11 @@ export default function FeedPage() {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
   }, []);
 
-  useEffect(() => { load(); }, [tab, user]);
+  useEffect(() => { load(); }, [tab, user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function load() {
     setLoading(true);
-
-    if (!user && tab === "following") {
-      setActivities([]);
-      setLoading(false);
-      return;
-    }
+    if (!user && tab === "following") { setActivities([]); setLoading(false); return; }
 
     let query = supabase
       .from("activity_feed")
@@ -56,7 +50,7 @@ export default function FeedPage() {
 
   if (!user && tab === "following") {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center bg-stone-50 min-h-screen">
+      <div className="py-16 text-center">
         <p className="text-4xl mb-4">👥</p>
         <p className="font-bold text-stone-900 text-lg mb-2">Sign in to see your friends' activity</p>
         <p className="text-stone-500 mb-6">Follow people to see what they're watching and rating</p>
@@ -68,15 +62,7 @@ export default function FeedPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
-
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-black text-stone-900">Feed</h1>
-        <p className="text-stone-500 text-sm">What's everyone watching</p>
-      </div>
-
-      {/* Tabs */}
+    <div>
       <div className="flex gap-1 bg-stone-100 rounded-xl p-1 mb-6 w-fit">
         <button
           onClick={() => setTab("all")}
@@ -94,18 +80,13 @@ export default function FeedPage() {
         )}
       </div>
 
-      {/* Activities */}
       {loading ? (
         <div className="space-y-3">{[1,2,3,4].map(i => <div key={i} className="h-20 rounded-2xl shimmer"/>)}</div>
       ) : activities.length === 0 ? (
         <div className="text-center py-16 bg-white border border-stone-200 rounded-2xl text-stone-400">
           <p className="text-3xl mb-3">{tab === "following" ? "👥" : "🎬"}</p>
-          <p className="font-medium text-stone-600 mb-1">
-            {tab === "following" ? "No activity yet" : "No activity yet"}
-          </p>
-          <p className="text-sm mb-4">
-            {tab === "following" ? "Follow friends to see their activity" : "Be the first to rate a film!"}
-          </p>
+          <p className="font-medium text-stone-600 mb-1">No activity yet</p>
+          <p className="text-sm mb-4">{tab === "following" ? "Follow friends to see their activity" : "Be the first to rate a film!"}</p>
           <Link href="/" className="text-orange-600 text-sm hover:underline">Discover films →</Link>
         </div>
       ) : (
@@ -116,29 +97,21 @@ export default function FeedPage() {
             const movie = activity.movies;
             const ratingMap = { 5: "❤️", 4: "👍", 3: "😐", 2: "👎", 1: "💔" };
             const emoji = activity.activity_type === "rated" ? ratingMap[activity.metadata?.rating] ?? "⭐" : "🔖";
-
             return (
               <div key={activity.id} className="bg-white border border-stone-200 rounded-2xl p-4 shadow-sm hover:border-stone-300 transition-all">
                 <div className="flex items-center gap-3">
-                  {/* Avatar */}
                   <Link href={`/people/${activity.user_id}`} className="shrink-0">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xs font-black">
                       {initials}
                     </div>
                   </Link>
-
-                  {/* Content */}
                   <div className="flex-1 min-w-0">
                     <Link href={`/people/${activity.user_id}`} className="text-sm font-semibold text-stone-900 hover:text-orange-600 transition-colors">
                       {name}
                     </Link>
-                    <p className="text-xs text-stone-500">
-                      {activity.activity_type === "rated" ? "rated" : "saved"} {movie?.title}
-                    </p>
+                    <p className="text-xs text-stone-500">{activity.activity_type === "rated" ? "rated" : "saved"} {movie?.title}</p>
                     <p className="text-[10px] text-stone-400 mt-0.5">{timeAgo(activity.created_at)}</p>
                   </div>
-
-                  {/* Emoji + poster */}
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="text-base">{emoji}</span>
                     {movie?.poster_url && (
@@ -153,6 +126,18 @@ export default function FeedPage() {
           })}
         </div>
       )}
+    </div>
+  );
+}
+
+export default function FeedPage() {
+  return (
+    <div className="max-w-2xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
+      <div className="mb-6">
+        <h1 className="text-2xl font-black text-stone-900">Feed</h1>
+        <p className="text-stone-500 text-sm">What's everyone watching</p>
+      </div>
+      <FeedContent />
     </div>
   );
 }
