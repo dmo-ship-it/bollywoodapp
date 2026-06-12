@@ -12,6 +12,8 @@ alter table user_profiles
   add column if not exists gender text,  -- "male", "female", "other", null
   add column if not exists favorite_actors text[],  -- inferred from ratings over time
   add column if not exists favorite_directors text[],  -- inferred from ratings over time
+  add column if not exists watching_frequency text,    -- "daily" | "weekly" | "weekends" | "occasionally"
+  add column if not exists preferred_platforms text[], -- ["Netflix", "Amazon Prime", ...]
   add column if not exists created_at timestamp default now(),
   add column if not exists updated_at timestamp default now();
 

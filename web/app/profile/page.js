@@ -9,7 +9,7 @@ import WatchlistButton from "../components/WatchlistButton";
 
 const RATING_LABELS = { 5: "Loved", 4: "Liked", 3: "Okay", 2: "Didn't like", 1: "Hated" };
 const RATING_EMOJI  = { 5: "😍", 4: "😊", 3: "😐", 2: "😕", 1: "😡" };
-const TABS = ["Films", "Watchlist", "Rankings", "DNA", "Stats"];
+const TABS = ["Films", "Watchlist", "Rankings", "Taste", "Stats"];
 const COUNTRY_FLAGS = { IN:"🇮🇳",US:"🇺🇸",GB:"🇬🇧",CA:"🇨🇦",AU:"🇦🇺",AE:"🇦🇪",SG:"🇸🇬",NZ:"🇳🇿",ZA:"🇿🇦",MY:"🇲🇾",QA:"🇶🇦" };
 
 export default function ProfilePage() {
@@ -95,7 +95,7 @@ export default function ProfilePage() {
           <span>✨</span> Your 2026 Wrapped
         </Link>
         <Link href="/taste-profile" className="flex items-center gap-2 bg-white border-2 border-orange-400 text-orange-600 font-bold text-sm px-5 py-3 rounded-full hover:bg-orange-50 transition-all">
-          <span>🧬</span> Taste Profile
+          Taste Profile
         </Link>
         {profile?.username && (
           <Link href={`/u/${profile.username}`} className="flex items-center gap-2 bg-white border-2 border-stone-200 text-stone-700 font-bold text-sm px-5 py-3 rounded-full hover:bg-stone-50 transition-all">
@@ -319,15 +319,12 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* ── DNA ── */}
-      {tab === "DNA" && (
+      {/* ── Taste ── */}
+      {tab === "Taste" && (
         <div>
-          <div className="flex items-center gap-3 mb-6">
-            <span className="text-3xl">🧬</span>
-            <div>
-              <h2 className="font-bold text-lg text-stone-900">Your Entertainment DNA</h2>
-              <p className="text-stone-500 text-sm">Evolves as you rate and compare more films</p>
-            </div>
+          <div className="mb-6">
+            <h2 className="font-bold text-lg text-stone-900">Your Taste Profile</h2>
+            <p className="text-stone-500 text-sm">Evolves as you rate and compare more films</p>
           </div>
           {profile?.dna?.length > 0 ? (
             <div className="space-y-3 mb-8">
@@ -345,8 +342,8 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="text-center py-16 text-stone-400 bg-white border border-stone-200 rounded-2xl">
-              <p className="text-4xl mb-3">🧬</p>
-              <p className="font-medium mb-2 text-stone-600">No DNA yet</p>
+              <p className="text-4xl mb-3">🎬</p>
+              <p className="font-medium mb-2 text-stone-600">No taste profile yet</p>
               <p className="text-sm mb-4">Complete onboarding to generate your taste profile</p>
               <Link href="/onboarding" className="bg-orange-600 text-white font-bold text-sm px-6 py-2.5 rounded-full hover:bg-orange-500 transition-colors">
                 Start onboarding →
