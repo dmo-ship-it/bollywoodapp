@@ -52,9 +52,9 @@ export default function RankingsPage() {
       return;
     }
 
-    // Pre-fetch seen movie IDs for unseen filter (not needed for "my" since those are all rated)
+    // Pre-fetch seen movie IDs for seen/unseen filter (not needed for "my" since those are all rated)
     let seenSet = null;
-    if (filters.unseen && user && mode !== "my") {
+    if (filters.seenFilter && user && mode !== "my") {
       const { data: seen } = await supabase
         .from("user_reactions")
         .select("movie_id")
@@ -222,9 +222,8 @@ export default function RankingsPage() {
     ]);
 
     let results = data ?? [];
-    if (seenSet) {
-      results = results.filter((m) => !seenSet.has(m.id));
-    }
+    if (seenSet && filters.seenFilter === "unseen") results = results.filter((m) => !seenSet.has(m.id));
+    if (seenSet && filters.seenFilter === "seen")   results = results.filter((m) =>  seenSet.has(m.id));
 
     setMovies(results.slice(0, 100));
     setTotalRatings(count ?? 0);
@@ -242,8 +241,9 @@ export default function RankingsPage() {
     if (personSet) {
       results = results.filter((m) => personSet.has(m.id));
     }
-    if (filters.unseen && seenSet) {
-      results = results.filter((m) => !seenSet.has(m.id));
+    if (filters.seenFilter && seenSet) {
+      if (filters.seenFilter === "unseen") results = results.filter((m) => !seenSet.has(m.id));
+      if (filters.seenFilter === "seen")   results = results.filter((m) =>  seenSet.has(m.id));
     }
     return results;
   }
@@ -389,10 +389,10 @@ export default function RankingsPage() {
               </button>
             </span>
           )}
-          {filters.unseen && (
+          {filters.seenFilter && (
             <span className="inline-flex items-center gap-1.5 bg-stone-100 border border-stone-200 text-stone-700 text-xs font-medium px-3 py-1 rounded-full">
-              Not seen
-              <button onClick={() => setFilters((f) => ({ ...f, unseen: false }))}>
+              {filters.seenFilter === "seen" ? "Only Rated" : "Not Rated"}
+              <button onClick={() => setFilters((f) => ({ ...f, seenFilter: null }))}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
               </button>
             </span>
