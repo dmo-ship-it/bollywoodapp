@@ -44,16 +44,13 @@ export default function MovieCard({ movie, userScore, isWatchlisted = false, com
             <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col gap-1">
               {/* Trailer button — for coming soon */}
               {comingSoon && movie.trailer_url && (
-                <a
-                  href={movie.trailer_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(movie.trailer_url, "_blank", "noopener,noreferrer"); }}
                   className="bg-white/95 rounded-md p-1 shadow-sm hover:bg-stone-50 transition-colors"
                   title="Watch trailer"
                 >
                   <span className="text-xs leading-none">▶</span>
-                </a>
+                </button>
               )}
               {/* Rate button — hidden for unreleased films */}
               {!comingSoon && (

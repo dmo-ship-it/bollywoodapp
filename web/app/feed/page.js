@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "../../lib/supabase-browser";
+import WahWahButton from "../components/WahWahButton";
 import Link from "next/link";
 
 function timeAgo(d) {
@@ -18,6 +19,7 @@ export function FeedContent() {
   const [user,       setUser]       = useState(null);
   const [tab,        setTab]        = useState("following");
   const [activities, setActivities] = useState([]);
+  const [wahdIds,    setWahdIds]    = useState(new Set());
   const [loading,    setLoading]    = useState(true);
 
   useEffect(() => {
@@ -32,7 +34,7 @@ export function FeedContent() {
 
     let query = supabase
       .from("activity_feed")
-      .select("id, user_id, activity_type, movie_id, created_at, metadata, user_profiles(user_id,display_name,email), movies(id,title,year,poster_url)")
+      .select("id, user_id, activity_type, movie_id, created_at, metadata, wah_wah_count, user_profiles(user_id,display_name,email), movies(id,title,year,poster_url)")
       .order("created_at", { ascending: false })
       .limit(50);
 
@@ -44,7 +46,22 @@ export function FeedContent() {
     }
 
     const { data } = await query;
-    setActivities(data ?? []);
+    const items = data ?? [];
+    setActivities(items);
+
+    // Fetch which items the current user has already wah'd
+    if (user && items.length > 0) {
+      const { data: wahs } = await supabase
+        .from("wah_wahs")
+        .select("target_id")
+        .eq("user_id", user.id)
+        .eq("target_type", "activity")
+        .in("target_id", items.map(a => a.id));
+      setWahdIds(new Set((wahs ?? []).map(w => w.target_id)));
+    } else {
+      setWahdIds(new Set());
+    }
+
     setLoading(false);
   }
 
@@ -118,6 +135,15 @@ export function FeedContent() {
                       <Link href={`/movies/${movie.id}`}>
                         <img src={movie.poster_url} alt={movie.title} className="w-8 h-12 rounded-lg object-cover shadow-sm" loading="lazy" />
                       </Link>
+                    )}
+                    {user && activity.user_id !== user.id && (
+                      <WahWahButton
+                        targetType="activity"
+                        targetId={activity.id}
+                        initialCount={activity.wah_wah_count ?? 0}
+                        initialVoted={wahdIds.has(activity.id)}
+                        size="sm"
+                      />
                     )}
                   </div>
                 </div>

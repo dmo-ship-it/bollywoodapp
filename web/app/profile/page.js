@@ -38,6 +38,10 @@ export default function ProfilePage() {
   const [profileError,    setProfileError]    = useState("");
   const [avatarPreview,   setAvatarPreview]   = useState(null); // data URL for preview
   const [avatarFile,      setAvatarFile]      = useState(null); // File object to upload
+  const [deleteOpen,      setDeleteOpen]      = useState(false);
+  const [deleteConfirm,   setDeleteConfirm]   = useState("");
+  const [deleting,        setDeleting]        = useState(false);
+  const [deleteError,     setDeleteError]     = useState("");
 
   useEffect(() => {
     async function load() {
@@ -132,6 +136,21 @@ export default function ProfilePage() {
     setAvatarPreview(null);
     setProfileSaving(false);
     setEditProfile(false);
+  }
+
+  async function deleteAccount() {
+    setDeleting(true);
+    setDeleteError("");
+    try {
+      const res = await fetch("/api/delete-account", { method: "POST" });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error || "Failed to delete account");
+      await supabase.auth.signOut();
+      router.push("/login?deleted=1");
+    } catch (err) {
+      setDeleteError(err.message);
+      setDeleting(false);
+    }
   }
 
   const displayName  = profile?.display_name || user.email?.split("@")[0] || "You";
@@ -582,6 +601,55 @@ export default function ProfilePage() {
           )}
         </div>
       )}
+      {/* Danger zone */}
+      <div className="mt-12 pt-8 border-t border-stone-200">
+        <button
+          onClick={() => { setDeleteOpen(true); setDeleteConfirm(""); setDeleteError(""); }}
+          className="text-xs text-stone-400 hover:text-red-500 transition-colors underline underline-offset-2"
+        >
+          Delete account
+        </button>
+      </div>
+
+      {/* Delete Account modal */}
+      {deleteOpen && (
+        <>
+          <div className="fixed inset-0 bg-black/40 z-40" onClick={() => !deleting && setDeleteOpen(false)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-bold text-stone-900 text-base">Delete account</h2>
+                <button
+                  onClick={() => setDeleteOpen(false)}
+                  disabled={deleting}
+                  className="text-stone-400 hover:text-stone-600 transition-colors disabled:opacity-40"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
+              <p className="text-sm text-stone-600 mb-1">This will permanently delete your account and all your data — ratings, watchlist, badges, and points. <strong>This cannot be undone.</strong></p>
+              <p className="text-sm text-stone-500 mb-4 mt-3">Type <strong>DELETE</strong> to confirm:</p>
+              <input
+                type="text"
+                value={deleteConfirm}
+                onChange={(e) => setDeleteConfirm(e.target.value)}
+                placeholder="DELETE"
+                disabled={deleting}
+                className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-900 placeholder-stone-300 focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition-all disabled:opacity-40"
+              />
+              {deleteError && <p className="text-xs text-red-500 mt-2">{deleteError}</p>}
+              <button
+                onClick={deleteAccount}
+                disabled={deleteConfirm !== "DELETE" || deleting}
+                className="mt-4 w-full bg-red-600 text-white font-bold py-3 rounded-xl hover:bg-red-500 transition-colors text-sm disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                {deleting ? "Deleting…" : "Delete my account"}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Edit Profile modal */}
       {editProfile && (
         <>

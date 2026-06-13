@@ -41,16 +41,25 @@ export default function WrappedPage() {
         setTopFilm(scored[0].movies);
       }
 
-      // Top director
-      const directorMap = {};
-      rated.forEach(r => {
-        // In a real scenario, we'd fetch director data. For now, use genres as a proxy
-        if (r.movies?.genres?.[0]) {
-          directorMap[r.movies.genres[0]] = (directorMap[r.movies.genres[0]] ?? 0) + 1;
+      // Top director — look up actual director credits for rated films
+      const ratedMovieIds = rated.map(r => r.movies?.id).filter(Boolean);
+      if (ratedMovieIds.length > 0) {
+        const { data: credits } = await supabase
+          .from("movie_credits")
+          .select("movie_id, people(id, name)")
+          .eq("role", "Director")
+          .in("movie_id", ratedMovieIds);
+
+        if (credits?.length > 0) {
+          const directorMap = {};
+          credits.forEach(c => {
+            const name = c.people?.name;
+            if (name) directorMap[name] = (directorMap[name] ?? 0) + 1;
+          });
+          const topDir = Object.entries(directorMap).sort((a, b) => b[1] - a[1])[0]?.[0];
+          setTopDirector(topDir);
         }
-      });
-      const topDir = Object.entries(directorMap).sort((a, b) => b[1] - a[1])[0]?.[0];
-      setTopDirector(topDir);
+      }
 
       // Stats
       setStats({
@@ -124,6 +133,14 @@ export default function WrappedPage() {
             <p className="text-3xl font-black">{stats?.streak ?? 0}w</p>
           </div>
         </div>
+
+        {/* Top director */}
+        {topDirector && (
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-center">
+            <p className="text-orange-100 text-xs uppercase tracking-widest mb-2">Your Favourite Director</p>
+            <p className="text-2xl font-black">{topDirector}</p>
+          </div>
+        )}
 
         {/* Top vibe */}
         {dna.length > 0 && (

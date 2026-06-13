@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "../../../lib/supabase-browser";
+import { awardPoints } from "../../../lib/points";
 import Link from "next/link";
 
 export default function NewCommunityPost() {
@@ -83,9 +84,12 @@ export default function NewCommunityPost() {
         user_id: user.id, title: title.trim(), description: description.trim() || null, is_ranked: isRanked,
       }).select("id").single();
       if (!error && list) {
-        await supabase.from("community_list_items").insert(
-          listMovies.map((m, i) => ({ list_id: list.id, movie_id: m.id, position: i, note: m.note || null }))
-        );
+        await Promise.all([
+          supabase.from("community_list_items").insert(
+            listMovies.map((m, i) => ({ list_id: list.id, movie_id: m.id, position: i, note: m.note || null }))
+          ),
+          awardPoints(supabase, user.id, "CREATE_LIST"),
+        ]);
         router.push(`/community/lists/${list.id}`);
       }
     } else if (type === "poll") {

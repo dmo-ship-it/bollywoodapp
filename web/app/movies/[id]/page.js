@@ -2,6 +2,7 @@ import { supabase } from "../../../lib/supabase";
 import Link from "next/link";
 import RatingPanel from "./RatingPanel";
 import TrailerPlayer from "./TrailerPlayer";
+import FriendsOnThisFilm from "./FriendsOnThisFilm";
 
 const OTT_COLORS = {
   "Netflix":                       "bg-red-600",
@@ -75,13 +76,13 @@ export default async function MoviePage({ params }) {
   const composers = credits?.filter((c) => c.role === "Music") ?? [];
 
 
-  const allTags = [
+  const allTags = [...new Set([
     ...(movie.themes ?? []),
     ...(movie.tone ?? []),
     ...(movie.notable_elements ?? []),
     ...(movie.mood_tags ?? []),
     ...(movie.vibe_tags ?? []),
-  ].filter(Boolean);
+  ].filter(Boolean))];
 
   const director = directors[0]?.people?.name;
 
@@ -167,6 +168,7 @@ export default async function MoviePage({ params }) {
             {/* ── Rate + Bookmark ── */}
             <div className="mb-5">
               <RatingPanel movieId={movie.id} movieTitle={movie.title} posterUrl={movie.poster_url} />
+              <FriendsOnThisFilm movieId={movie.id} />
             </div>
 
             {/* Genres */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "../../lib/supabase-browser";
 
 export default function LoginPage() {
@@ -9,6 +10,8 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState("");
   const supabase = createClient();
+  const searchParams = useSearchParams();
+  const deleted = searchParams.get("deleted") === "1";
 
   async function handleMagicLink(e) {
     e.preventDefault();
@@ -33,6 +36,12 @@ export default function LoginPage() {
   return (
     <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4 bg-stone-50">
       <div className="w-full max-w-sm">
+
+        {deleted && (
+          <div className="mb-6 bg-stone-100 border border-stone-200 rounded-xl px-4 py-3 text-center text-sm text-stone-600">
+            Your account has been deleted. Sorry to see you go.
+          </div>
+        )}
 
         <div className="text-center mb-10">
           <div className="text-5xl mb-4">🎬</div>

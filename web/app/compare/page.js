@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { createClient } from "../../lib/supabase-browser";
+import { awardPoints } from "../../lib/points";
 import Link from "next/link";
 
 const COMPARISON_TYPES = [
@@ -57,10 +58,13 @@ export default function ComparePage() {
     setTotal((t) => t + 1);
     const loserId = pair.find((m) => m.id !== winnerId)?.id;
     if (user) {
-      await supabase.from("user_comparisons").insert({
-        user_id: user.id, movie_a_id: pair[0].id, movie_b_id: pair[1].id,
-        winner_id: winnerId, comparison_type: compType.id,
-      });
+      await Promise.all([
+        supabase.from("user_comparisons").insert({
+          user_id: user.id, movie_a_id: pair[0].id, movie_b_id: pair[1].id,
+          winner_id: winnerId, comparison_type: compType.id,
+        }),
+        awardPoints(supabase, user.id, "COMPARE_FILMS"),
+      ]);
       const { data: rated } = await supabase
         .from("user_reactions").select("movie_id, score")
         .eq("user_id", user.id).in("movie_id", [pair[0].id, pair[1].id]);
