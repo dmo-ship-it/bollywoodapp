@@ -24,15 +24,26 @@ export default function PostPage() {
   const supabase = createClient();
   const commentRef = useRef(null);
 
-  const [user,         setUser]         = useState(null);
-  const [post,         setPost]         = useState(null);
-  const [comments,     setComments]     = useState([]);
-  const [movie,        setMovie]        = useState(null);
-  const [authorProfile,setAuthorProfile]= useState(null);
-  const [voted,        setVoted]        = useState(false);
-  const [newComment,   setNewComment]   = useState("");
-  const [submitting,   setSubmitting]   = useState(false);
-  const [loading,      setLoading]      = useState(true);
+  const [user,           setUser]           = useState(null);
+  const [post,           setPost]           = useState(null);
+  const [comments,       setComments]       = useState([]);
+  const [movie,          setMovie]          = useState(null);
+  const [authorProfile,  setAuthorProfile]  = useState(null);
+  const [voted,          setVoted]          = useState(false);
+  const [newComment,     setNewComment]     = useState("");
+  const [submitting,     setSubmitting]     = useState(false);
+  const [loading,        setLoading]        = useState(true);
+
+  // Post editing
+  const [editing,        setEditing]        = useState(false);
+  const [editTitle,      setEditTitle]      = useState("");
+  const [editContent,    setEditContent]    = useState("");
+  const [savingEdit,     setSavingEdit]     = useState(false);
+  const [confirmDelete,  setConfirmDelete]  = useState(false);
+
+  // Comment editing
+  const [editingComment, setEditingComment] = useState(null); // comment id
+  const [editCommentText,setEditCommentText]= useState("");
 
   useEffect(() => { load(); }, [id]);
 
@@ -82,6 +93,38 @@ export default function PostPage() {
       setPost(p => ({ ...p, upvotes: p.upvotes + 1 }));
       setVoted(true);
     }
+  }
+
+  async function saveEdit() {
+    if (!editTitle.trim() || savingEdit) return;
+    setSavingEdit(true);
+    await supabase.from("community_posts")
+      .update({ title: editTitle.trim(), content: editContent.trim() })
+      .eq("id", id);
+    setPost(p => ({ ...p, title: editTitle.trim(), content: editContent.trim() }));
+    setEditing(false);
+    setSavingEdit(false);
+  }
+
+  async function deletePost() {
+    await supabase.from("community_posts").delete().eq("id", id);
+    router.push("/community");
+  }
+
+  async function saveEditComment(commentId) {
+    if (!editCommentText.trim()) return;
+    await supabase.from("community_comments")
+      .update({ content: editCommentText.trim() })
+      .eq("id", commentId);
+    setComments(prev => prev.map(c => c.id === commentId ? { ...c, content: editCommentText.trim() } : c));
+    setEditingComment(null);
+  }
+
+  async function deleteComment(commentId) {
+    await supabase.from("community_comments").delete().eq("id", commentId);
+    await supabase.from("community_posts").update({ comment_count: Math.max(0, post.comment_count - 1) }).eq("id", id);
+    setComments(prev => prev.filter(c => c.id !== commentId));
+    setPost(p => ({ ...p, comment_count: Math.max(0, p.comment_count - 1) }));
   }
 
   async function submitComment(e) {
@@ -137,39 +180,101 @@ export default function PostPage() {
               {movie.title} · {movie.year}
             </Link>
           )}
+          {user?.id === post.user_id && !editing && (
+            <div className="ml-auto flex items-center gap-2">
+              <button onClick={() => { setEditTitle(post.title); setEditContent(post.content); setEditing(true); }}
+                className="text-[11px] text-stone-400 hover:text-orange-600 font-medium transition-colors">
+                Edit
+              </button>
+              <button onClick={() => setConfirmDelete(true)}
+                className="text-[11px] text-stone-400 hover:text-red-500 font-medium transition-colors">
+                Delete
+              </button>
+            </div>
+          )}
         </div>
 
-        <h1 className="text-xl font-black text-stone-900 mb-3">{post.title}</h1>
-
-        {/* Movie card for reviews */}
-        {movie && post.post_type === "review" && (
-          <Link href={`/movies/${movie.id}`} className="flex items-center gap-3 bg-stone-50 border border-stone-200 rounded-xl p-3 mb-4 hover:border-orange-200 transition-colors group">
-            {movie.poster_url && <img src={movie.poster_url} className="w-10 h-14 rounded-lg object-cover" alt=""/>}
-            <div>
-              <p className="font-semibold text-stone-900 text-sm group-hover:text-orange-600 transition-colors">{movie.title}</p>
-              <p className="text-xs text-stone-400">{movie.year} · {movie.genres?.slice(0,2).join(", ")}</p>
-              {movie.tmdb_rating > 0 && <p className="text-xs text-stone-400">{Math.round(movie.tmdb_rating * 10)}</p>}
+        {editing ? (
+          <div className="space-y-3 mb-4">
+            <input
+              value={editTitle}
+              onChange={e => setEditTitle(e.target.value)}
+              className="w-full text-xl font-black text-stone-900 border-b border-stone-300 focus:outline-none focus:border-orange-400 pb-1 bg-transparent"
+            />
+            <textarea
+              value={editContent}
+              onChange={e => setEditContent(e.target.value)}
+              rows={6}
+              className="w-full text-sm text-stone-700 border border-stone-200 rounded-xl p-3 focus:outline-none focus:border-orange-400 resize-none"
+            />
+            <div className="flex gap-2">
+              <button onClick={saveEdit} disabled={!editTitle.trim() || savingEdit}
+                className="bg-orange-600 text-white font-bold text-xs px-4 py-2 rounded-full hover:bg-orange-500 transition-colors disabled:opacity-40">
+                {savingEdit ? "Saving…" : "Save"}
+              </button>
+              <button onClick={() => setEditing(false)}
+                className="text-xs text-stone-500 hover:text-stone-800 font-medium px-4 py-2 rounded-full border border-stone-200 hover:border-stone-300 transition-colors">
+                Cancel
+              </button>
             </div>
-          </Link>
+          </div>
+        ) : (
+          <>
+            <h1 className="text-xl font-black text-stone-900 mb-3">{post.title}</h1>
+
+            {/* Movie card for reviews */}
+            {movie && post.post_type === "review" && (
+              <Link href={`/movies/${movie.id}`} className="flex items-center gap-3 bg-stone-50 border border-stone-200 rounded-xl p-3 mb-4 hover:border-orange-200 transition-colors group">
+                {movie.poster_url && <img src={movie.poster_url} className="w-10 h-14 rounded-lg object-cover" alt=""/>}
+                <div>
+                  <p className="font-semibold text-stone-900 text-sm group-hover:text-orange-600 transition-colors">{movie.title}</p>
+                  <p className="text-xs text-stone-400">{movie.year} · {movie.genres?.slice(0,2).join(", ")}</p>
+                  {movie.tmdb_rating > 0 && <p className="text-xs text-stone-400">{Math.round(movie.tmdb_rating * 10)}</p>}
+                </div>
+              </Link>
+            )}
+
+            {/* Content */}
+            <p className="text-stone-700 text-sm leading-relaxed whitespace-pre-wrap mb-4">{post.content}</p>
+          </>
         )}
 
-        {/* Content */}
-        <p className="text-stone-700 text-sm leading-relaxed whitespace-pre-wrap mb-4">{post.content}</p>
-
         {/* Author + meta */}
-        <div className="flex items-center justify-between">
-          <Link href={`/people/${post.user_id}`} className="flex items-center gap-2 group">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xs font-black">{initials}</div>
-            <div>
-              <p className="text-xs font-semibold text-stone-700 group-hover:text-orange-600 transition-colors">{authorName}</p>
-              <p className="text-[10px] text-stone-400">{timeAgo(post.created_at)}</p>
-            </div>
-          </Link>
+        {!editing && (
+          <div className="flex items-center justify-between">
+            <Link href={`/people/${post.user_id}`} className="flex items-center gap-2 group">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xs font-black">{initials}</div>
+              <div>
+                <p className="text-xs font-semibold text-stone-700 group-hover:text-orange-600 transition-colors">{authorName}</p>
+                <p className="text-[10px] text-stone-400">{timeAgo(post.created_at)}</p>
+              </div>
+            </Link>
 
-          {/* Wah Wah */}
-          <WahWahButton targetType="post" targetId={id} initialCount={post.upvotes} initialVoted={voted} size="md" />
-        </div>
+            {/* Wah Wah */}
+            <WahWahButton targetType="post" targetId={id} initialCount={post.upvotes} initialVoted={voted} size="md" />
+          </div>
+        )}
       </div>
+
+      {/* Delete confirm */}
+      {confirmDelete && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+            <h3 className="font-bold text-stone-900 mb-2">Delete post?</h3>
+            <p className="text-sm text-stone-500 mb-5">This can't be undone. All comments will also be removed.</p>
+            <div className="flex gap-3">
+              <button onClick={deletePost}
+                className="flex-1 bg-red-500 text-white font-bold text-sm py-2 rounded-full hover:bg-red-600 transition-colors">
+                Delete
+              </button>
+              <button onClick={() => setConfirmDelete(false)}
+                className="flex-1 border border-stone-200 text-stone-600 font-medium text-sm py-2 rounded-full hover:bg-stone-50 transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Comments */}
       <div className="mb-4">
@@ -178,14 +283,44 @@ export default function PostPage() {
           {comments.map(c => {
             const name = c.profile?.display_name || c.profile?.email?.split("@")[0] || "Someone";
             const ini  = name.slice(0,2).toUpperCase();
+            const isOwn = user?.id === c.user_id;
             return (
               <div key={c.id} className="bg-white border border-stone-200 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-[9px] font-black">{ini}</div>
                   <span className="text-xs font-semibold text-stone-700">{name}</span>
                   <span className="text-[10px] text-stone-400">{timeAgo(c.created_at)}</span>
+                  {isOwn && editingComment !== c.id && (
+                    <div className="ml-auto flex gap-2">
+                      <button onClick={() => { setEditingComment(c.id); setEditCommentText(c.content); }}
+                        className="text-[10px] text-stone-400 hover:text-orange-600 font-medium transition-colors">Edit</button>
+                      <button onClick={() => deleteComment(c.id)}
+                        className="text-[10px] text-stone-400 hover:text-red-500 font-medium transition-colors">Delete</button>
+                    </div>
+                  )}
                 </div>
-                <p className="text-stone-700 text-sm leading-relaxed whitespace-pre-wrap">{c.content}</p>
+                {editingComment === c.id ? (
+                  <div className="space-y-2">
+                    <textarea
+                      value={editCommentText}
+                      onChange={e => setEditCommentText(e.target.value)}
+                      rows={3}
+                      className="w-full text-sm text-stone-900 border border-stone-200 rounded-lg p-2 focus:outline-none focus:border-orange-400 resize-none"
+                    />
+                    <div className="flex gap-2">
+                      <button onClick={() => saveEditComment(c.id)} disabled={!editCommentText.trim()}
+                        className="bg-orange-600 text-white font-bold text-xs px-3 py-1.5 rounded-full hover:bg-orange-500 transition-colors disabled:opacity-40">
+                        Save
+                      </button>
+                      <button onClick={() => setEditingComment(null)}
+                        className="text-xs text-stone-500 hover:text-stone-800 font-medium">
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-stone-700 text-sm leading-relaxed whitespace-pre-wrap">{c.content}</p>
+                )}
               </div>
             );
           })}

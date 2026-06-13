@@ -52,6 +52,7 @@ export default function CommunityPage() {
   const [badgeStats,   setBadgeStats]   = useState({});
   const [earnedBadges, setEarnedBadges] = useState(new Set());
   const [loading,      setLoading]      = useState(true);
+  const [menuOpen,     setMenuOpen]     = useState(null); // item key
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
@@ -178,6 +179,13 @@ export default function CommunityPage() {
     setLoading(false);
   }
 
+  async function deleteItem(item) {
+    setMenuOpen(null);
+    const table = item._type === "list" ? "community_lists" : item._type === "poll" ? "community_polls" : "community_posts";
+    await supabase.from(table).delete().eq("id", item.id);
+    setItems(prev => prev.filter(i => !(i._type === item._type && i.id === item.id)));
+  }
+
   const filtered = items.filter(item => {
     if (typeFilter !== "all" && item._kind !== typeFilter) return false;
     const q = search.trim().toLowerCase();
@@ -186,7 +194,7 @@ export default function CommunityPage() {
   });
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
+    <div className="max-w-2xl mx-auto px-4 py-8 bg-stone-50 min-h-screen" onClick={() => setMenuOpen(null)}>
 
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -313,9 +321,11 @@ export default function CommunityPage() {
           ) : filtered.map(item => {
             const name     = item.profile?.display_name || item.profile?.email?.split("@")[0] || "Someone";
             const initials = name.slice(0, 2).toUpperCase();
+            const itemKey  = `${item._type}-${item.id}`;
+            const isOwn    = user?.id === item.user_id;
 
             return (
-              <div key={`${item._type}-${item.id}`} className="bg-white border border-stone-200 rounded-2xl p-4 hover:border-stone-300 transition-all">
+              <div key={itemKey} className="bg-white border border-stone-200 rounded-2xl p-4 hover:border-stone-300 transition-all">
                 <div className="flex items-start gap-3">
                   {/* Upvote */}
                   <div className="shrink-0 pt-0.5">
@@ -343,6 +353,29 @@ export default function CommunityPage() {
                           {item.movie.poster_url && <img src={item.movie.poster_url} className="w-3 h-4 rounded object-cover" alt=""/>}
                           {item.movie.title}
                         </Link>
+                      )}
+                      {isOwn && (
+                        <div className="ml-auto relative shrink-0">
+                          <button onClick={e => { e.stopPropagation(); setMenuOpen(menuOpen === itemKey ? null : itemKey); }}
+                            className="w-6 h-6 flex items-center justify-center rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                          </button>
+                          {menuOpen === itemKey && (
+                            <div className="absolute right-0 top-full mt-1 w-32 bg-white border border-stone-200 rounded-xl shadow-lg z-10 py-1" onClick={e => e.stopPropagation()}>
+                              {item._type === "post" && (
+                                <Link href={item.href}
+                                  onClick={() => setMenuOpen(null)}
+                                  className="block w-full text-left px-3 py-2 text-xs text-stone-700 hover:bg-stone-50 transition-colors">
+                                  Edit
+                                </Link>
+                              )}
+                              <button onClick={() => deleteItem(item)}
+                                className="block w-full text-left px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors">
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
 

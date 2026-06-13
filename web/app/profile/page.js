@@ -6,6 +6,8 @@ import Link from "next/link";
 import { createClient } from "../../lib/supabase-browser";
 import { BADGES } from "../../lib/badges";
 import WatchlistButton from "../components/WatchlistButton";
+import RatingModal from "../components/RatingModal";
+import { languageName } from "../../lib/languages";
 
 const RATING_LABELS = { 5: "Loved", 4: "Liked", 3: "Okay", 2: "Didn't like", 1: "Hated" };
 const RATING_EMOJI  = { 5: "😍", 4: "😊", 3: "😐", 2: "😕", 1: "😡" };
@@ -27,7 +29,15 @@ export default function ProfilePage() {
   const [loading,     setLoading]     = useState(true);
   const [tab,          setTab]          = useState("Films");
   const [filter,       setFilter]       = useState(0);
-  const [badgesOpen,   setBadgesOpen]   = useState(false);
+  const [badgesOpen,    setBadgesOpen]    = useState(false);
+  const [editingMovie,  setEditingMovie]  = useState(null);
+  const [editProfile,   setEditProfile]   = useState(false);
+  const [editName,      setEditName]      = useState("");
+  const [editUsername,  setEditUsername]  = useState("");
+  const [profileSaving,   setProfileSaving]   = useState(false);
+  const [profileError,    setProfileError]    = useState("");
+  const [avatarPreview,   setAvatarPreview]   = useState(null); // data URL for preview
+  const [avatarFile,      setAvatarFile]      = useState(null); // File object to upload
 
   useEffect(() => {
     async function load() {
@@ -78,6 +88,52 @@ export default function ProfilePage() {
   const loved      = rated.filter((r) => r.rating === 5).length;
   const avgRating  = rated.length ? (rated.reduce((s, r) => s + r.rating, 0) / rated.length).toFixed(1) : "—";
 
+  async function saveProfile() {
+    if (!user) return;
+    setProfileSaving(true);
+    setProfileError("");
+    const name = editName.trim();
+    const uname = editUsername.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
+
+    if (uname && uname !== profile?.username) {
+      const { data: existing } = await supabase
+        .from("user_profiles").select("user_id").eq("username", uname).single();
+      if (existing) {
+        setProfileError("That username is already taken.");
+        setProfileSaving(false);
+        return;
+      }
+    }
+
+    let pictureUrl = profile?.profile_picture_url ?? null;
+    if (avatarFile) {
+      const ext = avatarFile.name.split(".").pop();
+      const path = `${user.id}.${ext}`;
+      const { error } = await supabase.storage.from("avatars").upload(path, avatarFile, { upsert: true });
+      if (error) {
+        setProfileError("Photo upload failed. Please try again.");
+        setProfileSaving(false);
+        return;
+      }
+      const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
+      pictureUrl = urlData.publicUrl;
+    }
+
+    await supabase.from("user_profiles").upsert({
+      user_id:             user.id,
+      display_name:        name || null,
+      username:            uname || null,
+      profile_picture_url: pictureUrl,
+    }, { onConflict: "user_id" });
+
+    const { data } = await supabase.from("user_profiles").select("*").eq("user_id", user.id).single();
+    setProfile(data);
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    setProfileSaving(false);
+    setEditProfile(false);
+  }
+
   const displayName  = profile?.display_name || user.email?.split("@")[0] || "You";
   const username     = profile?.username ? `@${profile.username}` : null;
   const initials     = displayName.slice(0, 2).toUpperCase();
@@ -91,9 +147,11 @@ export default function ProfilePage() {
 
       {/* Quick actions */}
       <div className="flex gap-2 mb-6 flex-wrap">
-        <Link href="/wrapped" className="flex items-center gap-2 bg-gradient-to-r from-orange-400 to-rose-400 text-white font-bold text-sm px-5 py-3 rounded-full hover:shadow-lg transition-all">
-          <span>✨</span> Your 2026 Wrapped
-        </Link>
+        {new Date().getMonth() === 11 && (
+          <Link href="/wrapped" className="flex items-center gap-2 bg-gradient-to-r from-orange-400 to-rose-400 text-white font-bold text-sm px-5 py-3 rounded-full hover:shadow-lg transition-all">
+            <span>✨</span> Your 2026 Wrapped
+          </Link>
+        )}
         <Link href="/taste-profile" className="flex items-center gap-2 bg-white border-2 border-orange-400 text-orange-600 font-bold text-sm px-5 py-3 rounded-full hover:bg-orange-50 transition-all">
           Taste Profile
         </Link>
@@ -106,12 +164,25 @@ export default function ProfilePage() {
 
       {/* Profile header */}
       <div className="flex items-start gap-4 mb-8">
-        <div className="w-18 h-18 w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xl font-black shrink-0">
-          {initials}
+        <div className="w-16 h-16 rounded-full shrink-0 overflow-hidden bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center">
+          {profile?.profile_picture_url
+            ? <img src={profile.profile_picture_url} alt={displayName} className="w-full h-full object-cover" />
+            : <span className="text-white text-xl font-black">{initials}</span>
+          }
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl font-black text-stone-900">{displayName}</h1>
+            <button
+              onClick={() => { setEditName(profile?.display_name || ""); setEditUsername(profile?.username || ""); setProfileError(""); setEditProfile(true); }}
+              className="text-stone-300 hover:text-stone-500 transition-colors"
+              title="Edit profile"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
             {streak > 0 && (
               <span className="flex items-center gap-1 bg-orange-50 border border-orange-200 text-orange-600 text-xs font-bold px-2.5 py-1 rounded-full">
                 🔥 {streak} week streak
@@ -284,29 +355,41 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="space-y-2">
-              {[...rated].filter((r) => r.score != null).sort((a, b) => b.score - a.score).map((r, i) => {
+              {[...reactions].filter((r) => r.score != null).sort((a, b) => b.score - a.score).map((r, i) => {
                 const movie = r.movies;
                 if (!movie) return null;
-                const score = Math.round(r.score);
-                const scoreColor = r.rating === 5 ? "text-rose-600" : r.rating === 4 ? "text-orange-600" : "text-stone-500";
-                const barColor   = r.rating === 5 ? "bg-rose-500"  : r.rating === 4 ? "bg-orange-500"  : "bg-stone-300";
+                const score      = Math.round(r.score);
+                const scoreColor = score >= 80 ? "text-rose-600" : score >= 60 ? "text-orange-600" : "text-stone-500";
+                const barColor   = score >= 80 ? "bg-rose-500"   : score >= 60 ? "bg-orange-500"   : "bg-stone-300";
                 return (
-                  <Link key={movie.id} href={`/movies/${movie.id}`} className="flex items-center gap-4 bg-white border border-stone-200 rounded-2xl p-3 hover:border-stone-300 hover:shadow-sm transition-all group">
-                    <span className="text-stone-400 text-sm font-bold w-6 text-center shrink-0">#{i + 1}</span>
-                    <div className="w-10 h-14 rounded-lg overflow-hidden bg-stone-100 shrink-0">
-                      {movie.poster_url ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center">🎬</div>}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-stone-900 group-hover:text-orange-600 transition-colors truncate">{movie.title}</p>
-                      <p className="text-xs text-stone-400">{movie.year}</p>
-                    </div>
-                    <div className="shrink-0 flex flex-col items-end gap-1.5">
-                      <p className={`text-lg font-black ${scoreColor}`}>{score}</p>
-                      <div className="w-16 h-1.5 bg-stone-100 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full ${barColor}`} style={{ width: `${score}%` }} />
+                  <div key={movie.id} className="flex items-center gap-2 bg-white border border-stone-200 rounded-2xl p-3 hover:border-stone-300 hover:shadow-sm transition-all group">
+                    <Link href={`/movies/${movie.id}`} className="flex items-center gap-3 flex-1 min-w-0">
+                      <span className="text-stone-400 text-sm font-bold w-6 text-center shrink-0">#{i + 1}</span>
+                      <div className="w-10 h-14 rounded-lg overflow-hidden bg-stone-100 shrink-0">
+                        {movie.poster_url ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center">🎬</div>}
                       </div>
-                    </div>
-                  </Link>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-stone-900 group-hover:text-orange-600 transition-colors truncate">{movie.title}</p>
+                        <p className="text-xs text-stone-400">{movie.year}{movie.genres?.length > 0 && ` · ${movie.genres.slice(0, 2).join(", ")}`}</p>
+                      </div>
+                      <div className="shrink-0 flex flex-col items-end gap-1.5">
+                        <p className={`text-lg font-black ${scoreColor}`}>{score}</p>
+                        <div className="w-14 h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                          <div className={`h-full rounded-full ${barColor}`} style={{ width: `${score}%` }} />
+                        </div>
+                      </div>
+                    </Link>
+                    <button
+                      onClick={() => setEditingMovie({ ...movie, currentRating: r.rating })}
+                      className="text-stone-300 hover:text-orange-500 transition-colors shrink-0 pl-1"
+                      title="Edit rating"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                      </svg>
+                    </button>
+                  </div>
                 );
               })}
               <div className="text-center pt-4">
@@ -315,6 +398,29 @@ export default function ProfilePage() {
                 </Link>
               </div>
             </div>
+          )}
+
+          {editingMovie && (
+            <RatingModal
+              movieId={editingMovie.id}
+              movieTitle={editingMovie.title}
+              posterUrl={editingMovie.poster_url}
+              onClose={() => setEditingMovie(null)}
+              onRated={(newRating) => {
+                supabase.from("user_reactions").select("rating, score").eq("user_id", user.id).eq("movie_id", editingMovie.id).single()
+                  .then(({ data }) => {
+                    if (!data) return;
+                    setReactions((prev) => prev.map((r) =>
+                      r.movies?.id === editingMovie.id ? { ...r, rating: data.rating, score: data.score } : r
+                    ));
+                  });
+                setEditingMovie(null);
+              }}
+              onDeleted={() => {
+                setReactions((prev) => prev.filter((r) => r.movies?.id !== editingMovie.id));
+                setEditingMovie(null);
+              }}
+            />
           )}
         </div>
       )}
@@ -350,6 +456,23 @@ export default function ProfilePage() {
               </Link>
             </div>
           )}
+          {profile?.preferred_languages?.length > 0 && (
+            <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm mb-3">
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-xs text-stone-400 uppercase tracking-widest font-medium">Language Preferences</p>
+                <Link href="/onboarding" className="text-xs text-orange-600 hover:underline">Edit</Link>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {profile.preferred_languages.map((code, idx) => (
+                  <div key={code} className="flex items-center gap-2 bg-stone-50 border border-stone-200 rounded-full px-3 py-1.5">
+                    <span className="text-[10px] font-bold text-stone-400 w-4 text-center">#{idx + 1}</span>
+                    <span className="text-sm font-medium text-stone-700">{languageName(code)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {rated.length > 0 && (() => {
             const genreCounts = {};
             rated.forEach((r) => (r.movies?.genres ?? []).forEach((g) => { genreCounts[g] = (genreCounts[g] ?? 0) + 1; }));
@@ -458,6 +581,91 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
+      )}
+      {/* Edit Profile modal */}
+      {editProfile && (
+        <>
+          <div className="fixed inset-0 bg-black/40 z-40" onClick={() => { setEditProfile(false); setAvatarFile(null); setAvatarPreview(null); }} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="font-bold text-stone-900 text-base">Edit Profile</h2>
+                <button onClick={() => { setEditProfile(false); setAvatarFile(null); setAvatarPreview(null); }} className="text-stone-400 hover:text-stone-600 transition-colors">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
+
+              {/* Avatar picker */}
+              <div className="flex justify-center mb-5">
+                <label className="relative cursor-pointer group">
+                  <div className="w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center">
+                    {avatarPreview || profile?.profile_picture_url
+                      ? <img src={avatarPreview || profile.profile_picture_url} alt="" className="w-full h-full object-cover" />
+                      : <span className="text-white text-2xl font-black">{initials}</span>
+                    }
+                  </div>
+                  <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                      <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setAvatarFile(file);
+                      const reader = new FileReader();
+                      reader.onload = (ev) => setAvatarPreview(ev.target.result);
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                </label>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-stone-500 uppercase tracking-widest mb-1.5">Display name</label>
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    placeholder={user?.email?.split("@")[0]}
+                    maxLength={40}
+                    className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-stone-500 uppercase tracking-widest mb-1.5">Username</label>
+                  <div className="flex items-center border border-stone-200 rounded-xl px-4 py-2.5 focus-within:border-orange-400 focus-within:ring-2 focus-within:ring-orange-100 transition-all">
+                    <span className="text-stone-400 text-sm mr-1">@</span>
+                    <input
+                      type="text"
+                      value={editUsername}
+                      onChange={(e) => setEditUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))}
+                      placeholder="yourhandle"
+                      maxLength={30}
+                      className="flex-1 text-sm text-stone-900 placeholder-stone-400 focus:outline-none bg-transparent"
+                    />
+                  </div>
+                  <p className="text-xs text-stone-400 mt-1">Letters, numbers, underscores only</p>
+                </div>
+                {profileError && <p className="text-xs text-red-500">{profileError}</p>}
+              </div>
+
+              <button
+                onClick={saveProfile}
+                disabled={profileSaving}
+                className="mt-6 w-full bg-stone-900 text-white font-bold py-3 rounded-xl hover:bg-stone-800 transition-colors text-sm disabled:opacity-40"
+              >
+                {profileSaving ? "Saving…" : "Save"}
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

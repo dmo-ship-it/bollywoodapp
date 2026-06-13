@@ -26,6 +26,19 @@ const FREQUENCIES  = [
 ];
 const PLATFORMS = ["Netflix", "Amazon Prime", "Disney+ Hotstar", "Zee5", "SonyLIV", "Jio Cinema", "Cinema hall", "Other"];
 
+const LANGUAGES = [
+  { code: "hi", label: "Hindi"     },
+  { code: "ta", label: "Tamil"     },
+  { code: "te", label: "Telugu"    },
+  { code: "ml", label: "Malayalam" },
+  { code: "kn", label: "Kannada"   },
+  { code: "mr", label: "Marathi"   },
+  { code: "bn", label: "Bengali"   },
+  { code: "pa", label: "Punjabi"   },
+  { code: "gu", label: "Gujarati"  },
+  { code: "en", label: "English"   },
+];
+
 const COUNTRIES = [
   { code: "IN", label: "India" },
   { code: "US", label: "United States" },
@@ -83,6 +96,7 @@ export default function TasteProfilePage() {
   const [surveyActors,    setSurveyActors]    = useState([]); // [{id, name, photo_url}]
   const [surveyDirectors, setSurveyDirectors] = useState([]);
   const [surveyFrequency, setSurveyFrequency] = useState("");
+  const [surveyLanguages, setSurveyLanguages] = useState([]);
   const [surveyPlatforms, setSurveyPlatforms] = useState([]);
   const [personQuery,     setPersonQuery]     = useState("");
   const [personResults,   setPersonResults]   = useState([]);
@@ -112,6 +126,7 @@ export default function TasteProfilePage() {
         setSurveyGender(profile.gender || "");
         setSurveyCountry(profile.country || "");
         setSurveyCity(profile.city || "");
+        setSurveyLanguages(profile.preferred_languages || []);
         setSurveyFrequency(profile.watching_frequency || "");
         setSurveyPlatforms(profile.preferred_platforms || []);
         if (profile.favorite_actors?.length)
@@ -224,6 +239,7 @@ export default function TasteProfilePage() {
       favorite_actors:     surveyActors.length  ? surveyActors.map((a) => a.name)  : null,
       favorite_directors:  surveyDirectors.length ? surveyDirectors.map((d) => d.name) : null,
       watching_frequency:  surveyFrequency || null,
+      preferred_languages: surveyLanguages.length ? surveyLanguages : null,
       preferred_platforms: surveyPlatforms.length ? surveyPlatforms : null,
     }, { onConflict: "user_id" });
     const { data } = await supabase.from("user_profiles").select("*").eq("user_id", user.id).single();
@@ -551,6 +567,33 @@ export default function TasteProfilePage() {
                     {g}
                   </button>
                 ))}
+              </div>
+            </div>
+
+            <div className="mb-5">
+              <p className="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-2">Languages you watch</p>
+              <p className="text-xs text-stone-400 mb-3">Select in order of preference — first selected = #1.</p>
+              <div className="flex flex-wrap gap-2">
+                {LANGUAGES.map((l) => {
+                  const rank = surveyLanguages.indexOf(l.code);
+                  const selected = rank !== -1;
+                  return (
+                    <button
+                      key={l.code}
+                      onClick={() => setSurveyLanguages((prev) =>
+                        selected ? prev.filter((c) => c !== l.code) : [...prev, l.code]
+                      )}
+                      className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                        selected
+                          ? "border-orange-400 bg-orange-50 text-orange-700"
+                          : "border-stone-200 bg-stone-50 text-stone-600 hover:border-stone-300"
+                      }`}
+                    >
+                      {selected && <span className="text-[10px] font-bold opacity-70">#{rank + 1}</span>}
+                      {l.label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
