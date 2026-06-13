@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "../../lib/supabase-browser";
 import { BADGES } from "../../lib/badges";
-import WahWahButton from "../components/WahWahButton";
+import VoteButton from "../components/VoteButton";
 import Link from "next/link";
 import { FeedContent } from "../feed/page";
 import { LeaderboardsContent } from "../leaderboards/page";
@@ -48,7 +48,7 @@ export default function CommunityPage() {
   const [typeFilter,   setTypeFilter]   = useState("all");
   const [showFilter,   setShowFilter]   = useState(false);
   const [items,        setItems]        = useState([]);   // merged posts + lists + polls
-  const [myVotes,      setMyVotes]      = useState(new Set());
+  const [myVoteMap,    setMyVoteMap]    = useState({}); // "type-id" → 'up'|'down'
   const [badgeStats,   setBadgeStats]   = useState({});
   const [earnedBadges, setEarnedBadges] = useState(new Set());
   const [loading,      setLoading]      = useState(true);
@@ -116,14 +116,14 @@ export default function CommunityPage() {
       { data: movies },
       { data: listItems },
       { data: postVotes },
-      { data: listVotes },
+      ,
       { data: myPollResponses },
     ] = await Promise.all([
       supabase.from("user_profiles").select("user_id,display_name,email").in("user_id", userIds),
       movieIds.length ? supabase.from("movies").select("id,title,poster_url,year").in("id", movieIds) : { data: [] },
       listIds.length  ? supabase.from("community_list_items").select("list_id,movies(id,poster_url)").in("list_id", listIds).order("position").limit(300) : { data: [] },
-      user ? supabase.from("community_votes").select("target_id").eq("user_id", user.id).eq("target_type", "post") : { data: [] },
-      user ? supabase.from("community_votes").select("target_id").eq("user_id", user.id).eq("target_type", "list") : { data: [] },
+      user ? supabase.from("community_votes").select("target_id,target_type,vote_type").eq("user_id", user.id).in("target_type", ["post","list"]) : { data: [] },
+      { data: [] }, // placeholder (list votes merged above)
       user && pollIds.length ? supabase.from("community_poll_responses").select("poll_id").eq("user_id", user.id).in("poll_id", pollIds) : { data: [] },
     ]);
 
@@ -133,11 +133,9 @@ export default function CommunityPage() {
     (listItems ?? []).forEach(i => { if (!itemsByList[i.list_id]) itemsByList[i.list_id] = []; itemsByList[i.list_id].push(i); });
     const respondedPolls = new Set((myPollResponses ?? []).map(r => r.poll_id));
 
-    const allVotes = new Set([
-      ...(postVotes ?? []).map(v => v.target_id),
-      ...(listVotes ?? []).map(v => v.target_id),
-    ]);
-    setMyVotes(allVotes);
+    const voteMap = {};
+    (postVotes ?? []).forEach(v => { voteMap[`${v.target_type}-${v.target_id}`] = v.vote_type; });
+    setMyVoteMap(voteMap);
 
     // Build unified items array
     const merged = [
@@ -184,6 +182,34 @@ export default function CommunityPage() {
     const table = item._type === "list" ? "community_lists" : item._type === "poll" ? "community_polls" : "community_posts";
     await supabase.from(table).delete().eq("id", item.id);
     setItems(prev => prev.filter(i => !(i._type === item._type && i.id === item.id)));
+  }
+
+  async function voteItem(item, type) {
+    if (!user) { window.location.href = "/login"; return; }
+    const key     = `${item._type}-${item.id}`;
+    const prev    = myVoteMap[key] ?? null;
+    const newVote = prev === type ? null : type;
+
+    let upDelta = 0;
+    if (prev === "up")    upDelta--;
+    if (newVote === "up") upDelta++;
+    // For the list card score we just track upvotes (displayed as simple count)
+    setMyVoteMap(m => ({ ...m, [key]: newVote }));
+    setItems(prev => prev.map(i => i._type === item._type && i.id === item.id
+      ? { ...i, upvotes: Math.max(0, (i.upvotes ?? 0) + upDelta) }
+      : i));
+
+    const targetType = item._type === "list" ? "list" : "post";
+    await supabase.from("community_votes").delete()
+      .eq("user_id", user.id).eq("target_type", targetType).eq("target_id", item.id);
+    if (newVote) {
+      await supabase.from("community_votes")
+        .insert({ user_id: user.id, target_type: targetType, target_id: item.id, vote_type: newVote });
+    }
+    const countTable = item._type === "list" ? "community_lists" : "community_posts";
+    await supabase.from(countTable)
+      .update({ upvotes: Math.max(0, (item.upvotes ?? 0) + upDelta) })
+      .eq("id", item.id);
   }
 
   const filtered = items.filter(item => {
@@ -327,16 +353,13 @@ export default function CommunityPage() {
             return (
               <div key={itemKey} className="bg-white border border-stone-200 rounded-2xl p-4 hover:border-stone-300 transition-all">
                 <div className="flex items-start gap-3">
-                  {/* Upvote */}
-                  <div className="shrink-0 pt-0.5">
-                    <WahWahButton
-                      targetType={item._type === "list" ? "list" : "post"}
-                      targetId={item.id}
-                      initialCount={item.upvotes}
-                      initialVoted={myVotes.has(item.id)}
-                      size="sm"
-                    />
-                  </div>
+                  {/* Vote column */}
+                  <VoteButton
+                    score={item.upvotes ?? 0}
+                    myVote={myVoteMap[itemKey] ?? null}
+                    onVote={t => voteItem(item, t)}
+                    layout="vertical"
+                  />
 
                   <div className="flex-1 min-w-0">
                     {/* Type badge row */}
