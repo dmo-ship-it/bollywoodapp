@@ -18,6 +18,7 @@ export default function NewCommunityPost() {
   const [description,  setDescription]  = useState("");
   const [isRanked,     setIsRanked]     = useState(false);
   const [maxPicks,     setMaxPicks]     = useState(3);     // for polls
+  const [pollSubject,  setPollSubject]  = useState("movies"); // "movies" | "people"
   const [movieQuery,   setMovieQuery]   = useState("");
   const [movieResults, setMovieResults] = useState([]);
   const [linkedMovie,  setLinkedMovie]  = useState(null);  // for reviews
@@ -91,6 +92,7 @@ export default function NewCommunityPost() {
         user_id: user.id, title: title.trim(),
         description: description.trim() || null,
         max_picks: maxPicks,
+        poll_subject: pollSubject,
       }).select("id").single();
       if (!error && poll) router.push(`/community/polls/${poll.id}`);
     } else {
@@ -198,7 +200,7 @@ export default function NewCommunityPost() {
               </div>
               <button type="button" onClick={() => setIsRanked(r => !r)}
                 className={`w-11 h-6 rounded-full transition-colors relative ${isRanked ? "bg-orange-600" : "bg-stone-200"}`}>
-                <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${isRanked ? "translate-x-5" : "translate-x-0.5"}`}/>
+                <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${isRanked ? "translate-x-5" : "translate-x-0"}`}/>
               </button>
             </div>
 
@@ -261,8 +263,28 @@ export default function NewCommunityPost() {
                 placeholder="Any extra context for the poll…"
                 className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-all text-sm resize-none"/>
             </div>
+
+            {/* Subject type */}
             <div>
-              <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">How many films can each person pick?</label>
+              <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">People pick from…</label>
+              <div className="flex gap-2">
+                {[
+                  { id: "movies", label: "🎬 Films"  },
+                  { id: "people", label: "🎭 People" },
+                ].map(s => (
+                  <button key={s.id} type="button" onClick={() => setPollSubject(s.id)}
+                    className={`flex-1 py-2 rounded-xl border text-sm font-semibold transition-all ${pollSubject === s.id ? "bg-violet-600 text-white border-violet-600" : "bg-white border-stone-200 text-stone-600 hover:border-stone-300"}`}>
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Max picks */}
+            <div>
+              <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">
+                How many {pollSubject === "people" ? "people" : "films"} can each person pick?
+              </label>
               <div className="flex gap-2">
                 {[1, 2, 3, 5, 10].map(n => (
                   <button key={n} type="button" onClick={() => setMaxPicks(n)}
@@ -271,7 +293,7 @@ export default function NewCommunityPost() {
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-stone-400 mt-2">Each person can pick up to {maxPicks} film{maxPicks !== 1 ? "s" : ""}. Results show the most-picked films across all voters.</p>
+              <p className="text-xs text-stone-400 mt-2">Results show the most-picked {pollSubject === "people" ? "people" : "films"} across all voters.</p>
             </div>
           </>
         )}
