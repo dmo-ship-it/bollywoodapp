@@ -324,17 +324,122 @@ function labelFor(tag) {
  * every tag dimension. Each recommendation carries a `tasteMatchScore`, a
  * normalized `matchPct` (0-100), and `matchReasons` explaining the top drivers.
  */
+// Per dimension, return the tags of a candidate film as an array. Shared by the
+// recommendation engine and the per-card personalized scorer.
+const DIM_TAGS = {
+  themes:           (m) => m.themes || [],
+  tone:             (m) => m.tone || [],
+  comedy_style:     (m) => (m.comedy_style ? [m.comedy_style] : []),
+  realism:          (m) => (m.realism ? [m.realism] : []),
+  setting_tags:     (m) => m.setting_tags || [],
+  notable_elements: (m) => m.notable_elements || [],
+  genres:           (m) => m.genres || [],
+  language:         (m) => (m.language ? [m.language] : []),
+  era:              (m) => (m.year ? [`${Math.floor(m.year / 10) * 10}s`] : []),
+};
+
+// A median loved film maps to this score; exceptional matches reach ~100. Keeping
+// the baseline below 100 leaves headroom so "for you" scores spread realistically
+// instead of pinning everything at 100.
+const PERSONAL_BASELINE_TARGET = 85;
+
+// Map a calibrated ratio (candidate score ÷ loved-film baseline) to a 0-100 score.
+function personalScoreFromRatio(ratio) {
+  return Math.max(0, Math.min(100, Math.round(ratio * PERSONAL_BASELINE_TARGET)));
+}
+
+// Score a single movie against a set of affinities. Returns { score, contributions }.
+function scoreMovie(movie, affinities) {
+  let score = 0;
+  const contributions = [];
+  for (const dim of Object.keys(DIMENSION_WEIGHTS)) {
+    const weight = DIMENSION_WEIGHTS[dim];
+    const affinity = affinities[dim] || {};
+    for (const tag of DIM_TAGS[dim](movie)) {
+      const entry = affinity[tag];
+      if (!entry) continue;
+      const value = entry.score * weight;
+      score += value;
+      contributions.push({ dim, tag, value, affinity: entry });
+    }
+  }
+  return { score, contributions };
+}
+
+// Median taste-score across the user's loved films (4–5★). Used as the anchor for
+// "as well-matched as films you already loved". Returns 0 if there isn't enough
+// signal (fewer than 3 loved films) to calibrate confidently.
+function computeLovedBaseline(seenMovies, affinities) {
+  const lovedRated = seenMovies.filter((r) => r.movies && r.rating >= 4);
+  if (lovedRated.length < 3) return 0;
+  const lovedScores = lovedRated
+    .map((r) => scoreMovie(r.movies, affinities).score)
+    .sort((a, b) => a - b);
+  const mid = Math.floor(lovedScores.length / 2);
+  return lovedScores.length % 2 === 0
+    ? (lovedScores[mid - 1] + lovedScores[mid]) / 2
+    : lovedScores[mid];
+}
+
+/**
+ * Personalized 0-100 "for you" score for an arbitrary set of movies, calibrated
+ * to the user's own loved-film baseline. Returns a { movieId -> score } map.
+ *
+ * Returns {} when the user lacks enough taste signal (< 3 loved films) — callers
+ * should fall back to the global score in that case.
+ */
+export async function getPersonalizedScoreMap(userId, movieIds) {
+  if (!userId || !movieIds?.length) return {};
+  const supabase = createClient();
+  const profile = await getTasteProfile(userId);
+  if (!profile) return {};
+  const { affinities } = profile;
+
+  // Seen films (with enrichment) → loved-film baseline.
+  let { data: seenMovies } = await supabase
+    .from("user_reactions")
+    .select(`rating, movies(${MOVIE_FIELDS})`)
+    .eq("user_id", userId)
+    .gt("rating", 0);
+  seenMovies = seenMovies || [];
+
+  const lovedBaseline = computeLovedBaseline(seenMovies, affinities);
+  if (lovedBaseline <= 0) return {}; // not enough signal — caller uses global score
+
+  // Fetch enrichment for the requested movies (the home page only loads light cols).
+  let { data: movies } = await supabase
+    .from("movies")
+    .select(`${MOVIE_FIELDS}, global_score`)
+    .in("id", movieIds);
+  movies = movies || [];
+
+  const map = {};
+  for (const movie of movies) {
+    const { score: tasteScore } = scoreMovie(movie, affinities);
+    const quality = movie.global_score ? (movie.global_score / 100) * 0.5 : 0;
+    map[movie.id] = personalScoreFromRatio((tasteScore + quality) / lovedBaseline);
+  }
+  return map;
+}
+
+/**
+ * Recommend unseen films, scored against the user's signed affinities across
+ * every tag dimension. Each recommendation carries a `tasteMatchScore`, a
+ * normalized `matchPct` (0-100), and `matchReasons` explaining the top drivers.
+ */
 export async function getTasteBasedRecommendations(userId, { limit = 20 } = {}) {
   const supabase = createClient();
   const profile = await getTasteProfile(userId);
   if (!profile) return [];
 
-  const { data: seenMovies } = await supabase
+  // Fetch seen movies with their full fields so we can calibrate the scoring baseline.
+  let { data: seenMovies } = await supabase
     .from("user_reactions")
-    .select("movie_id")
+    .select(`movie_id, rating, movies(${MOVIE_FIELDS})`)
     .eq("user_id", userId)
     .gt("rating", 0);
-  const seenIds = seenMovies?.map((m) => m.movie_id) || [];
+  seenMovies = seenMovies || [];
+  const seenIds = seenMovies.map((m) => m.movie_id);
 
   const excludeIds = seenIds.length > 0 ? seenIds : ["00000000-0000-0000-0000-000000000000"];
   let { data: allMovies, error } = await supabase
@@ -355,59 +460,44 @@ export async function getTasteBasedRecommendations(userId, { limit = 20 } = {}) 
 
   const { affinities } = profile;
 
-  // Per dimension, return the tags of a candidate film as an array.
-  const dimTags = {
-    themes:           (m) => m.themes || [],
-    tone:             (m) => m.tone || [],
-    comedy_style:     (m) => (m.comedy_style ? [m.comedy_style] : []),
-    realism:          (m) => (m.realism ? [m.realism] : []),
-    setting_tags:     (m) => m.setting_tags || [],
-    notable_elements: (m) => m.notable_elements || [],
-    genres:           (m) => m.genres || [],
-    language:         (m) => (m.language ? [m.language] : []),
-    era:              (m) => (m.year ? [`${Math.floor(m.year / 10) * 10}s`] : []),
-  };
+  // ── Personal baseline: matchPct=100 means "as well-matched as films you
+  // already loved" — not just the best film in today's candidate pool.
+  const lovedBaseline = computeLovedBaseline(seenMovies, affinities);
 
   const scored = allMovies.map((movie) => {
-    let score = 0;
-    const contributions = []; // { dim, tag, value }
+    const { score: tasteScore, contributions } = scoreMovie(movie, affinities);
 
-    for (const dim of Object.keys(DIMENSION_WEIGHTS)) {
-      const weight = DIMENSION_WEIGHTS[dim];
-      const affinity = affinities[dim] || {};
-      for (const tag of dimTags[dim](movie)) {
-        const entry = affinity[tag];
-        if (!entry) continue;
-        const value = entry.score * weight;
-        score += value;
-        contributions.push({ dim, tag, value });
-      }
-    }
-
-    // Quality prior: a gentle pull toward well-regarded films, used mostly as a
-    // tiebreaker so two equally-matched films order by global score.
+    // Quality prior: gentle tiebreaker toward well-regarded films.
     const quality = movie.global_score ? (movie.global_score / 100) * 0.5 : 0;
-    score += quality;
+    const score = tasteScore + quality;
 
-    // Top positive drivers → human-readable reasons.
+    // Personalized match reasons: include user's avg rating for that tag so the
+    // reason reads as "yours" not generic.
     const matchReasons = contributions
       .filter((c) => c.value > 0)
       .sort((a, b) => b.value - a.value)
       .slice(0, 3)
-      .map((c) => labelFor(c.tag));
+      .map((c) => {
+        const label = labelFor(c.tag);
+        const avgR = c.affinity.avgRating;
+        // Show "Tag (★4.2)" only when there's meaningful personal data.
+        return c.affinity.count >= 2 && avgR
+          ? `${label} (★${Number(avgR).toFixed(1)})`
+          : label;
+      });
 
     return { ...movie, tasteMatchScore: score, _contributions: contributions, matchReasons };
   });
 
-  // Normalize scores to a 0-100 match percentage for display.
-  const positive = scored.filter((s) => s.tasteMatchScore > 0);
-  const maxScore = positive.reduce((mx, s) => Math.max(mx, s.tasteMatchScore), 0) || 1;
+  // ── Calibrated normalization against the user's own loved-film baseline.
+  // If we have a loved baseline, use it; otherwise fall back to pool max so the
+  // page is never empty for new users.
+  const positiveScored = scored.filter((s) => s.tasteMatchScore > 0);
+  const fallbackMax = positiveScored.reduce((mx, s) => Math.max(mx, s.tasteMatchScore), 0) || 1;
+  const anchor = lovedBaseline > 0 ? lovedBaseline : fallbackMax;
 
   return scored
-    .map((s) => ({
-      ...s,
-      matchPct: Math.max(0, Math.min(100, Math.round((s.tasteMatchScore / maxScore) * 100))),
-    }))
+    .map((s) => ({ ...s, matchPct: personalScoreFromRatio(s.tasteMatchScore / anchor) }))
     .sort((a, b) => {
       if (b.tasteMatchScore !== a.tasteMatchScore) return b.tasteMatchScore - a.tasteMatchScore;
       return (b.global_score || 0) - (a.global_score || 0);

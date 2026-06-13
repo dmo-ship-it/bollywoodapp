@@ -6,6 +6,16 @@ import WatchlistButton from "../../components/WatchlistButton";
 import RatingModal from "../../components/RatingModal";
 import ScoreCircle from "../../components/ScoreCircle";
 import { RATINGS } from "../../components/RatingModal";
+import { getPersonalizedScoreMap } from "../../../lib/taste";
+
+// Predicted "for you" score: content-based taste match (works with sparse data,
+// same engine as the Discover page) first, falling back to the collaborative
+// prediction when the user lacks enough taste signal.
+async function predictForYou(supabase, userId, movieId) {
+  const map = await getPersonalizedScoreMap(userId, [movieId]);
+  if (map[movieId] != null) return map[movieId];
+  return computePrediction(supabase, userId, movieId);
+}
 
 async function computePrediction(supabase, userId, movieId) {
   const [{ data: myRatings }, { data: movieRatings }] = await Promise.all([
@@ -121,7 +131,7 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
           setYourScore(r.score);
         } else {
           // Predict if not yet rated
-          computePrediction(supabase, u.id, movieId).then(setPredicted);
+          predictForYou(supabase, u.id, movieId).then(setPredicted);
         }
 
         // Friend score
@@ -221,7 +231,7 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
           onDeleted={() => {
             setCurrentRating(null);
             setYourScore(null);
-            computePrediction(supabase, user.id, movieId).then(setPredicted);
+            predictForYou(supabase, user.id, movieId).then(setPredicted);
           }}
         />
       )}

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { languageName } from "../lib/languages";
 import { supabase } from "../lib/supabase";
 import { createClient } from "../lib/supabase-browser";
+import { getPersonalizedScoreMap } from "../lib/taste";
 import MovieCard from "./components/MovieCard";
 import MovieRow from "./components/MovieRow";
 import HeroMovie from "./components/HeroMovie";
@@ -32,8 +33,15 @@ export default function HomePage() {
   const [filters,        setFilters]       = useState(EMPTY_FILTERS);
   const [filterOpen,     setFilterOpen]    = useState(false);
   const [seeAll,         setSeeAll]        = useState(null); // "new" | "trending" | "coming-soon" | "recommended" | null
-  const [userScores,     setUserScores]    = useState({});
+  const [userScores,     setUserScores]    = useState({});  // user's own rating-derived scores
+  const [personalScores, setPersonalScores]= useState({});  // predicted "for you" scores (taste match)
+  const [userId,         setUserId]        = useState(null);
   const [userWatchlist,  setUserWatchlist] = useState(new Set());
+
+  // The score shown on every card: the user's own score wins where they've rated,
+  // otherwise the personalized taste-match prediction. Falls back to global score
+  // (inside MovieCard) when the user has no taste signal yet.
+  const cardScores = useMemo(() => ({ ...personalScores, ...userScores }), [personalScores, userScores]);
 
   // Initial load — hero, curated sections, user data
   useEffect(() => {
@@ -67,6 +75,7 @@ export default function HomePage() {
     const browserSupabase = createClient();
     browserSupabase.auth.getUser().then(async ({ data }) => {
       if (!data.user) return;
+      setUserId(data.user.id);
       const [{ data: reactions }, { data: watchlist }, { data: profile }] = await Promise.all([
         browserSupabase
           .from("user_reactions")
@@ -133,6 +142,20 @@ export default function HomePage() {
 
     setRecommended(filtered);
   }
+
+  // Fetch personalized "for you" scores for every visible movie that doesn't have
+  // one yet. Coming-soon films are skipped (their cards don't show a score).
+  useEffect(() => {
+    if (!userId) return;
+    const ids = [...recommended, ...newReleases, ...trending, ...movies]
+      .map((m) => m.id)
+      .filter((id) => id && !(id in personalScores));
+    if (ids.length === 0) return;
+    const unique = [...new Set(ids)];
+    getPersonalizedScoreMap(userId, unique).then((map) => {
+      if (map && Object.keys(map).length) setPersonalScores((prev) => ({ ...prev, ...map }));
+    });
+  }, [userId, recommended, newReleases, trending, movies]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Grid fetch — runs when searching, filtering, or "see all"
   const fetchMovies = useCallback(async () => {
@@ -302,7 +325,7 @@ export default function HomePage() {
                   title="Recommended for You"
                   subtitle="Based on your taste"
                   movies={recommended}
-                  userScores={userScores}
+                  userScores={cardScores}
                   userWatchlist={userWatchlist}
                   onSeeAll={recommended.length > 0 ? () => setSeeAll("recommended") : null}
                 />
@@ -310,7 +333,7 @@ export default function HomePage() {
                   title="New Releases"
                   subtitle="Fresh in cinemas"
                   movies={newReleases}
-                  userScores={userScores}
+                  userScores={cardScores}
                   userWatchlist={userWatchlist}
                   onSeeAll={newReleases.length >= 20 ? () => setSeeAll("new") : null}
                 />
@@ -318,7 +341,7 @@ export default function HomePage() {
                   title="Trending"
                   subtitle="What everyone's watching"
                   movies={trending}
-                  userScores={userScores}
+                  userScores={cardScores}
                   userWatchlist={userWatchlist}
                   onSeeAll={() => setSeeAll("trending")}
                 />
@@ -371,7 +394,7 @@ export default function HomePage() {
                   <MovieCard
                     key={movie.id}
                     movie={movie}
-                    userScore={userScores[movie.id]}
+                    userScore={cardScores[movie.id]}
                     isWatchlisted={userWatchlist.has(movie.id)}
                   />
                 ))}
