@@ -10,16 +10,74 @@ export const TRIVIA_POINT_VALUES = {
   STREAK_30: 150,   // Bonus for 30-day streak
 };
 
-/**
- * Get today's trivia question
- */
-export async function getTodayTrivia(supabase) {
-  const today = new Date().toISOString().split("T")[0];
+// Languages with a dedicated trivia bank.
+export const SUPPORTED_TRIVIA_LANGS = ["hi", "ta", "ml", "te"];
+export const TRIVIA_LANG_NAMES = { hi: "Hindi", ta: "Tamil", ml: "Malayalam", te: "Telugu" };
 
+/**
+ * Which day-index of a language's bank is "today".
+ * Rotates deterministically: everyone on the same UTC day sees the same
+ * question for a given language, and the bank loops once exhausted.
+ */
+export function getTriviaDayIndex(bankSize, date = new Date()) {
+  if (!bankSize) return 0;
+  const days = Math.floor(date.getTime() / 86400000); // days since epoch (UTC)
+  return ((days % bankSize) + bankSize) % bankSize;
+}
+
+/**
+ * Determine the user's "top" language from what they actually rate, falling
+ * back to their onboarding preference, then Hindi.
+ */
+export async function getUserTopLanguage(supabase, userId) {
+  // 1. Most-rated language across their reactions.
+  const { data: rated } = await supabase
+    .from("user_reactions")
+    .select("movies(language)")
+    .eq("user_id", userId)
+    .limit(2000);
+
+  const counts = {};
+  (rated || []).forEach((r) => {
+    const lang = r.movies?.language;
+    if (SUPPORTED_TRIVIA_LANGS.includes(lang)) counts[lang] = (counts[lang] || 0) + 1;
+  });
+  let top = null, max = 0;
+  for (const [lang, c] of Object.entries(counts)) if (c > max) { max = c; top = lang; }
+  if (top) return top;
+
+  // 2. Onboarding preference (preferred_languages stores the same codes).
+  const { data: profile } = await supabase
+    .from("user_profiles")
+    .select("preferred_languages")
+    .eq("user_id", userId)
+    .single();
+  const pref = (profile?.preferred_languages || []).find((l) =>
+    SUPPORTED_TRIVIA_LANGS.includes(l)
+  );
+  if (pref) return pref;
+
+  // 3. Default.
+  return "hi";
+}
+
+/**
+ * Get today's trivia question for a given language (day-index rotation).
+ */
+export async function getTodayTrivia(supabase, language = "hi") {
+  const { count } = await supabase
+    .from("trivia_questions")
+    .select("id", { count: "exact", head: true })
+    .eq("language", language);
+
+  if (!count) return null;
+
+  const idx = getTriviaDayIndex(count);
   const { data } = await supabase
     .from("trivia_questions")
     .select("*")
-    .eq("date", today)
+    .eq("language", language)
+    .eq("day_index", idx)
     .single();
 
   return data;
@@ -301,15 +359,8 @@ export async function createTriviaQuestion(
 /**
  * Check if user has answered today's trivia
  */
-export async function hasAnsweredToday(supabase, userId) {
-  const today = new Date().toISOString().split("T")[0];
-
-  const { data: todayQuestion } = await supabase
-    .from("trivia_questions")
-    .select("id")
-    .eq("date", today)
-    .single();
-
+export async function hasAnsweredToday(supabase, userId, language = "hi") {
+  const todayQuestion = await getTodayTrivia(supabase, language);
   if (!todayQuestion) return false;
 
   const { data: answer } = await supabase

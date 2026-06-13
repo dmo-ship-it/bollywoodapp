@@ -46,3 +46,6 @@ data/upcoming.json
 .cleanup-backup-*/
 
 data/archive/
+
+# Trivia question banks — already seeded to Supabase, no need to version 1,460 JSON files
+data/trivia/

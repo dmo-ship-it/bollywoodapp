@@ -10,6 +10,9 @@ import {
   submitTriviaAnswer,
   getUserTriviaStats,
   hasAnsweredToday,
+  getUserTopLanguage,
+  SUPPORTED_TRIVIA_LANGS,
+  TRIVIA_LANG_NAMES,
 } from "../../lib/trivia";
 
 export default function TriviaPage() {
@@ -26,6 +29,20 @@ export default function TriviaPage() {
   const [result, setResult] = useState(null);
   const [alreadyAnswered, setAlreadyAnswered] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [language, setLanguage] = useState("hi");
+
+  // Load (or reload) the question + answered-state for a given language.
+  async function loadForLanguage(currentUser, lang) {
+    setSelectedAnswer(null);
+    setSubmitted(false);
+    setResult(null);
+
+    const answered = await hasAnsweredToday(supabase, currentUser.id, lang);
+    setAlreadyAnswered(answered);
+
+    const todayQ = await getTodayTrivia(supabase, lang);
+    setQuestion(todayQ);
+  }
 
   useEffect(() => {
     async function load() {
@@ -46,13 +63,11 @@ export default function TriviaPage() {
 
       // Check if user has access to trivia (Silver tier or higher)
       if (userTier.minPoints >= 500 || userTier.id === "founder") {
-        // Check if user already answered today
-        const answered = await hasAnsweredToday(supabase, user.id);
-        setAlreadyAnswered(answered);
+        // Pick the language of the films they watch most.
+        const lang = await getUserTopLanguage(supabase, user.id);
+        setLanguage(lang);
 
-        // Get today's question
-        const todayQ = await getTodayTrivia(supabase);
-        setQuestion(todayQ);
+        await loadForLanguage(user, lang);
 
         // Get user's stats
         const userStats = await getUserTriviaStats(supabase, user.id);
@@ -63,6 +78,14 @@ export default function TriviaPage() {
     }
     load();
   }, []);
+
+  async function handleSwitchLanguage(lang) {
+    if (lang === language || !user) return;
+    setLanguage(lang);
+    setLoading(true);
+    await loadForLanguage(user, lang);
+    setLoading(false);
+  }
 
   async function handleSubmitAnswer() {
     if (selectedAnswer === null) return;
@@ -172,9 +195,28 @@ export default function TriviaPage() {
     <div className="max-w-2xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
 
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-3xl font-black text-stone-900 mb-2">🎬 Daily Trivia</h1>
-        <p className="text-stone-600">Test your Bollywood knowledge!</p>
+        <p className="text-stone-600">
+          Test your knowledge of {TRIVIA_LANG_NAMES[language]} cinema — one new question a day.
+        </p>
+      </div>
+
+      {/* Language switcher */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        {SUPPORTED_TRIVIA_LANGS.map((code) => (
+          <button
+            key={code}
+            onClick={() => handleSwitchLanguage(code)}
+            className={`px-4 py-2 rounded-full text-sm font-bold transition-colors ${
+              code === language
+                ? "bg-orange-600 text-white"
+                : "bg-white border border-stone-200 text-stone-600 hover:border-orange-300"
+            }`}
+          >
+            {TRIVIA_LANG_NAMES[code]}
+          </button>
+        ))}
       </div>
 
       {/* Stats Card */}
@@ -229,12 +271,27 @@ export default function TriviaPage() {
           <div className="bg-white bg-opacity-60 rounded-lg p-4">
             <p className="text-sm text-stone-600 mb-2">Explanation:</p>
             <p className="text-stone-900 leading-relaxed">{result.explanation}</p>
+            {question?.source_url && (
+              <a
+                href={question.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-3 text-xs text-orange-600 hover:underline"
+              >
+                Source ↗
+              </a>
+            )}
           </div>
         </div>
       )}
 
       {!alreadyAnswered || !result ? (
         <div className="bg-white border border-stone-200 rounded-2xl p-8 mb-8">
+          {question.category === "fun_fact" && (
+            <span className="inline-block mb-3 px-2.5 py-1 rounded-full bg-rose-100 text-rose-700 text-xs font-bold">
+              ✨ Fun Fact
+            </span>
+          )}
           <h2 className="text-xl font-bold text-stone-900 mb-6">{question.question}</h2>
 
           <div className="space-y-3 mb-8">
