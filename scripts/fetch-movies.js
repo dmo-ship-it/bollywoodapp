@@ -75,7 +75,10 @@ async function fetchPage(language, page) {
 async function fetchMovieDetails(id) {
   const url =
     `${BASE}/movie/${id}` +
-    `?append_to_response=credits,keywords,videos,watch%2Fproviders`;
+    `?append_to_response=credits,keywords,videos,watch%2Fproviders` +
+    // Without this, TMDB filters videos to the default en-US language and
+    // drops Hindi-tagged trailers — which is most Bollywood official trailers.
+    `&include_video_language=hi,en,null`;
   return get(url);
 }
 

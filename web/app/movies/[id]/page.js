@@ -1,6 +1,7 @@
 import { supabase } from "../../../lib/supabase";
 import Link from "next/link";
 import RatingPanel from "./RatingPanel";
+import TrailerPlayer from "./TrailerPlayer";
 
 const OTT_COLORS = {
   "Netflix":        "bg-red-600",
@@ -150,14 +151,7 @@ export default async function MoviePage({ params }) {
 
             {/* Trailer */}
             {movie.trailer_url && (
-              <a
-                href={movie.trailer_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-800 transition-colors"
-              >
-                ▶ Watch Trailer
-              </a>
+              <TrailerPlayer trailerUrl={movie.trailer_url} />
             )}
           </div>
         </div>
