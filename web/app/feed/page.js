@@ -16,7 +16,7 @@ export function FeedContent() {
   const supabase = createClient();
 
   const [user,       setUser]       = useState(null);
-  const [tab,        setTab]        = useState("all");
+  const [tab,        setTab]        = useState("following");
   const [activities, setActivities] = useState([]);
   const [loading,    setLoading]    = useState(true);
 
@@ -64,20 +64,20 @@ export function FeedContent() {
   return (
     <div>
       <div className="flex gap-1 bg-stone-100 rounded-xl p-1 mb-6 w-fit">
+        {user && (
+          <button
+            onClick={() => setTab("following")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === "following" ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}
+          >
+            Friends
+          </button>
+        )}
         <button
           onClick={() => setTab("all")}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === "all" ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}
         >
           Global
         </button>
-        {user && (
-          <button
-            onClick={() => setTab("following")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === "following" ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}
-          >
-            Following
-          </button>
-        )}
       </div>
 
       {loading ? (
@@ -86,7 +86,7 @@ export function FeedContent() {
         <div className="text-center py-16 bg-white border border-stone-200 rounded-2xl text-stone-400">
           <p className="text-3xl mb-3">🎬</p>
           <p className="font-medium text-stone-600 mb-1">No activity yet</p>
-          <p className="text-sm mb-4">{tab === "following" ? "Follow friends to see their activity" : "Be the first to rate a film!"}</p>
+          <p className="text-sm mb-4">{tab === "following" ? "Follow people to see their activity" : "Be the first to rate a film!"}</p>
           <Link href="/" className="text-orange-600 text-sm hover:underline">Discover films →</Link>
         </div>
       ) : (

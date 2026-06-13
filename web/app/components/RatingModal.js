@@ -22,7 +22,7 @@ const MUSIC_OPTIONS = [
   { label: "Forgettable", value: 1 },
 ];
 
-export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, onRated }) {
+export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, onRated, onDeleted }) {
   const supabase = createClient();
   const [user,          setUser]          = useState(null);
   const [step,          setStep]          = useState("rate");
@@ -47,6 +47,15 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
       }
     });
   }, [movieId]);
+
+  async function handleDelete() {
+    if (!user || saving) return;
+    setSaving(true);
+    await supabase.from("user_reactions").delete().eq("user_id", user.id).eq("movie_id", movieId);
+    setSaving(false);
+    if (onDeleted) onDeleted();
+    onClose();
+  }
 
   function handlePick(rating) {
     setPendingRating(rating);
@@ -141,6 +150,17 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
                   </button>
                 ))}
               </div>
+              {currentRating && (
+                <div className="mt-4 text-center">
+                  <button
+                    onClick={handleDelete}
+                    disabled={saving}
+                    className="text-xs text-stone-400 hover:text-red-500 transition-colors disabled:opacity-40"
+                  >
+                    Remove rating
+                  </button>
+                </div>
+              )}
             </>
           )}
 

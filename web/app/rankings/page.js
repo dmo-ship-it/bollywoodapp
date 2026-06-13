@@ -5,6 +5,7 @@ import { createClient } from "../../lib/supabase-browser";
 import { languageName } from "../../lib/languages";
 import Link from "next/link";
 import RankingsShareCard from "../components/RankingsShareCard";
+import RatingModal from "../components/RatingModal";
 import FilterPanel, {
   EMPTY_FILTERS,
   countActiveFilters,
@@ -23,6 +24,7 @@ export default function RankingsPage() {
   const [totalRatings, setTotalRatings] = useState(0);
   const [personalTotal,setPersonalTotal]= useState(0);
   const [showShareCard,setShowShareCard]= useState(false);
+  const [editingMovie, setEditingMovie] = useState(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -246,6 +248,25 @@ export default function RankingsPage() {
     return results;
   }
 
+  function handleRated(movieId, newRating) {
+    // Re-fetch updated score for this movie after editing
+    supabase
+      .from("user_reactions")
+      .select("score, rating")
+      .eq("user_id", user.id)
+      .eq("movie_id", movieId)
+      .single()
+      .then(({ data }) => {
+        if (!data) return;
+        setMovies((prev) =>
+          prev
+            .map((m) => m.id === movieId ? { ...m, userScore: data.score, userRating: data.rating } : m)
+            .sort((a, b) => b.userScore - a.userScore)
+        );
+      });
+    setEditingMovie(null);
+  }
+
   const isMy     = mode === "my"      && !!user;
   const isFriends = mode === "friends" && !!user;
   const isTwins  = mode === "twins"   && !!user;
@@ -446,47 +467,63 @@ export default function RankingsPage() {
               : "bg-stone-300";
 
             return (
-              <Link
+              <div
                 key={movie.id}
-                href={`/movies/${movie.id}`}
-                className="flex items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3 hover:border-stone-300 hover:shadow-sm transition-all group"
+                className="flex items-center gap-2 bg-white border border-stone-200 rounded-2xl p-3 hover:border-stone-300 hover:shadow-sm transition-all group"
               >
-                {/* Rank */}
-                <div className="w-8 text-center shrink-0">
-                  <span className="text-stone-400 text-sm font-bold">#{rank}</span>
-                </div>
-
-                {/* Poster */}
-                <div className="w-10 h-14 rounded-lg overflow-hidden bg-stone-100 shrink-0">
-                  {movie.poster_url
-                    ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" />
-                    : <div className="w-full h-full flex items-center justify-center text-stone-300">🎬</div>
-                  }
-                </div>
-
-                {/* Info */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-stone-900 group-hover:text-orange-600 transition-colors truncate">
-                    {movie.title}
-                  </p>
-                  <p className="text-xs text-stone-400 mt-0.5">
-                    {movie.year}
-                    {movie.genres?.length > 0 && ` · ${movie.genres.slice(0, 2).join(", ")}`}
-                    {isFriends && movie.friendCount > 1 && ` · ${movie.friendCount} friends`}
-                    {isTwins && movie.twinCount > 1 && ` · ${movie.twinCount} twins`}
-                  </p>
-                </div>
-
-                {/* Score */}
-                {roundScore != null && (
-                  <div className="shrink-0 flex flex-col items-end gap-1.5">
-                    <p className={`text-lg font-black ${scoreColor}`}>{roundScore}</p>
-                    <div className="w-14 h-1.5 bg-stone-100 rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full ${barColor}`} style={{ width: `${roundScore}%` }} />
-                    </div>
+                {/* Navigable area */}
+                <Link href={`/movies/${movie.id}`} className="flex items-center gap-3 flex-1 min-w-0">
+                  {/* Rank */}
+                  <div className="w-8 text-center shrink-0">
+                    <span className="text-stone-400 text-sm font-bold">#{rank}</span>
                   </div>
+
+                  {/* Poster */}
+                  <div className="w-10 h-14 rounded-lg overflow-hidden bg-stone-100 shrink-0">
+                    {movie.poster_url
+                      ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" />
+                      : <div className="w-full h-full flex items-center justify-center text-stone-300">🎬</div>
+                    }
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-stone-900 group-hover:text-orange-600 transition-colors truncate">
+                      {movie.title}
+                    </p>
+                    <p className="text-xs text-stone-400 mt-0.5">
+                      {movie.year}
+                      {movie.genres?.length > 0 && ` · ${movie.genres.slice(0, 2).join(", ")}`}
+                      {isFriends && movie.friendCount > 1 && ` · ${movie.friendCount} friends`}
+                      {isTwins && movie.twinCount > 1 && ` · ${movie.twinCount} twins`}
+                    </p>
+                  </div>
+
+                  {/* Score */}
+                  {roundScore != null && (
+                    <div className="shrink-0 flex flex-col items-end gap-1.5">
+                      <p className={`text-lg font-black ${scoreColor}`}>{roundScore}</p>
+                      <div className="w-14 h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full ${barColor}`} style={{ width: `${roundScore}%` }} />
+                      </div>
+                    </div>
+                  )}
+                </Link>
+
+                {/* Edit — My Rankings only */}
+                {isMy && (
+                  <button
+                    onClick={() => setEditingMovie(movie)}
+                    className="text-stone-300 hover:text-orange-500 transition-colors shrink-0 pl-1"
+                    title="Edit rating"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
                 )}
-              </Link>
+              </div>
             );
           })}
 
@@ -518,6 +555,21 @@ export default function RankingsPage() {
           isPersonal={isMy}
           language={filters.language}
           onClose={() => setShowShareCard(false)}
+        />
+      )}
+
+      {/* Edit rating modal */}
+      {editingMovie && (
+        <RatingModal
+          movieId={editingMovie.id}
+          movieTitle={editingMovie.title}
+          posterUrl={editingMovie.poster_url}
+          onClose={() => setEditingMovie(null)}
+          onRated={(rating) => handleRated(editingMovie.id, rating)}
+          onDeleted={() => {
+            setMovies((prev) => prev.filter((m) => m.id !== editingMovie.id));
+            setEditingMovie(null);
+          }}
         />
       )}
 

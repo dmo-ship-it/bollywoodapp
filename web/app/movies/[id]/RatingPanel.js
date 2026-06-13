@@ -85,7 +85,7 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
   const [avgScore,      setAvgScore]      = useState(null);
   const [friendScore,   setFriendScore]   = useState(null); // { score, count }
   const [predicted,     setPredicted]     = useState(null);
-  const [showModal,     setShowModal]     = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
@@ -193,9 +193,10 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
             }`}
           >
             {currentRating ? (
-              <>{ratingObj?.emoji} {ratingObj?.label}</>
+              <>{ratingObj?.emoji} {ratingObj?.label} <span className="text-stone-400 ml-0.5">· Edit</span></>
             ) : <>＋ Rate</>}
           </button>
+
           <WatchlistButton movieId={movieId} movieTitle={movieTitle} />
         </div>
       ) : (
@@ -217,6 +218,11 @@ export default function RatingPanel({ movieId, movieTitle, posterUrl }) {
           posterUrl={posterUrl}
           onClose={() => setShowModal(false)}
           onRated={handleRated}
+          onDeleted={() => {
+            setCurrentRating(null);
+            setYourScore(null);
+            computePrediction(supabase, user.id, movieId).then(setPredicted);
+          }}
         />
       )}
     </>
