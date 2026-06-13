@@ -31,7 +31,9 @@ export default function PollPage() {
   const [loading,      setLoading]      = useState(true);
   const [authorName,   setAuthorName]   = useState("");
 
-  const isMoviePoll = poll?.poll_subject !== "people";
+  const isMoviePoll  = !poll?.poll_subject || poll?.poll_subject === "movies";
+  const isPeoplePoll = poll?.poll_subject === "people";
+  const isOtherPoll  = poll?.poll_subject === "other";
 
   useEffect(() => {
     async function load() {
@@ -54,19 +56,45 @@ export default function PollPage() {
   }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function loadResults(pollData, currentUser) {
+    const isOther  = pollData.poll_subject === "other";
     const isPeople = pollData.poll_subject === "people";
+
+    const selectCols = isOther
+      ? "user_id, option_text"
+      : isPeople
+        ? "user_id, person_id, people(id, name, photo_url, primary_role)"
+        : "user_id, movie_id, movies(id, title, poster_url, year)";
 
     const { data: responses } = await supabase
       .from("community_poll_responses")
-      .select(isPeople
-        ? "user_id, person_id, people(id, name, photo_url, primary_role)"
-        : "user_id, movie_id, movies(id, title, poster_url, year)")
+      .select(selectCols)
       .eq("poll_id", id);
 
     if (!responses?.length) return;
 
+    if (isOther) {
+      const counts = {};
+      responses.forEach(r => {
+        const key = r.option_text ?? "—";
+        counts[key] = (counts[key] ?? 0) + 1;
+      });
+      const sorted = Object.entries(counts)
+        .map(([text, count]) => ({ subject: { id: text, title: text }, count }))
+        .sort((a, b) => b.count - a.count);
+      setResults(sorted);
+      setTotalVoters(new Set(responses.map(r => r.user_id)).size);
+      if (currentUser) {
+        const mine = responses.filter(r => r.user_id === currentUser.id);
+        if (mine.length > 0) {
+          setHasResponded(true);
+          setMyPicks(mine.map(r => ({ id: r.option_text, title: r.option_text })));
+        }
+      }
+      return;
+    }
+
     const counts = {}, subjectObjs = {};
-    const subjectKey = isPeople ? "person_id" : "movie_id";
+    const subjectKey  = isPeople ? "person_id" : "movie_id";
     const subjectData = isPeople ? "people" : "movies";
 
     responses.forEach(r => {
@@ -91,9 +119,9 @@ export default function PollPage() {
     }
   }
 
-  // Search
+  // Search (not used for "other" polls)
   useEffect(() => {
-    if (!poll || query.length < 2) { setQueryResults([]); return; }
+    if (!poll || isOtherPoll || query.length < 2) { setQueryResults([]); return; }
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       if (isMoviePoll) {
@@ -132,11 +160,14 @@ export default function PollPage() {
     setSubmitting(true);
 
     const isPeople = poll.poll_subject === "people";
+    const isOther  = poll.poll_subject === "other";
     await supabase.from("community_poll_responses").insert(
       myPicks.map(item => ({
         poll_id: id,
         user_id: user.id,
-        ...(isPeople ? { person_id: item.id } : { movie_id: item.id }),
+        ...(isOther  ? { option_text: item.title } :
+            isPeople ? { person_id: item.id } :
+                       { movie_id: item.id }),
       }))
     );
     await supabase.from("community_polls")
@@ -162,9 +193,9 @@ export default function PollPage() {
     </div>
   );
 
-  const maxCount   = results[0]?.count ?? 1;
-  const subjectLabel = isMoviePoll ? "film" : "person";
-  const subjectPlural = isMoviePoll ? "films" : "people";
+  const maxCount      = results[0]?.count ?? 1;
+  const subjectLabel  = isMoviePoll ? "film"  : isPeoplePoll ? "person"  : "option";
+  const subjectPlural = isMoviePoll ? "films" : isPeoplePoll ? "people" : "options";
 
   return (
     <div className="max-w-xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
@@ -173,7 +204,7 @@ export default function PollPage() {
       {/* Poll header */}
       <div className="bg-white border border-stone-200 rounded-2xl p-5 mb-5 shadow-sm">
         <span className="text-[10px] font-semibold bg-violet-100 text-violet-700 border border-violet-200 px-2 py-0.5 rounded-full">
-          📊 Poll · {isMoviePoll ? "🎬 Films" : "🎭 People"}
+          📊 Poll · {isMoviePoll ? "🎬 Films" : isPeoplePoll ? "🎭 People" : "🗂️ Other"}
         </span>
         <h1 className="text-xl font-black text-stone-900 mt-2 mb-1 leading-snug">{poll.title}</h1>
         {poll.description && <p className="text-stone-500 text-sm mb-3">{poll.description}</p>}
@@ -196,7 +227,33 @@ export default function PollPage() {
             <Link href="/login" className="inline-block mt-2 bg-orange-600 text-white font-bold text-sm px-5 py-2 rounded-full hover:bg-orange-500 transition-colors">
               Sign in →
             </Link>
+          ) : isOtherPoll ? (
+            /* Other poll: show option buttons */
+            <>
+              <div className="space-y-2 mb-3">
+                {(poll.options ?? []).map((opt) => {
+                  const picked = !!myPicks.find(p => p.id === opt);
+                  const maxed  = myPicks.length >= poll.max_picks && !picked;
+                  return (
+                    <button key={opt} type="button"
+                      disabled={maxed}
+                      onClick={() => picked ? removePick(opt) : addPick({ id: opt, title: opt })}
+                      className={`w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all ${picked ? "bg-violet-600 text-white border-violet-600" : "bg-stone-50 border-stone-200 text-stone-800 hover:border-violet-300 disabled:opacity-40"}`}>
+                      {picked && <span className="mr-2">✓</span>}{opt}
+                    </button>
+                  );
+                })}
+              </div>
+              {myPicks.length >= poll.max_picks && (
+                <p className="text-xs text-stone-400 mb-3">Max {poll.max_picks} {poll.max_picks === 1 ? "option" : "options"} selected.</p>
+              )}
+              <button onClick={submitPicks} disabled={myPicks.length === 0 || submitting}
+                className="w-full bg-violet-600 text-white font-bold py-2.5 rounded-full hover:bg-violet-500 transition-colors text-sm disabled:opacity-40">
+                {submitting ? "Submitting…" : `Submit${myPicks.length > 0 ? ` (${myPicks.length})` : ""}`}
+              </button>
+            </>
           ) : (
+            /* Films or People poll: search box */
             <>
               <div className="relative mb-3">
                 <input
@@ -272,24 +329,32 @@ export default function PollPage() {
       {hasResponded && myPicks.length > 0 && (
         <div className="bg-violet-50 border border-violet-200 rounded-2xl p-4 mb-5">
           <p className="text-xs font-semibold text-violet-700 mb-2">✓ Your picks</p>
-          <div className="flex gap-2 flex-wrap">
-            {myPicks.map(item => (
-              <div key={item?.id} className="flex items-center gap-2">
-                {isMoviePoll ? (
-                  item?.poster_url && <img src={item.poster_url} className="w-8 h-11 rounded-lg object-cover" alt={item.title}/>
-                ) : (
-                  item?.photo_url
-                    ? <img src={item.photo_url} className="w-9 h-9 rounded-full object-cover" alt={item.name}/>
-                    : <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xs font-black">{item?.name?.slice(0,2).toUpperCase()}</div>
-                )}
-              </div>
-            ))}
-            <div className="flex flex-col justify-center gap-0.5">
+          {isOtherPoll ? (
+            <div className="flex gap-2 flex-wrap">
               {myPicks.map(item => (
-                <p key={item?.id} className="text-xs font-medium text-violet-800">{isMoviePoll ? item?.title : item?.name}</p>
+                <span key={item?.id} className="bg-violet-200 text-violet-800 text-xs font-semibold px-3 py-1 rounded-full">{item?.title}</span>
               ))}
             </div>
-          </div>
+          ) : (
+            <div className="flex gap-2 flex-wrap">
+              {myPicks.map(item => (
+                <div key={item?.id} className="flex items-center gap-2">
+                  {isMoviePoll ? (
+                    item?.poster_url && <img src={item.poster_url} className="w-8 h-11 rounded-lg object-cover" alt={item.title}/>
+                  ) : (
+                    item?.photo_url
+                      ? <img src={item.photo_url} className="w-9 h-9 rounded-full object-cover" alt={item.name}/>
+                      : <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xs font-black">{item?.name?.slice(0,2).toUpperCase()}</div>
+                  )}
+                </div>
+              ))}
+              <div className="flex flex-col justify-center gap-0.5">
+                {myPicks.map(item => (
+                  <p key={item?.id} className="text-xs font-medium text-violet-800">{isMoviePoll ? item?.title : item?.name}</p>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -308,11 +373,29 @@ export default function PollPage() {
         ) : (
           <div className="space-y-3">
             {results.map(({ subject, count }, i) => {
-              const pct  = Math.round((count / maxCount) * 100);
-              const name = isMoviePoll ? subject?.title : subject?.name;
-              const sub  = isMoviePoll ? subject?.year : subject?.primary_role;
+              const pct = Math.round((count / maxCount) * 100);
+
+              if (isOtherPoll) {
+                return (
+                  <div key={subject?.id ?? i} className="flex items-center gap-3">
+                    <span className="text-xs font-black text-stone-400 w-5 shrink-0 text-center">#{i + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-semibold text-stone-900">{subject?.title ?? "Unknown"}</span>
+                        <span className="text-xs font-bold text-stone-600 shrink-0 ml-2">{count} pick{count !== 1 ? "s" : ""}</span>
+                      </div>
+                      <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-violet-500 rounded-full transition-all duration-500" style={{ width: `${pct}%` }}/>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              const name  = isMoviePoll ? subject?.title : subject?.name;
+              const sub   = isMoviePoll ? subject?.year  : subject?.primary_role;
               const thumb = isMoviePoll ? subject?.poster_url : subject?.photo_url;
-              const href = isMoviePoll
+              const href  = isMoviePoll
                 ? (subject?.id ? `/movies/${subject.id}` : "#")
                 : (subject?.id ? `/person/${subject.id}` : "#");
 

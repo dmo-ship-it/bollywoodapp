@@ -30,10 +30,11 @@ export const EMPTY_FILTERS = {
   actorName:    "",
   directorId:   null,   // UUID from people table
   directorName: "",
+  unseen:       false,  // hide movies user has already rated
 };
 
 export function countActiveFilters(filters) {
-  return [filters.language, filters.decade, filters.actorId, filters.directorId]
+  return [filters.language, filters.decade, filters.actorId, filters.directorId, filters.unseen || null]
     .filter(Boolean).length;
 }
 
@@ -112,7 +113,7 @@ export default function FilterPanel({ open, onClose, filters, onChange }) {
   function clearAll() {
     setActorQuery(""); setDirectorQuery("");
     setActorSuggestions([]); setDirectorSuggestions([]);
-    onChange(EMPTY_FILTERS);
+    onChange({ ...EMPTY_FILTERS, unseen: false });
   }
 
   const hasAny = countActiveFilters(filters) > 0;
@@ -231,6 +232,22 @@ export default function FilterPanel({ open, onClose, filters, onChange }) {
             {filters.actorId && (
               <p className="text-xs text-orange-600 mt-2 font-medium">✓ {filters.actorName}</p>
             )}
+          </section>
+
+          {/* Not Seen */}
+          <section>
+            <button
+              onClick={() => patch({ unseen: !filters.unseen })}
+              className="w-full flex items-center justify-between py-1"
+            >
+              <div>
+                <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-0.5">Not Seen</p>
+                <p className="text-sm text-stone-600 text-left">Only show films I haven't rated</p>
+              </div>
+              <div className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${filters.unseen ? "bg-orange-600" : "bg-stone-200"}`}>
+                <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${filters.unseen ? "translate-x-5" : "translate-x-0.5"}`} />
+              </div>
+            </button>
           </section>
 
           {/* Director */}

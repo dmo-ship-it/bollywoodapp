@@ -15,7 +15,7 @@ export default function RankingsPage() {
   const supabase = createClient();
 
   const [user,         setUser]         = useState(null);
-  const [mode,         setMode]         = useState("my"); // "my" | "friends" | "global"
+  const [mode,         setMode]         = useState("my"); // "my" | "friends" | "twins" | "global"
   const [movies,       setMovies]       = useState([]);
   const [loading,      setLoading]      = useState(true);
   const [filters,      setFilters]      = useState(EMPTY_FILTERS);
@@ -50,12 +50,25 @@ export default function RankingsPage() {
       return;
     }
 
+    // Pre-fetch seen movie IDs for unseen filter (not needed for "my" since those are all rated)
+    let seenSet = null;
+    if (filters.unseen && user && mode !== "my") {
+      const { data: seen } = await supabase
+        .from("user_reactions")
+        .select("movie_id")
+        .eq("user_id", user.id)
+        .gt("rating", 0);
+      seenSet = new Set((seen ?? []).map((r) => r.movie_id));
+    }
+
     if (mode === "my" && user) {
       await fetchMyRankings(personSet);
     } else if (mode === "friends" && user) {
-      await fetchFriendsRankings(personSet);
+      await fetchFriendsRankings(personSet, seenSet);
+    } else if (mode === "twins" && user) {
+      await fetchTasteTwinsRankings(personSet, seenSet);
     } else {
-      await fetchGlobalRankings(personIds);
+      await fetchGlobalRankings(personIds, seenSet);
     }
 
     setLoading(false);
@@ -85,7 +98,7 @@ export default function RankingsPage() {
   }
 
   // ── Friends Rankings ─────────────────────────────────────────────────────────
-  async function fetchFriendsRankings(personSet) {
+  async function fetchFriendsRankings(personSet, seenSet) {
     const { data: follows } = await supabase
       .from("user_follows")
       .select("following_id")
@@ -119,18 +132,81 @@ export default function RankingsPage() {
       .map((m) => ({ ...m, friendScore: Math.round(m.total / m.count), friendCount: m.count }))
       .sort((a, b) => b.friendScore - a.friendScore);
 
-    results = applyInMemoryFilters(results, personSet);
+    results = applyInMemoryFilters(results, personSet, seenSet);
+    setMovies(results.slice(0, 100));
+  }
+
+  // ── Taste Twins Rankings ─────────────────────────────────────────────────────
+  async function fetchTasteTwinsRankings(personSet, seenSet) {
+    // Step 1: get my top-rated movie IDs
+    const { data: myRatings } = await supabase
+      .from("user_reactions")
+      .select("movie_id, score")
+      .eq("user_id", user.id)
+      .gt("rating", 0)
+      .not("score", "is", null)
+      .order("score", { ascending: false })
+      .limit(30);
+
+    const myMovieIds = (myRatings ?? []).map((r) => r.movie_id);
+    if (myMovieIds.length === 0) { setMovies([]); return; }
+
+    // Step 2: find other users who rated those same movies
+    const { data: overlaps } = await supabase
+      .from("user_reactions")
+      .select("user_id, movie_id, score")
+      .in("movie_id", myMovieIds)
+      .neq("user_id", user.id)
+      .gt("rating", 0)
+      .not("score", "is", null);
+
+    // Count overlap per user and pick top 20 taste twins
+    const userOverlap = {};
+    (overlaps ?? []).forEach((r) => {
+      if (!userOverlap[r.user_id]) userOverlap[r.user_id] = 0;
+      userOverlap[r.user_id] += 1;
+    });
+    const twinIds = Object.entries(userOverlap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 20)
+      .map(([id]) => id);
+
+    if (twinIds.length === 0) { setMovies([]); return; }
+
+    // Step 3: get all ratings from those twins
+    const { data: twinRatings } = await supabase
+      .from("user_reactions")
+      .select("movie_id, score, movies(id, title, year, poster_url, genres, language, global_score)")
+      .in("user_id", twinIds)
+      .gt("rating", 0)
+      .not("score", "is", null)
+      .limit(1000);
+
+    // Aggregate: average twin score per movie
+    const agg = {};
+    (twinRatings ?? []).forEach((r) => {
+      if (!r.movies) return;
+      if (!agg[r.movie_id]) agg[r.movie_id] = { ...r.movies, total: 0, count: 0 };
+      agg[r.movie_id].total += r.score;
+      agg[r.movie_id].count += 1;
+    });
+
+    let results = Object.values(agg)
+      .map((m) => ({ ...m, twinScore: Math.round(m.total / m.count), twinCount: m.count }))
+      .sort((a, b) => b.twinScore - a.twinScore);
+
+    results = applyInMemoryFilters(results, personSet, seenSet);
     setMovies(results.slice(0, 100));
   }
 
   // ── Global Rankings ──────────────────────────────────────────────────────────
-  async function fetchGlobalRankings(personIds) {
+  async function fetchGlobalRankings(personIds, seenSet) {
     let q = supabase
       .from("movies")
       .select("id, title, year, poster_url, genres, global_score, tmdb_rating, language")
       .not("global_score", "is", null)
       .order("global_score", { ascending: false })
-      .limit(100);
+      .limit(200);
 
     if (filters.decade) {
       q = q.gte("year", filters.decade.min).lte("year", filters.decade.max);
@@ -143,12 +219,17 @@ export default function RankingsPage() {
       supabase.from("user_reactions").select("*", { count: "exact", head: true }).not("score", "is", null),
     ]);
 
-    setMovies(data ?? []);
+    let results = data ?? [];
+    if (seenSet) {
+      results = results.filter((m) => !seenSet.has(m.id));
+    }
+
+    setMovies(results.slice(0, 100));
     setTotalRatings(count ?? 0);
   }
 
-  // ── Shared in-memory filter for personal + friends ───────────────────────────
-  function applyInMemoryFilters(results, personSet) {
+  // ── Shared in-memory filter for personal + friends + twins ──────────────────
+  function applyInMemoryFilters(results, personSet, seenSet = null) {
     if (filters.decade) {
       const { min, max } = filters.decade;
       results = results.filter((m) => m.year >= min && m.year <= max);
@@ -159,19 +240,24 @@ export default function RankingsPage() {
     if (personSet) {
       results = results.filter((m) => personSet.has(m.id));
     }
+    if (filters.unseen && seenSet) {
+      results = results.filter((m) => !seenSet.has(m.id));
+    }
     return results;
   }
 
-  const isMy      = mode === "my"      && !!user;
+  const isMy     = mode === "my"      && !!user;
   const isFriends = mode === "friends" && !!user;
-  const isGlobal  = mode === "global";
+  const isTwins  = mode === "twins"   && !!user;
+  const isGlobal = mode === "global";
 
   const filterCount = countActiveFilters(filters);
 
   const tabs = [
-    ...(user ? [{ id: "my",      label: "My Rankings"      }] : []),
-    ...(user ? [{ id: "friends", label: "Friends"           }] : []),
-    {            id: "global",   label: "🌍 Global"          },
+    ...(user ? [{ id: "my",      label: "My Rankings"  }] : []),
+    ...(user ? [{ id: "friends", label: "Friends"       }] : []),
+    ...(user ? [{ id: "twins",   label: "Taste Twins"   }] : []),
+    {            id: "global",   label: "Global"         },
   ];
 
   return (
@@ -184,6 +270,7 @@ export default function RankingsPage() {
           <p className="text-stone-500 text-sm">
             {isMy      ? "Your films ranked by personal score"
              : isFriends ? "What your friends love most"
+             : isTwins  ? "Top picks from people with your taste"
              : `Community's top films${totalRatings > 0 ? ` · ${totalRatings.toLocaleString()} ratings` : ""}`}
           </p>
         </div>
@@ -281,6 +368,14 @@ export default function RankingsPage() {
               </button>
             </span>
           )}
+          {filters.unseen && (
+            <span className="inline-flex items-center gap-1.5 bg-stone-100 border border-stone-200 text-stone-700 text-xs font-medium px-3 py-1 rounded-full">
+              Not seen
+              <button onClick={() => setFilters((f) => ({ ...f, unseen: false }))}>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </span>
+          )}
           <button
             onClick={() => setFilters(EMPTY_FILTERS)}
             className="text-xs text-stone-400 hover:text-stone-600 transition-colors"
@@ -298,13 +393,15 @@ export default function RankingsPage() {
       ) : movies.length === 0 ? (
         <div className="text-center py-20 text-stone-400 bg-white border border-stone-200 rounded-2xl">
           <p className="text-4xl mb-3">
-            {isMy ? "🏆" : isFriends ? "👥" : "🌍"}
+            {isMy ? "🏆" : isFriends ? "👥" : isTwins ? "🧬" : "🌐"}
           </p>
           <p className="font-medium text-stone-600 mb-1">
             {isMy
               ? (filterCount > 0 ? "No matches for these filters" : "No personal rankings yet")
               : isFriends
               ? (filterCount > 0 ? "No matches for these filters" : "No friend ratings yet")
+              : isTwins
+              ? (filterCount > 0 ? "No matches for these filters" : "No taste twins found yet")
               : (filterCount > 0 ? "No matches for these filters" : "No global rankings yet")}
           </p>
           <p className="text-sm mb-4">
@@ -312,6 +409,8 @@ export default function RankingsPage() {
               ? (filterCount > 0 ? "Try clearing some filters" : "Rate films to build your list")
               : isFriends
               ? (filterCount > 0 ? "Try clearing some filters" : "Follow people to see what they love")
+              : isTwins
+              ? (filterCount > 0 ? "Try clearing some filters" : "Rate more films to find your taste twins")
               : "Be the first to rate films"}
           </p>
           {isMy && !filterCount && (
@@ -319,6 +418,9 @@ export default function RankingsPage() {
           )}
           {isFriends && !filterCount && (
             <Link href="/taste-profile" className="text-orange-600 text-sm hover:underline">Find people to follow →</Link>
+          )}
+          {isTwins && !filterCount && (
+            <Link href="/onboarding" className="text-orange-600 text-sm hover:underline">Rate more films →</Link>
           )}
         </div>
       ) : (
@@ -328,6 +430,8 @@ export default function RankingsPage() {
               ? movie.userScore
               : isFriends
               ? movie.friendScore
+              : isTwins
+              ? movie.twinScore
               : movie.global_score;
 
             const roundScore = score ? Math.round(score) : null;
@@ -369,6 +473,7 @@ export default function RankingsPage() {
                     {movie.year}
                     {movie.genres?.length > 0 && ` · ${movie.genres.slice(0, 2).join(", ")}`}
                     {isFriends && movie.friendCount > 1 && ` · ${movie.friendCount} friends`}
+                    {isTwins && movie.twinCount > 1 && ` · ${movie.twinCount} twins`}
                   </p>
                 </div>
 

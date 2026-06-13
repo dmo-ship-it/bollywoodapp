@@ -18,7 +18,8 @@ export default function NewCommunityPost() {
   const [description,  setDescription]  = useState("");
   const [isRanked,     setIsRanked]     = useState(false);
   const [maxPicks,     setMaxPicks]     = useState(3);     // for polls
-  const [pollSubject,  setPollSubject]  = useState("movies"); // "movies" | "people"
+  const [pollSubject,  setPollSubject]  = useState("movies"); // "movies" | "people" | "other"
+  const [pollOptions,  setPollOptions]  = useState(["", ""]); // for "other" polls
   const [movieQuery,   setMovieQuery]   = useState("");
   const [movieResults, setMovieResults] = useState([]);
   const [linkedMovie,  setLinkedMovie]  = useState(null);  // for reviews
@@ -88,11 +89,18 @@ export default function NewCommunityPost() {
         router.push(`/community/lists/${list.id}`);
       }
     } else if (type === "poll") {
+      const options = pollSubject === "other"
+        ? pollOptions.map(o => o.trim()).filter(Boolean)
+        : null;
+      if (pollSubject === "other" && (!options || options.length < 2)) {
+        setSaving(false); return;
+      }
       const { data: poll, error } = await supabase.from("community_polls").insert({
         user_id: user.id, title: title.trim(),
         description: description.trim() || null,
         max_picks: maxPicks,
         poll_subject: pollSubject,
+        options,
       }).select("id").single();
       if (!error && poll) router.push(`/community/polls/${poll.id}`);
     } else {
@@ -163,13 +171,40 @@ export default function NewCommunityPost() {
           </div>
         )}
 
+        {/* Poll: subject picker comes FIRST, before the title */}
+        {type === "poll" && (
+          <div>
+            <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">People pick from…</label>
+            <div className="flex gap-2">
+              {[
+                { id: "movies", label: "🎬 Films"  },
+                { id: "people", label: "🎭 People" },
+                { id: "other",  label: "🗂️ Other"  },
+              ].map(s => (
+                <button key={s.id} type="button" onClick={() => setPollSubject(s.id)}
+                  className={`flex-1 py-2 rounded-xl border text-sm font-semibold transition-all ${pollSubject === s.id ? "bg-violet-600 text-white border-violet-600" : "bg-white border-stone-200 text-stone-600 hover:border-stone-300"}`}>
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Title */}
         <div>
           <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">
             {type === "list" ? "List title" : "Title"}
           </label>
           <input type="text" value={title} onChange={e => setTitle(e.target.value)} required
-            placeholder={type === "review" ? "My thoughts on…" : type === "list" ? "e.g. Essential 90s Bollywood" : "What's on your mind?"}
+            placeholder={
+              type === "poll"
+                ? pollSubject === "people" ? "e.g. Who are your top 3 Bollywood actors?"
+                : pollSubject === "other"  ? "e.g. What is the best theater in Houston to watch Indian movies?"
+                : "e.g. What are your top 3 90s Bollywood films?"
+              : type === "review" ? "My thoughts on…"
+              : type === "list"   ? "e.g. Essential 90s Bollywood"
+              : "What's on your mind?"
+            }
             className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-all text-sm"/>
         </div>
 
@@ -264,26 +299,45 @@ export default function NewCommunityPost() {
                 className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-all text-sm resize-none"/>
             </div>
 
-            {/* Subject type */}
-            <div>
-              <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">People pick from…</label>
-              <div className="flex gap-2">
-                {[
-                  { id: "movies", label: "🎬 Films"  },
-                  { id: "people", label: "🎭 People" },
-                ].map(s => (
-                  <button key={s.id} type="button" onClick={() => setPollSubject(s.id)}
-                    className={`flex-1 py-2 rounded-xl border text-sm font-semibold transition-all ${pollSubject === s.id ? "bg-violet-600 text-white border-violet-600" : "bg-white border-stone-200 text-stone-600 hover:border-stone-300"}`}>
-                    {s.label}
+            {/* Custom options builder for "Other" polls */}
+            {pollSubject === "other" && (
+              <div>
+                <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">
+                  Options <span className="text-stone-300 normal-case tracking-normal">(min 2)</span>
+                </label>
+                <div className="space-y-2">
+                  {pollOptions.map((opt, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={opt}
+                        onChange={e => {
+                          const next = [...pollOptions];
+                          next[i] = e.target.value;
+                          setPollOptions(next);
+                        }}
+                        placeholder={`Option ${i + 1}…`}
+                        className="flex-1 bg-white border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-all"/>
+                      {pollOptions.length > 2 && (
+                        <button type="button" onClick={() => setPollOptions(prev => prev.filter((_, j) => j !== i))}
+                          className="text-stone-300 hover:text-rose-500 text-xl px-1">×</button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {pollOptions.length < 8 && (
+                  <button type="button" onClick={() => setPollOptions(prev => [...prev, ""])}
+                    className="mt-2 text-xs text-violet-600 hover:text-violet-700 font-semibold">
+                    + Add option
                   </button>
-                ))}
+                )}
               </div>
-            </div>
+            )}
 
             {/* Max picks */}
             <div>
               <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">
-                How many {pollSubject === "people" ? "people" : "films"} can each person pick?
+                How many {pollSubject === "people" ? "people" : pollSubject === "other" ? "options" : "films"} can each person pick?
               </label>
               <div className="flex gap-2">
                 {[1, 2, 3, 5, 10].map(n => (
@@ -293,7 +347,7 @@ export default function NewCommunityPost() {
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-stone-400 mt-2">Results show the most-picked {pollSubject === "people" ? "people" : "films"} across all voters.</p>
+              <p className="text-xs text-stone-400 mt-2">Results show the most-picked {pollSubject === "people" ? "people" : pollSubject === "other" ? "options" : "films"} across all voters.</p>
             </div>
           </>
         )}
