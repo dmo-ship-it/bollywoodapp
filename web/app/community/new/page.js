@@ -218,7 +218,7 @@ export default function NewCommunityPost() {
               placeholder={type === "review" ? "Share what you thought…" : "Start the conversation…"}
               className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-all text-sm resize-none"/>
           </div>
-        ) : (
+        ) : type === "list" ? (
           <>
             <div>
               <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">Description <span className="text-stone-300 normal-case tracking-normal">(optional)</span></label>
@@ -287,7 +287,7 @@ export default function NewCommunityPost() {
               )}
             </div>
           </>
-        )}
+        ) : null}
 
         {/* Poll-specific fields */}
         {type === "poll" && (
