@@ -16,9 +16,10 @@ create table if not exists community_poll_responses (
   id         uuid primary key default gen_random_uuid(),
   poll_id    uuid not null references community_polls(id) on delete cascade,
   user_id    uuid not null references auth.users(id) on delete cascade,
-  movie_id   integer not null references movies(id) on delete cascade,
+  movie_id   uuid references movies(id) on delete cascade,
   created_at timestamptz not null default now(),
-  unique(poll_id, user_id, movie_id)
+  unique(poll_id, user_id, movie_id),
+  unique(poll_id, user_id, person_id)
 );
 
 -- RLS

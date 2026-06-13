@@ -12,6 +12,13 @@ const https = require("https");
 
 const TOKEN = process.env.TMDB_TOKEN;
 const OUTPUT_FILE = path.join(__dirname, "../data/movies.json");
+const TITLE_OVERRIDES_FILE = path.join(__dirname, "../data/title_overrides.json");
+
+// Load manual title overrides: { "tmdb_id": "Preferred Title" }
+// Use when TMDB's primary title is an English translation rather than the canonical name.
+const TITLE_OVERRIDES = fs.existsSync(TITLE_OVERRIDES_FILE)
+  ? JSON.parse(fs.readFileSync(TITLE_OVERRIDES_FILE, "utf8"))
+  : {};
 const LANGUAGES = [
   { code: "hi", name: "Hindi" },
   { code: "ta", name: "Tamil" },
@@ -132,7 +139,7 @@ function transformMovie(raw) {
     // Identity
     tmdb_id: raw.id,
     imdb_id: raw.imdb_id || null,
-    title: raw.title,
+    title: TITLE_OVERRIDES[String(raw.id)] ?? raw.title,
     original_title: raw.original_title,
     tagline: raw.tagline || null,
     overview: raw.overview,
