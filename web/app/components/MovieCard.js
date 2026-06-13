@@ -16,7 +16,9 @@ function formatReleaseDate(dateStr) {
 
 export default function MovieCard({ movie, userScore, isWatchlisted = false, comingSoon = false }) {
   const [showRating, setShowRating] = useState(false);
-  const [scored,     setScored]     = useState(userScore ?? null);
+  // Optimistic score shown immediately after the user rates from this card; null
+  // otherwise so the live `userScore` prop (personalized / own score) drives display.
+  const [justRated,  setJustRated]  = useState(null);
 
 
   return (
@@ -85,7 +87,7 @@ export default function MovieCard({ movie, userScore, isWatchlisted = false, com
                 )}
               </div>
             </div>
-            {!comingSoon && <ScoreCircle score={scored ?? displayScore(movie)} size="sm" />}
+            {!comingSoon && <ScoreCircle score={justRated ?? (userScore || displayScore(movie))} size="sm" />}
           </div>
         </Link>
       </div>
@@ -100,7 +102,7 @@ export default function MovieCard({ movie, userScore, isWatchlisted = false, com
           onRated={(rating) => {
             // Provisional score based on rating until exact score is computed
             const scores = { 5: 90, 4: 70, 3: 50, 2: 30, 1: 10 };
-            setScored(scores[rating] ?? 50);
+            setJustRated(scores[rating] ?? 50);
           }}
         />
       )}
