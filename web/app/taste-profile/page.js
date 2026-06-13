@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../lib/supabase-browser";
+import { languageName } from "../../lib/languages";
 import { getTastePercentiles } from "../../lib/taste";
 import Link from "next/link";
 
@@ -313,7 +314,7 @@ export default function TasteProfilePage() {
                   <p className="text-xs text-stone-400 mt-1">Top Director</p>
                 </div>
                 <div className="bg-white border border-stone-200 rounded-2xl p-4 text-center shadow-sm">
-                  <p className="text-3xl font-black text-stone-900">{taste.languageBreakdown[0]?.language || "—"}</p>
+                  <p className="text-3xl font-black text-stone-900">{languageName(taste.languageBreakdown[0]?.language) || "—"}</p>
                   <p className="text-xs text-stone-400 mt-1">Main Language</p>
                 </div>
               </div>
@@ -357,7 +358,7 @@ export default function TasteProfilePage() {
                 <div className="space-y-2">
                   {taste.languageBreakdown.map((l, i) => (
                     <div key={i} className="flex items-center justify-between bg-stone-50 border border-stone-200 rounded-lg p-3">
-                      <span className="text-sm font-medium text-stone-700">{l.language}</span>
+                      <span className="text-sm font-medium text-stone-700">{languageName(l.language)}</span>
                       <span className="font-bold text-orange-600">{l.pct}%</span>
                     </div>
                   ))}
@@ -412,7 +413,7 @@ export default function TasteProfilePage() {
                 <p className="text-sm text-stone-700 leading-relaxed">
                   You're a <strong>{taste.eraBreakdown[0]?.era} enthusiast</strong> who loves <strong>{taste.genreBreakdown.slice(0, 2).map(g => g.genre).join(" and ")}</strong> films,
                   with a strong affinity for <strong>{taste.directorAffinities[0]?.name}</strong>.
-                  Your taste is primarily in <strong>{taste.languageBreakdown[0]?.language}</strong>,
+                  Your taste is primarily in <strong>{languageName(taste.languageBreakdown[0]?.language)}</strong>,
                   and you gravitate toward <strong>{taste.vibeBreakdown[0]?.vibe}</strong> cinema.
                 </p>
               </section>

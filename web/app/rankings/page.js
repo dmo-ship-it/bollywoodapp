@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "../../lib/supabase-browser";
+import { languageName } from "../../lib/languages";
 import Link from "next/link";
 import RankingsShareCard from "../components/RankingsShareCard";
 import FilterPanel, {
@@ -250,7 +251,7 @@ export default function RankingsPage() {
         <div className="flex flex-wrap gap-2 mb-4">
           {filters.language && (
             <span className="inline-flex items-center gap-1.5 bg-orange-50 border border-orange-200 text-orange-700 text-xs font-medium px-3 py-1 rounded-full">
-              {filters.language.toUpperCase()}
+              {languageName(filters.language)}
               <button onClick={() => setFilters((f) => ({ ...f, language: null }))}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
               </button>
