@@ -7,18 +7,6 @@ import RatingModal from "./RatingModal";
 import ScoreCircle from "./ScoreCircle";
 import { displayScore } from "../../lib/score";
 
-const VIBE_ICONS = {
-  "feel-good":                  "🫶",
-  "emotionally devastating":    "😭",
-  "edge-of-your-seat thriller": "😰",
-  "laugh-out-loud comedy":      "😂",
-  "dark":                       "🌑",
-  "high energy":                "🔥",
-  "high-energy":                "🔥",
-  "slow burn":                  "🕯️",
-  "bittersweet":                "💛",
-  "emotional":                  "💙",
-};
 
 function formatReleaseDate(dateStr) {
   if (!dateStr) return null;
@@ -30,9 +18,6 @@ export default function MovieCard({ movie, userScore, isWatchlisted = false, com
   const [showRating, setShowRating] = useState(false);
   const [scored,     setScored]     = useState(userScore ?? null);
 
-  const allVibes = [...(movie.tone ?? []), ...(movie.mood_tags ?? [])];
-  const topVibe  = allVibes.find((t) => VIBE_ICONS[t.toLowerCase()]);
-  const vibeIcon = topVibe ? VIBE_ICONS[topVibe.toLowerCase()] : null;
 
   return (
     <>
@@ -51,14 +36,8 @@ export default function MovieCard({ movie, userScore, isWatchlisted = false, com
               <div className="w-full h-full flex items-center justify-center text-stone-400 text-3xl">🎬</div>
             )}
 
-            {/* Vibe on hover */}
-            {vibeIcon && (
-              <div className="absolute top-2 left-2 text-sm leading-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 drop-shadow-md">
-                {vibeIcon}
-              </div>
-            )}
 
-  
+
             {/* Action buttons — top right on hover */}
             <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col gap-1">
               {/* Trailer button — for coming soon */}
