@@ -17,6 +17,7 @@ export default function NewCommunityPost() {
   const [content,      setContent]      = useState("");
   const [description,  setDescription]  = useState("");
   const [isRanked,     setIsRanked]     = useState(false);
+  const [maxPicks,     setMaxPicks]     = useState(3);     // for polls
   const [movieQuery,   setMovieQuery]   = useState("");
   const [movieResults, setMovieResults] = useState([]);
   const [linkedMovie,  setLinkedMovie]  = useState(null);  // for reviews
@@ -85,6 +86,13 @@ export default function NewCommunityPost() {
         );
         router.push(`/community/lists/${list.id}`);
       }
+    } else if (type === "poll") {
+      const { data: poll, error } = await supabase.from("community_polls").insert({
+        user_id: user.id, title: title.trim(),
+        description: description.trim() || null,
+        max_picks: maxPicks,
+      }).select("id").single();
+      if (!error && poll) router.push(`/community/polls/${poll.id}`);
     } else {
       const { data: post, error } = await supabase.from("community_posts").insert({
         user_id: user.id, title: title.trim(), content: content.trim(),
@@ -109,6 +117,7 @@ export default function NewCommunityPost() {
           { id: "discussion", label: "💬 Discussion" },
           { id: "review",     label: "⭐ Review"     },
           { id: "list",       label: "📋 List"       },
+          { id: "poll",       label: "📊 Poll"       },
         ].map(t => (
           <button key={t.id} onClick={() => setType(t.id)}
             className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-all ${type === t.id ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}>
@@ -163,7 +172,7 @@ export default function NewCommunityPost() {
         </div>
 
         {/* Content or Description */}
-        {type !== "list" ? (
+        {type !== "list" && type !== "poll" ? (
           <div>
             <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">
               {type === "review" ? "Your review" : "Content"}
@@ -239,6 +248,30 @@ export default function NewCommunityPost() {
                   ))}
                 </div>
               )}
+            </div>
+          </>
+        )}
+
+        {/* Poll-specific fields */}
+        {type === "poll" && (
+          <>
+            <div>
+              <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">Description <span className="text-stone-300 normal-case tracking-normal">(optional)</span></label>
+              <textarea value={description} onChange={e => setDescription(e.target.value)} rows={2}
+                placeholder="Any extra context for the poll…"
+                className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-all text-sm resize-none"/>
+            </div>
+            <div>
+              <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">How many films can each person pick?</label>
+              <div className="flex gap-2">
+                {[1, 2, 3, 5, 10].map(n => (
+                  <button key={n} type="button" onClick={() => setMaxPicks(n)}
+                    className={`flex-1 py-2 rounded-xl border text-sm font-bold transition-all ${maxPicks === n ? "bg-violet-600 text-white border-violet-600" : "bg-white border-stone-200 text-stone-600 hover:border-stone-300"}`}>
+                    {n}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-stone-400 mt-2">Each person can pick up to {maxPicks} film{maxPicks !== 1 ? "s" : ""}. Results show the most-picked films across all voters.</p>
             </div>
           </>
         )}
