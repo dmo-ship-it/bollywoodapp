@@ -68,14 +68,14 @@ export function FeedContent() {
           onClick={() => setTab("all")}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === "all" ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}
         >
-          🌍 Everyone
+          Global
         </button>
         {user && (
           <button
             onClick={() => setTab("following")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === "following" ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}
           >
-            👯 Following
+            Following
           </button>
         )}
       </div>
@@ -84,7 +84,7 @@ export function FeedContent() {
         <div className="space-y-3">{[1,2,3,4].map(i => <div key={i} className="h-20 rounded-2xl shimmer"/>)}</div>
       ) : activities.length === 0 ? (
         <div className="text-center py-16 bg-white border border-stone-200 rounded-2xl text-stone-400">
-          <p className="text-3xl mb-3">{tab === "following" ? "👥" : "🎬"}</p>
+          <p className="text-3xl mb-3">🎬</p>
           <p className="font-medium text-stone-600 mb-1">No activity yet</p>
           <p className="text-sm mb-4">{tab === "following" ? "Follow friends to see their activity" : "Be the first to rate a film!"}</p>
           <Link href="/" className="text-orange-600 text-sm hover:underline">Discover films →</Link>

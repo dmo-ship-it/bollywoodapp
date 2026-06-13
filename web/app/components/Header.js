@@ -45,8 +45,8 @@ export default function Header() {
           {[
             { href: "/",              label: "Discover"  },
             { href: "/taste-profile", label: "Taste"     },
-            { href: "/trivia",        label: "Trivia"    },
             { href: "/community",     label: "Community" },
+            { href: "/trivia",        label: "Trivia"    },
             { href: "/rankings",      label: "Rankings"  },
           ].map((item) => {
             const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);

@@ -58,15 +58,18 @@ const FAN_COMMUNITIES = [
 
 export default function CommunityPage() {
   const supabase = createClient();
-  const [user,       setUser]       = useState(null);
-  const [tab,        setTab]        = useState("feed");
-  const [sort,       setSort]       = useState("new");
-  const [posts,      setPosts]      = useState([]);
-  const [lists,      setLists]      = useState([]);
-  const [myVotes,    setMyVotes]    = useState(new Set());
-  const [badgeStats, setBadgeStats] = useState({});
+  const [user,         setUser]         = useState(null);
+  const [tab,          setTab]          = useState("feed");
+  const [sort,         setSort]         = useState("new");
+  const [search,       setSearch]       = useState("");
+  const [postType,     setPostType]     = useState("all");
+  const [showFilter,   setShowFilter]   = useState(false);
+  const [posts,        setPosts]        = useState([]);
+  const [lists,        setLists]        = useState([]);
+  const [myVotes,      setMyVotes]      = useState(new Set());
+  const [badgeStats,   setBadgeStats]   = useState({});
   const [earnedBadges, setEarnedBadges] = useState(new Set());
-  const [loading,    setLoading]    = useState(true);
+  const [loading,      setLoading]      = useState(true);
 
   useEffect(() => {
     async function loadUser() {
@@ -113,10 +116,11 @@ export default function CommunityPage() {
     setLoading(true);
 
     if (tab === "discussions") {
+      const sortCol = sort === "new" ? "created_at" : sort === "hot" ? "upvotes" : "comment_count";
       const { data: rawPosts } = await supabase
         .from("community_posts")
         .select("id,title,content,post_type,upvotes,comment_count,created_at,user_id,movie_id")
-        .order(sort === "hot" ? "upvotes" : "created_at", { ascending: false })
+        .order(sortCol, { ascending: false })
         .limit(30);
 
       if (!rawPosts?.length) { setPosts([]); setLoading(false); return; }
@@ -136,10 +140,11 @@ export default function CommunityPage() {
       setPosts(rawPosts.map(p => ({ ...p, profile: profileMap[p.user_id], movie: p.movie_id ? movieMap[p.movie_id] : null })));
 
     } else {
+      const listSortCol = sort === "new" ? "created_at" : "upvotes";
       const { data: rawLists } = await supabase
         .from("community_lists")
         .select("id,title,description,is_ranked,upvotes,created_at,user_id")
-        .order(sort === "hot" ? "upvotes" : "created_at", { ascending: false })
+        .order(listSortCol, { ascending: false })
         .limit(30);
 
       if (!rawLists?.length) { setLists([]); setLoading(false); return; }
@@ -196,33 +201,88 @@ export default function CommunityPage() {
         </Link>
       </div>
 
-      {/* Tabs + Sort */}
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex gap-1 bg-stone-100 rounded-xl p-1 flex-wrap">
-          {[
-            { id: "feed",         label: "Feed"         },
-            { id: "discussions",  label: "Discussions"  },
-            { id: "lists",        label: "Lists"        },
-            { id: "leaderboards", label: "Leaderboards" },
-            { id: "communities",  label: "🎭 Communities" },
-          ].map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${tab === t.id ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}>
-              {t.label}
-            </button>
-          ))}
-        </div>
-        {(tab === "discussions" || tab === "lists") && (
-          <div className="flex gap-1 mt-2">
-            {["new","hot"].map(s => (
-              <button key={s} onClick={() => setSort(s)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${sort === s ? "bg-stone-200 text-stone-900" : "text-stone-400 hover:text-stone-700"}`}>
-                {s === "hot" ? "🔥 Hot" : "✨ New"}
-              </button>
-            ))}
-          </div>
-        )}
+      {/* Tabs */}
+      <div className="flex gap-1 bg-stone-100 rounded-xl p-1 mb-4">
+        {[
+          { id: "feed",         label: "Feed"         },
+          { id: "discussions",  label: "Discussions"  },
+          { id: "lists",        label: "Lists"        },
+          { id: "leaderboards", label: "Leaderboards" },
+          { id: "communities",  label: "Communities"  },
+        ].map(t => (
+          <button key={t.id} onClick={() => { setTab(t.id); setSearch(""); setShowFilter(false); }}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${tab === t.id ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}>
+            {t.label}
+          </button>
+        ))}
       </div>
+
+      {/* Search + Filter (discussions & lists only) */}
+      {(tab === "discussions" || tab === "lists") && (
+        <div className="mb-5">
+          <div className="flex gap-2">
+            {tab === "discussions" && (
+              <div className="relative flex-1">
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input
+                  type="text"
+                  placeholder="Search discussions…"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-stone-200 rounded-xl text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-colors"
+                />
+              </div>
+            )}
+            <div className="relative">
+              <button
+                onClick={() => setShowFilter(f => !f)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-sm font-medium transition-all ${showFilter || sort !== "new" || postType !== "all" ? "bg-orange-50 border-orange-300 text-orange-700" : "bg-white border-stone-200 text-stone-500 hover:text-stone-800 hover:border-stone-300"}`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M9 18h6"/></svg>
+                <span>Filter</span>
+                {(sort !== "new" || postType !== "all") && <span className="w-1.5 h-1.5 rounded-full bg-orange-500"/>}
+              </button>
+
+              {showFilter && (
+                <div className="absolute right-0 top-full mt-1 w-52 bg-white border border-stone-200 rounded-2xl shadow-lg z-10 p-3 space-y-3">
+                  <div>
+                    <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide mb-1.5">Sort by</p>
+                    <div className="flex flex-col gap-1">
+                      {[
+                        { id: "new", label: "Newest first"    },
+                        { id: "hot", label: "Most upvoted"    },
+                        { id: "top", label: tab === "discussions" ? "Most discussed" : "Most upvoted" },
+                      ].map(s => (
+                        <button key={s.id} onClick={() => { setSort(s.id); }}
+                          className={`text-left px-3 py-1.5 rounded-lg text-sm transition-all ${sort === s.id ? "bg-orange-50 text-orange-700 font-medium" : "text-stone-600 hover:bg-stone-50"}`}>
+                          {s.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {tab === "discussions" && (
+                    <div>
+                      <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide mb-1.5">Type</p>
+                      <div className="flex flex-col gap-1">
+                        {[
+                          { id: "all",        label: "All"         },
+                          { id: "discussion", label: "Discussions" },
+                          { id: "review",     label: "Reviews"     },
+                        ].map(t => (
+                          <button key={t.id} onClick={() => setPostType(t.id)}
+                            className={`text-left px-3 py-1.5 rounded-lg text-sm transition-all ${postType === t.id ? "bg-orange-50 text-orange-700 font-medium" : "text-stone-600 hover:bg-stone-50"}`}>
+                            {t.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {tab === "feed" ? (
         <FeedContent />
@@ -275,14 +335,20 @@ export default function CommunityPage() {
         </div>
       ) : tab === "discussions" ? (
         <div className="space-y-3">
-          {posts.length === 0 ? (
-            <div className="text-center py-20 bg-white border border-stone-200 rounded-2xl text-stone-400">
-              <p className="text-4xl mb-3">💬</p>
-              <p className="font-medium text-stone-600 mb-1">No discussions yet</p>
-              <p className="text-sm mb-4">Be the first to start a conversation</p>
-              <Link href="/community/new" className="text-orange-600 text-sm hover:underline">Create post →</Link>
-            </div>
-          ) : posts.map(post => {
+          {(() => {
+            const q = search.trim().toLowerCase();
+            const filtered = posts
+              .filter(p => postType === "all" || p.post_type === postType)
+              .filter(p => !q || p.title?.toLowerCase().includes(q) || p.content?.toLowerCase().includes(q));
+            if (filtered.length === 0) return (
+              <div className="text-center py-20 bg-white border border-stone-200 rounded-2xl text-stone-400">
+                <p className="text-4xl mb-3">💬</p>
+                <p className="font-medium text-stone-600 mb-1">{posts.length === 0 ? "No discussions yet" : "No results found"}</p>
+                <p className="text-sm mb-4">{posts.length === 0 ? "Be the first to start a conversation" : "Try a different search or filter"}</p>
+                {posts.length === 0 && <Link href="/community/new" className="text-orange-600 text-sm hover:underline">Create post →</Link>}
+              </div>
+            );
+            return filtered.map(post => {
             const name   = post.profile?.display_name || post.profile?.email?.split("@")[0] || "Someone";
             const voted  = myVotes.has(post.id);
             const initials = name.slice(0,2).toUpperCase();
@@ -328,7 +394,8 @@ export default function CommunityPage() {
                 </div>
               </div>
             );
-          })}
+          });
+          })()}
         </div>
       ) : (
         <div className="space-y-3">
