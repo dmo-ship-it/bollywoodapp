@@ -601,16 +601,6 @@ export default function ProfilePage() {
           )}
         </div>
       )}
-      {/* Danger zone */}
-      <div className="mt-12 pt-8 border-t border-stone-200">
-        <button
-          onClick={() => { setDeleteOpen(true); setDeleteConfirm(""); setDeleteError(""); }}
-          className="text-xs text-stone-400 hover:text-red-500 transition-colors underline underline-offset-2"
-        >
-          Delete account
-        </button>
-      </div>
-
       {/* Delete Account modal */}
       {deleteOpen && (
         <>
@@ -731,6 +721,14 @@ export default function ProfilePage() {
               >
                 {profileSaving ? "Saving…" : "Save"}
               </button>
+              <div className="mt-4 pt-4 border-t border-stone-100 text-center">
+                <button
+                  onClick={() => { setEditProfile(false); setDeleteOpen(true); setDeleteConfirm(""); setDeleteError(""); }}
+                  className="text-xs text-stone-400 hover:text-red-500 transition-colors underline underline-offset-2"
+                >
+                  Delete account
+                </button>
+              </div>
             </div>
           </div>
         </>
