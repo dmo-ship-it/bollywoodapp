@@ -4,14 +4,37 @@ import RatingPanel from "./RatingPanel";
 import TrailerPlayer from "./TrailerPlayer";
 
 const OTT_COLORS = {
-  "Netflix":        "bg-red-600",
-  "Amazon Prime":   "bg-cyan-600",
-  "Prime Video":    "bg-cyan-600",
-  "Disney+ Hotstar":"bg-blue-600",
-  "JioCinema":      "bg-purple-600",
-  "Apple TV+":      "bg-zinc-700",
-  "YouTube":        "bg-red-500",
+  "Netflix":                       "bg-red-600",
+  "Amazon Prime Video":            "bg-cyan-600",
+  "Amazon Prime Video with Ads":   "bg-cyan-600",
+  "Amazon Prime":                  "bg-cyan-600",
+  "Prime Video":                   "bg-cyan-600",
+  "Disney+ Hotstar":               "bg-blue-600",
+  "JioCinema":                     "bg-purple-600",
+  "Apple TV+":                     "bg-zinc-700",
+  "YouTube":                       "bg-red-500",
 };
+
+function ottSearchUrl(platform, title) {
+  const q = encodeURIComponent(title);
+  switch (platform) {
+    case "Netflix":
+    case "Netflix basic with Ads":             return `https://www.netflix.com/search?q=${q}`;
+    case "Amazon Prime Video":
+    case "Amazon Prime Video with Ads":
+    case "Amazon Prime":
+    case "Prime Video":                        return `https://www.primevideo.com/search/ref=atv_nb_sr?phrase=${q}`;
+    case "Disney+ Hotstar":                    return `https://www.hotstar.com/in/search?q=${q}`;
+    case "JioCinema":                          return `https://www.jiocinema.com/search/${q}`;
+    case "Apple TV+":                          return `https://tv.apple.com/search?term=${q}`;
+    case "YouTube":                            return `https://www.youtube.com/results?search_query=${q}+full+movie`;
+    case "ZEE5":                               return `https://www.zee5.com/search?q=${q}`;
+    case "Sun NXT":                            return `https://www.sunnxt.com/search?q=${q}`;
+    case "Mubi":                               return `https://mubi.com/en/in/search?q=${q}`;
+    case "Aha":                                return `https://www.aha.video/search?q=${q}`;
+    default:                                   return null;
+  }
+}
 
 
 export default async function MoviePage({ params }) {
@@ -88,11 +111,24 @@ export default async function MoviePage({ params }) {
             {movie.ott_platforms?.length > 0 && (
               <div className="mt-3 space-y-1.5">
                 <p className="text-[10px] text-stone-400 uppercase tracking-widest">Stream on</p>
-                {movie.ott_platforms.slice(0, 3).map((p) => (
-                  <div key={p} className={`${OTT_COLORS[p] ?? "bg-stone-700"} text-white text-[10px] font-medium px-2.5 py-1 rounded-md text-center`}>
-                    {p}
-                  </div>
-                ))}
+                {movie.ott_platforms.slice(0, 3).map((p) => {
+                  const url = ottSearchUrl(p, movie.title);
+                  return url ? (
+                    <a
+                      key={p}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`${OTT_COLORS[p] ?? "bg-stone-700"} text-white text-[10px] font-medium px-2.5 py-1 rounded-md text-center block hover:opacity-90 transition-opacity`}
+                    >
+                      {p}
+                    </a>
+                  ) : (
+                    <div key={p} className={`${OTT_COLORS[p] ?? "bg-stone-700"} text-white text-[10px] font-medium px-2.5 py-1 rounded-md text-center`}>
+                      {p}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
