@@ -11,7 +11,6 @@ import {
   getUserTriviaStats,
   hasAnsweredToday,
   getUserTopLanguage,
-  SUPPORTED_TRIVIA_LANGS,
   TRIVIA_LANG_NAMES,
 } from "../../lib/trivia";
 
@@ -79,13 +78,6 @@ export default function TriviaPage() {
     load();
   }, []);
 
-  async function handleSwitchLanguage(lang) {
-    if (lang === language || !user) return;
-    setLanguage(lang);
-    setLoading(true);
-    await loadForLanguage(user, lang);
-    setLoading(false);
-  }
 
   async function handleSubmitAnswer() {
     if (selectedAnswer === null) return;
@@ -195,28 +187,11 @@ export default function TriviaPage() {
     <div className="max-w-2xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
 
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-8">
         <h1 className="text-3xl font-black text-stone-900 mb-2">🎬 Daily Trivia</h1>
         <p className="text-stone-600">
           Test your knowledge of {TRIVIA_LANG_NAMES[language]} cinema — one new question a day.
         </p>
-      </div>
-
-      {/* Language switcher */}
-      <div className="flex flex-wrap gap-2 mb-8">
-        {SUPPORTED_TRIVIA_LANGS.map((code) => (
-          <button
-            key={code}
-            onClick={() => handleSwitchLanguage(code)}
-            className={`px-4 py-2 rounded-full text-sm font-bold transition-colors ${
-              code === language
-                ? "bg-orange-600 text-white"
-                : "bg-white border border-stone-200 text-stone-600 hover:border-orange-300"
-            }`}
-          >
-            {TRIVIA_LANG_NAMES[code]}
-          </button>
-        ))}
       </div>
 
       {/* Stats Card */}
