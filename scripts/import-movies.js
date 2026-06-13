@@ -28,8 +28,7 @@ const HEADERS = {
 };
 
 async function upsertCredits(rows) {
-  // Credits have no unique constraint so we use plain insert with ignore-on-conflict header
-  const url = `${SUPABASE_URL}/rest/v1/movie_credits`;
+  const url = `${SUPABASE_URL}/rest/v1/movie_credits?on_conflict=movie_id,person_id,role`;
   const res = await fetch(url, {
     method: "POST",
     headers: { ...HEADERS, "Prefer": "resolution=ignore-duplicates" },

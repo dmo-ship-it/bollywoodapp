@@ -114,7 +114,7 @@ export default function RankingsShareCard({ movies, totalRated, isPersonal, lang
                   </p>
                 )}
                 <p style={{ color: "#9ca3af", fontSize: "11px", fontFamily: "system-ui, sans-serif", letterSpacing: "0.5px" }}>
-                  My Top {top5.length}{language !== "All" ? ` ${language}` : ""}:
+                  My Top {top5.length}{language ? ` ${language.toUpperCase()}` : ""}:
                 </p>
               </div>
 
