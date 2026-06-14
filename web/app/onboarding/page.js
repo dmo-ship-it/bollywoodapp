@@ -59,6 +59,20 @@ const RATINGS = [
 const INITIAL_SCORES = { 5: 90, 4: 70, 3: 50, 2: 30, 1: 10 };
 const BUCKET_RANGES  = { 5: [80, 100], 4: [60, 79], 3: [40, 59], 2: [20, 39], 1: [0, 19] };
 
+const AVATAR_GRADIENTS = [
+  "from-amber-400 to-orange-500",
+  "from-purple-500 to-pink-500",
+  "from-blue-500 to-cyan-500",
+  "from-emerald-500 to-teal-500",
+  "from-rose-500 to-pink-600",
+  "from-indigo-500 to-purple-500",
+];
+
+function avatarGradient(userId = "") {
+  const n = userId.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+  return AVATAR_GRADIENTS[n % AVATAR_GRADIENTS.length];
+}
+
 function buildDNA(selected) {
   const rated = selected.filter((s) => s.rating > 0);
   const avg   = rated.length ? rated.reduce((s, r) => s + r.rating, 0) / rated.length : 0;
@@ -75,7 +89,6 @@ function buildDNA(selected) {
   return arcs.slice(0, 4);
 }
 
-// Only compare movies within the same rating bucket
 function generatePairs(selected) {
   const buckets = {};
   selected.filter((s) => s.rating != null).forEach((s) => {
@@ -124,16 +137,23 @@ export default function OnboardingPage() {
 
   const [step,            setStep]            = useState(0);
   const [user,            setUser]            = useState(null);
+  // Step 0: Identity
+  const [displayName,     setDisplayName]     = useState("");
+  const [username,        setUsername]        = useState("");
+  // Step 1: Location
   const [country,         setCountry]         = useState("");
   const [city,            setCity]            = useState("");
   const [countrySearch,   setCountrySearch]   = useState("");
   const [showCountryDrop, setShowCountryDrop] = useState(false);
-  const [languageRanking, setLanguageRanking] = useState([]); // ordered array of lang codes
+  // Step 2: Languages
+  const [languageRanking, setLanguageRanking] = useState([]);
+  // Step 3: Rate films
   const [query,           setQuery]           = useState("");
   const [results,         setResults]         = useState([]);
   const [searching,       setSearching]       = useState(false);
   const [showDropdown,    setShowDropdown]     = useState(false);
-  const [selected,        setSelected]        = useState([]); // [{ movie, rating }]
+  const [selected,        setSelected]        = useState([]);
+  // Step 4: Compare
   const [pairs,           setPairs]           = useState([]);
   const [pairIdx,         setPairIdx]         = useState(0);
   const [compResults,     setCompResults]     = useState([]);
@@ -142,10 +162,34 @@ export default function OnboardingPage() {
   const debounceRef = useRef(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    async function init() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { router.replace("/login"); return; }
+      setUser(user);
+
+      const { data: profile } = await supabase
+        .from("user_profiles")
+        .select("onboarding_complete, display_name, username")
+        .eq("user_id", user.id)
+        .single();
+
+      if (profile?.onboarding_complete) { router.replace("/"); return; }
+
+      // Pre-fill identity from existing profile or auth metadata
+      const meta = user.user_metadata || {};
+      const nameFromMeta = meta.full_name || meta.name || "";
+      const nameFromEmail = user.email?.split("@")[0] ?? "";
+      const defaultName = profile?.display_name || nameFromMeta || nameFromEmail;
+      const defaultUsername = profile?.username ||
+        (nameFromMeta || nameFromEmail).toLowerCase().replace(/[^a-z0-9_]/g, "").slice(0, 20);
+
+      setDisplayName(defaultName);
+      setUsername(defaultUsername);
+    }
+    init();
   }, []);
 
-  // Debounced search
+  // Debounced film search
   useEffect(() => {
     if (query.length < 2) { setResults([]); setShowDropdown(false); return; }
     clearTimeout(debounceRef.current);
@@ -181,20 +225,16 @@ export default function OnboardingPage() {
     );
   }
 
-  function handleLocationContinue() {
-    setStep(1);
-  }
-
-  function handleLanguageContinue() {
-    setStep(2);
-  }
+  function handleIdentityContinue() { setStep(1); }
+  function handleLocationContinue() { setStep(2); }
+  function handleLanguageContinue() { setStep(3); }
 
   function handleContinue() {
     const rated = selected.filter((s) => s.rating != null);
     const p = generatePairs(rated);
     if (p.length > 0) {
       setPairs(p);
-      setStep(3);
+      setStep(4);
     } else {
       handleFinish(selected, []);
     }
@@ -227,20 +267,35 @@ export default function OnboardingPage() {
           score:    scores[s.movie.id] ?? INITIAL_SCORES[s.rating],
         }));
       if (reactions.length) {
-        await supabase.from("user_reactions").upsert(reactions, { onConflict: "user_id,movie_id" });
+        const { error: reactErr } = await supabase
+          .from("user_reactions")
+          .upsert(reactions, { onConflict: "user_id,movie_id" });
+        if (reactErr) console.error("user_reactions upsert failed:", reactErr);
       }
-      const userMetadata = currentUser.user_metadata || {};
 
+      // Core profile fields — always exist in base schema
+      const { error: profileErr } = await supabase.from("user_profiles").upsert(
+        {
+          user_id:             currentUser.id,
+          display_name:        displayName.trim() || null,
+          username:            username.trim().toLowerCase() || null,
+          dna:                 buildDNA(sel),
+          onboarding_complete: true,
+          email:               currentUser.email,
+          country:             country || null,
+          city:                city.trim() || null,
+        },
+        { onConflict: "user_id" }
+      );
+      if (profileErr) console.error("user_profiles core upsert failed:", profileErr);
+
+      // Extended fields (migrate-user-profiles.sql) — best effort
+      const meta = currentUser.user_metadata || {};
       await supabase.from("user_profiles").upsert(
         {
-          user_id: currentUser.id,
-          dna: buildDNA(sel),
-          onboarding_complete: true,
-          email: currentUser.email,
-          full_name: userMetadata.full_name || userMetadata.name || currentUser.email?.split("@")[0],
-          profile_picture_url: userMetadata.avatar_url || userMetadata.picture,
-          country: country || null,
-          city: city.trim() || null,
+          user_id:             currentUser.id,
+          full_name:           meta.full_name || meta.name || displayName.trim() || null,
+          profile_picture_url: meta.avatar_url || meta.picture || null,
           preferred_languages: languageRanking.length > 0 ? languageRanking : null,
         },
         { onConflict: "user_id" }
@@ -249,8 +304,76 @@ export default function OnboardingPage() {
     router.push("/");
   }
 
-  // ── Step 0: Location ──
+  // ── Step 0: Identity ──
   if (step === 0) {
+    const initials  = displayName.slice(0, 2).toUpperCase() || "?";
+    const gradient  = user ? avatarGradient(user.id) : "from-amber-400 to-orange-500";
+    const canContinue = displayName.trim().length >= 2 && username.trim().length >= 2;
+
+    return (
+      <div className="max-w-lg mx-auto px-4 py-10">
+        <div className="mb-6">
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 1 of 4</p>
+          <h1 className="text-2xl font-black text-stone-900 mb-1">Create your profile</h1>
+          <p className="text-stone-500 text-sm">How you'll appear to others on Bolly</p>
+        </div>
+
+        {/* Avatar preview */}
+        <div className="flex justify-center mb-8">
+          <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-2xl font-black select-none`}>
+            {initials}
+          </div>
+        </div>
+
+        <div className="space-y-4 mb-8">
+          <div>
+            <label className="block text-xs font-semibold text-stone-500 uppercase tracking-widest mb-2">
+              Display name
+            </label>
+            <input
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              placeholder="How you want to be known"
+              maxLength={32}
+              className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all shadow-sm"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-stone-500 uppercase tracking-widest mb-2">
+              Username
+            </label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 text-sm select-none">@</span>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) =>
+                  setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))
+                }
+                placeholder="yourhandle"
+                maxLength={20}
+                className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 pl-8 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all shadow-sm"
+              />
+            </div>
+            <p className="text-[10px] text-stone-400 mt-1.5">Letters, numbers and underscores only</p>
+          </div>
+        </div>
+
+        <button
+          onClick={handleIdentityContinue}
+          disabled={!canContinue}
+          className="w-full bg-orange-600 text-white font-bold py-3.5 rounded-full hover:bg-orange-500 transition-colors text-sm disabled:opacity-40 shadow-sm"
+        >
+          Continue →
+        </button>
+      </div>
+    );
+  }
+
+  // ── Step 1: Location ──
+  if (step === 1) {
     const filteredCountries = countrySearch.trim()
       ? COUNTRIES.filter((c) => c.label.toLowerCase().includes(countrySearch.toLowerCase()))
       : COUNTRIES;
@@ -259,7 +382,7 @@ export default function OnboardingPage() {
     return (
       <div className="max-w-lg mx-auto px-4 py-10">
         <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 1 of 3</p>
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 2 of 4</p>
           <h1 className="text-2xl font-black text-stone-900 mb-1">Where are you based?</h1>
           <p className="text-stone-500 text-sm">Helps us surface locally relevant films and showtimes.</p>
         </div>
@@ -345,22 +468,18 @@ export default function OnboardingPage() {
     );
   }
 
-  // ── Step 1: Language Ranking ──
-  if (step === 1) {
+  // ── Step 2: Language Ranking ──
+  if (step === 2) {
     const toggleLanguage = (code) => {
-      setLanguageRanking((prev) => {
-        if (prev.includes(code)) {
-          return prev.filter((c) => c !== code);
-        } else {
-          return [...prev, code];
-        }
-      });
+      setLanguageRanking((prev) =>
+        prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]
+      );
     };
 
     return (
       <div className="max-w-lg mx-auto px-4 py-10">
         <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 2 of 3</p>
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 3 of 4</p>
           <h1 className="text-2xl font-black text-stone-900 mb-1">Which languages do you watch most?</h1>
           <p className="text-stone-500 text-sm">Select in order — most-watched first. We'll show those films at the top of your feed.</p>
         </div>
@@ -437,16 +556,14 @@ export default function OnboardingPage() {
     );
   }
 
-  // ── Step 2: Search + Rate ──
-  if (step === 2) {
+  // ── Step 3: Search + Rate ──
+  if (step === 3) {
     const ratedCount = selected.filter((s) => s.rating != null).length;
-    const allRated   = selected.length > 0 && selected.every((s) => s.rating != null);
 
     return (
       <div className="max-w-lg mx-auto px-4 py-10">
-
         <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 3 of 3</p>
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 4 of 4</p>
           <h1 className="text-2xl font-black text-stone-900 mb-1">Pick films you've seen</h1>
           <p className="text-stone-500 text-sm">Search for up to 5 films and rate each one</p>
         </div>
@@ -587,8 +704,8 @@ export default function OnboardingPage() {
     );
   }
 
-  // ── Step 3: Compare within same bucket ──
-  if (step === 3) {
+  // ── Step 4: Compare within same bucket ──
+  if (step === 4) {
     const pair = pairs[pairIdx];
 
     return (

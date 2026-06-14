@@ -19,7 +19,7 @@ export default function LoginPage() {
     setError("");
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${location.origin}/auth/callback?next=/setup` },
+      options: { emailRedirectTo: `${location.origin}/auth/callback?next=/onboarding` },
     });
     if (error) setError(error.message);
     else setSent(true);
@@ -29,7 +29,7 @@ export default function LoginPage() {
   async function handleGoogle() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${location.origin}/auth/callback?next=/setup` },
+      options: { redirectTo: `${location.origin}/auth/callback?next=/onboarding` },
     });
   }
 
