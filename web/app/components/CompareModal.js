@@ -127,14 +127,14 @@ function ResultCard({ movieTitle, posterUrl, movieId, myScore, myRank, avgScore,
 export default function CompareModal({ movieId, movieTitle, posterUrl, rating, userId, onClose }) {
   const supabase = createClient();
 
-  const [phase,      setPhase]      = useState("loading");
-  const [sorted,     setSorted]     = useState([]);
-  const [low,        setLow]        = useState(0);
-  const [high,       setHigh]       = useState(0);
-  const [compsDone,  setCompsDone]  = useState(0);
-  const [finalPos,   setFinalPos]   = useState(null);
-  const [finalScore, setFinalScore] = useState(null);
-  const [avgScore,   setAvgScore]   = useState(null);
+  const [phase,       setPhase]       = useState("loading");
+  const [sorted,      setSorted]      = useState([]);
+  const [low,         setLow]         = useState(0);
+  const [high,        setHigh]        = useState(0);
+  const [compsDone,   setCompsDone]   = useState(0);
+  const [finalScore,  setFinalScore]  = useState(null);
+  const [overallRank, setOverallRank] = useState(null);
+  const [avgScore,    setAvgScore]    = useState(null);
 
   useEffect(() => {
     async function load() {
@@ -167,7 +167,7 @@ export default function CompareModal({ movieId, movieTitle, posterUrl, rating, u
       }
 
       if (movies.length === 0) {
-        await finish(INITIAL_SCORES[rating], 0);
+        await finish(INITIAL_SCORES[rating]);
       } else {
         setLow(0);
         setHigh(movies.length - 1);
@@ -177,14 +177,21 @@ export default function CompareModal({ movieId, movieTitle, posterUrl, rating, u
     load();
   }, []);
 
-  async function finish(score, pos) {
+  async function finish(score) {
     setFinalScore(score);
-    setFinalPos(pos);
     setPhase("done");
     await supabase.from("user_reactions")
       .update({ score })
       .eq("user_id", userId)
       .eq("movie_id", movieId);
+
+    const { count } = await supabase
+      .from("user_reactions")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .neq("movie_id", movieId)
+      .gt("score", score);
+    setOverallRank((count ?? 0) + 1);
   }
 
   async function handleChoice(newWon) {
@@ -200,9 +207,8 @@ export default function CompareModal({ movieId, movieTitle, posterUrl, rating, u
     }
 
     if (newLow > newHigh || newCount >= 4) {
-      const pos   = newLow;
-      const score = insertionScore(sorted, pos, rating);
-      await finish(score, pos);
+      const score = insertionScore(sorted, newLow, rating);
+      await finish(score);
     } else {
       setLow(newLow);
       setHigh(newHigh);
@@ -210,13 +216,12 @@ export default function CompareModal({ movieId, movieTitle, posterUrl, rating, u
   }
 
   async function handleSkip() {
-    await finish(INITIAL_SCORES[rating], Math.floor(sorted.length / 2));
+    await finish(INITIAL_SCORES[rating]);
   }
 
   const totalComps = Math.min(4, Math.ceil(Math.log2((sorted.length || 0) + 1)));
   const mid        = Math.floor((low + high) / 2);
   const target     = sorted[mid];
-  const myRank     = finalPos !== null ? finalPos + 1 : null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
@@ -303,7 +308,7 @@ export default function CompareModal({ movieId, movieTitle, posterUrl, rating, u
             posterUrl={posterUrl}
             movieId={movieId}
             myScore={finalScore}
-            myRank={myRank}
+            myRank={overallRank}
             avgScore={avgScore}
             onClose={onClose}
           />
