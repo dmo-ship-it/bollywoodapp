@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../lib/supabase-browser";
 
@@ -147,19 +147,19 @@ export default function OnboardingPage() {
   const [showCountryDrop, setShowCountryDrop] = useState(false);
   // Step 2: Languages
   const [languageRanking, setLanguageRanking] = useState([]);
-  // Step 3: Rate films
-  const [query,           setQuery]           = useState("");
-  const [results,         setResults]         = useState([]);
-  const [searching,       setSearching]       = useState(false);
-  const [showDropdown,    setShowDropdown]     = useState(false);
-  const [selected,        setSelected]        = useState([]);
-  // Step 4: Compare
+  // Step 3: Seen grid
+  const [anchorMovies,    setAnchorMovies]    = useState([]);
+  const [anchorLoading,   setAnchorLoading]   = useState(false);
+  const [loadingMore,     setLoadingMore]     = useState(false);
+  const [batchLoaded,     setBatchLoaded]     = useState(false);
+  const [seenIds,         setSeenIds]         = useState(new Set());
+  // Step 4: Rate seen films
+  const [selected,        setSelected]        = useState([]); // [{movie, rating}]
+  // Step 5: Compare within same bucket
   const [pairs,           setPairs]           = useState([]);
   const [pairIdx,         setPairIdx]         = useState(0);
   const [compResults,     setCompResults]     = useState([]);
   const [saving,          setSaving]          = useState(false);
-
-  const debounceRef = useRef(null);
 
   useEffect(() => {
     async function init() {
@@ -175,7 +175,6 @@ export default function OnboardingPage() {
 
       if (profile?.onboarding_complete) { router.replace("/"); return; }
 
-      // Pre-fill identity from existing profile or auth metadata
       const meta = user.user_metadata || {};
       const nameFromMeta = meta.full_name || meta.name || "";
       const nameFromEmail = user.email?.split("@")[0] ?? "";
@@ -189,52 +188,107 @@ export default function OnboardingPage() {
     init();
   }, []);
 
-  // Debounced film search
-  useEffect(() => {
-    if (query.length < 2) { setResults([]); setShowDropdown(false); return; }
-    clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(async () => {
-      setSearching(true);
-      const { data } = await supabase
-        .from("movies")
-        .select("id, title, year, poster_url, genres")
-        .ilike("title", `%${query}%`)
-        .order("tmdb_popularity", { ascending: false })
-        .limit(8);
-      setResults(data ?? []);
-      setShowDropdown(true);
-      setSearching(false);
-    }, 150);
-  }, [query]);
+  function handleIdentityContinue() { setStep(1); }
+  function handleLocationContinue() { setStep(2); }
 
-  function addMovie(movie) {
-    if (selected.length >= 5 || selected.find((s) => s.movie.id === movie.id)) return;
-    setSelected((prev) => [...prev, { movie, rating: null }]);
-    setQuery("");
-    setResults([]);
-    setShowDropdown(false);
+  // Decade buckets for stratified sampling — gives era diversity instead of recency bias
+  const DECADE_BUCKETS = [
+    { min: 1900, max: 1979, limit: 8  },
+    { min: 1980, max: 1989, limit: 8  },
+    { min: 1990, max: 1999, limit: 10 },
+    { min: 2000, max: 2009, limit: 10 },
+    { min: 2010, max: 2019, limit: 12 },
+    { min: 2020, max: 2030, limit: 8  },
+  ];
+
+  async function fetchStratified(langLabels, orderCol, extraLimit = 0) {
+    const results = await Promise.all(
+      DECADE_BUCKETS.map(({ min, max, limit }) => {
+        let q = supabase
+          .from("movies")
+          .select("id, title, year, poster_url, genres")
+          .gte("year", min)
+          .lte("year", max)
+          .gte("tmdb_rating", 6.0)
+          .order(orderCol, { ascending: false })
+          .limit(limit + extraLimit);
+        if (langLabels.length > 0) q = q.overlaps("languages", langLabels);
+        return q;
+      })
+    );
+    return results.flatMap(r => r.data ?? []);
   }
 
-  function removeMovie(movieId) {
-    setSelected((prev) => prev.filter((s) => s.movie.id !== movieId));
+  async function handleLanguageContinue() {
+    setStep(3);
+    setAnchorLoading(true);
+
+    const langLabels = languageRanking
+      .map(code => LANGUAGES.find(l => l.code === code)?.label)
+      .filter(Boolean);
+
+    let movies = await fetchStratified(langLabels, "tmdb_popularity");
+
+    // Fallback: drop language filter if it returned too few results
+    if (movies.length < 15) {
+      movies = await fetchStratified([], "tmdb_popularity");
+    }
+
+    // Sort newest-first so users see recent familiar films at the top
+    movies.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
+    setAnchorMovies(movies);
+    setAnchorLoading(false);
+  }
+
+  async function loadMoreFilms() {
+    setLoadingMore(true);
+
+    const langLabels = languageRanking
+      .map(code => LANGUAGES.find(l => l.code === code)?.label)
+      .filter(Boolean);
+
+    const existingIds = new Set(anchorMovies.map(m => m.id));
+
+    // Batch 2 ordered by rating instead of popularity — surfaces acclaimed films
+    // that weren't in the popularity-ordered first batch
+    let candidates = await fetchStratified(langLabels, "tmdb_rating", 10);
+    if (candidates.filter(m => !existingIds.has(m.id)).length < 10) {
+      candidates = await fetchStratified([], "tmdb_rating", 10);
+    }
+
+    const newMovies = candidates
+      .filter(m => !existingIds.has(m.id))
+      .sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
+
+    setAnchorMovies(prev => [...prev, ...newMovies]);
+    setBatchLoaded(true);
+    setLoadingMore(false);
+  }
+
+  function toggleSeen(movieId) {
+    setSeenIds(prev => {
+      const next = new Set(prev);
+      if (next.has(movieId)) next.delete(movieId); else next.add(movieId);
+      return next;
+    });
+  }
+
+  function handleSeenContinue() {
+    const seenMovies = anchorMovies.filter(m => seenIds.has(m.id));
+    setSelected(seenMovies.map(m => ({ movie: m, rating: null })));
+    setStep(4);
   }
 
   function setRating(movieId, rating) {
-    setSelected((prev) =>
-      prev.map((s) => s.movie.id === movieId ? { ...s, rating } : s)
-    );
+    setSelected(prev => prev.map(s => s.movie.id === movieId ? { ...s, rating } : s));
   }
 
-  function handleIdentityContinue() { setStep(1); }
-  function handleLocationContinue() { setStep(2); }
-  function handleLanguageContinue() { setStep(3); }
-
-  function handleContinue() {
-    const rated = selected.filter((s) => s.rating != null);
+  function handleRatingContinue() {
+    const rated = selected.filter(s => s.rating != null);
     const p = generatePairs(rated);
     if (p.length > 0) {
       setPairs(p);
-      setStep(4);
+      setStep(5);
     } else {
       handleFinish(selected, []);
     }
@@ -247,7 +301,7 @@ export default function OnboardingPage() {
 
     if (pairIdx < pairs.length - 1) {
       setCompResults(updatedCompResults);
-      setPairIdx((i) => i + 1);
+      setPairIdx(i => i + 1);
     } else {
       handleFinish(selected, updatedCompResults);
     }
@@ -273,7 +327,6 @@ export default function OnboardingPage() {
         if (reactErr) console.error("user_reactions upsert failed:", reactErr);
       }
 
-      // Core profile fields — always exist in base schema
       const { error: profileErr } = await supabase.from("user_profiles").upsert(
         {
           user_id:             currentUser.id,
@@ -289,7 +342,6 @@ export default function OnboardingPage() {
       );
       if (profileErr) console.error("user_profiles core upsert failed:", profileErr);
 
-      // Extended fields (migrate-user-profiles.sql) — best effort
       const meta = currentUser.user_metadata || {};
       await supabase.from("user_profiles").upsert(
         {
@@ -318,7 +370,6 @@ export default function OnboardingPage() {
           <p className="text-stone-500 text-sm">How you'll appear to others on Bolly</p>
         </div>
 
-        {/* Avatar preview */}
         <div className="flex justify-center mb-8">
           <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-2xl font-black select-none`}>
             {initials}
@@ -387,7 +438,6 @@ export default function OnboardingPage() {
           <p className="text-stone-500 text-sm">Helps us surface locally relevant films and showtimes.</p>
         </div>
 
-        {/* Country picker */}
         <div className="mb-4">
           <label className="block text-xs font-semibold text-stone-500 uppercase tracking-widest mb-2">Country</label>
           <div className="relative">
@@ -436,7 +486,6 @@ export default function OnboardingPage() {
           </div>
         </div>
 
-        {/* City (optional) */}
         <div className="mb-8">
           <label className="block text-xs font-semibold text-stone-500 uppercase tracking-widest mb-2">
             City <span className="text-stone-300 normal-case font-normal">(optional)</span>
@@ -484,7 +533,6 @@ export default function OnboardingPage() {
           <p className="text-stone-500 text-sm">Select in order — most-watched first. We'll show those films at the top of your feed.</p>
         </div>
 
-        {/* Selected ranking display */}
         {languageRanking.length > 0 && (
           <div className="mb-6 p-4 bg-white border border-stone-200 rounded-2xl shadow-sm">
             <p className="text-xs text-stone-400 mb-3 uppercase tracking-widest font-medium">Your order</p>
@@ -510,7 +558,6 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* All languages in one grid */}
         <div className="grid grid-cols-2 gap-2 mb-8">
           {LANGUAGES.map((lang) => {
             const rank = languageRanking.indexOf(lang.code);
@@ -556,156 +603,203 @@ export default function OnboardingPage() {
     );
   }
 
-  // ── Step 3: Search + Rate ──
+  // ── Step 3: "Which of these have you seen?" ──
   if (step === 3) {
-    const ratedCount = selected.filter((s) => s.rating != null).length;
-
     return (
-      <div className="max-w-lg mx-auto px-4 py-10">
+      <div className="max-w-lg mx-auto px-4 pt-10 pb-36">
         <div className="mb-6">
           <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 4 of 4</p>
-          <h1 className="text-2xl font-black text-stone-900 mb-1">Pick films you've seen</h1>
-          <p className="text-stone-500 text-sm">Search for up to 5 films and rate each one</p>
+          <h1 className="text-2xl font-black text-stone-900 mb-1">Which of these have you seen?</h1>
+          <p className="text-stone-500 text-sm">Tap any film you've watched — even if it was years ago</p>
         </div>
 
-        {/* Search box */}
-        {selected.length < 5 && (
-          <div className="relative mb-6">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onFocus={() => results.length > 0 && setShowDropdown(true)}
-              onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
-              placeholder="Search for a film…"
-              className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all pr-24 shadow-sm"
-            />
-            {searching && (
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 text-xs">
-                searching…
-              </span>
-            )}
-
-            {showDropdown && results.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-stone-200 rounded-xl overflow-hidden z-50 shadow-lg">
-                {results.map((movie) => {
-                  const already = !!selected.find((s) => s.movie.id === movie.id);
-                  return (
-                    <button
-                      key={movie.id}
-                      onMouseDown={() => addMovie(movie)}
-                      disabled={already}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-stone-50 transition-colors text-left disabled:opacity-40"
-                    >
-                      <div className="w-8 h-11 rounded-md overflow-hidden bg-stone-100 shrink-0">
-                        {movie.poster_url
-                          ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" />
-                          : <div className="w-full h-full flex items-center justify-center text-xs">🎬</div>
-                        }
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-stone-900 truncate">{movie.title}</p>
-                        <p className="text-xs text-stone-400">{movie.year}</p>
-                      </div>
-                      {already && <span className="text-xs text-stone-400 shrink-0">Added</span>}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
+        {anchorLoading ? (
+          <div className="grid grid-cols-3 gap-2">
+            {Array.from({ length: 18 }).map((_, i) => (
+              <div key={i} className="aspect-[2/3] rounded-xl bg-stone-100 animate-pulse" />
+            ))}
           </div>
-        )}
+        ) : (
+          <div className="grid grid-cols-3 gap-2">
+            {anchorMovies.map(movie => {
+              const seen = seenIds.has(movie.id);
+              return (
+                <button
+                  key={movie.id}
+                  onClick={() => toggleSeen(movie.id)}
+                  className={`relative aspect-[2/3] rounded-xl overflow-hidden bg-stone-100 transition-all ${
+                    seen
+                      ? "ring-2 ring-orange-500 ring-offset-1 scale-[0.97]"
+                      : "hover:ring-1 hover:ring-stone-300 hover:scale-[1.02]"
+                  }`}
+                >
+                  {movie.poster_url ? (
+                    <img
+                      src={movie.poster_url}
+                      alt={movie.title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-stone-300 text-2xl">🎬</div>
+                  )}
 
-        {/* Empty state */}
-        {selected.length === 0 && (
-          <div className="text-center py-14 text-stone-400 border border-dashed border-stone-200 rounded-2xl">
-            <p className="text-4xl mb-3">🔍</p>
-            <p className="text-sm">Search for films you've already seen</p>
-            <p className="text-xs text-stone-300 mt-1">e.g. "Sholay", "3 Idiots", "Gangs of Wasseypur"</p>
-          </div>
-        )}
+                  {/* Title gradient */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent px-1.5 pb-1.5 pt-6">
+                    <p className="text-[9px] text-white font-semibold leading-tight line-clamp-2">{movie.title}</p>
+                  </div>
 
-        {/* Selected + rate inline */}
-        {selected.length > 0 && (
-          <div className="space-y-3 mb-6">
-            {selected.map(({ movie, rating }) => (
-              <div key={movie.id} className={`bg-white border rounded-2xl p-4 shadow-sm transition-colors ${
-                rating != null ? "border-stone-200" : "border-orange-200"
-              }`}>
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-14 rounded-lg overflow-hidden bg-stone-100 shrink-0">
-                    {movie.poster_url
-                      ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" />
-                      : <div className="w-full h-full flex items-center justify-center text-lg">🎬</div>
-                    }
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-stone-900 truncate">{movie.title}</p>
-                    <p className="text-xs text-stone-400">{movie.year}</p>
-                    {rating == null && (
-                      <p className="text-[10px] text-orange-500 mt-0.5">Rate this film ↓</p>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => removeMovie(movie.id)}
-                    className="text-stone-300 hover:text-stone-500 text-xl leading-none shrink-0 transition-colors"
-                  >
-                    ×
-                  </button>
-                </div>
-                <div className="flex gap-1.5">
-                  {RATINGS.map((r) => (
-                    <button
-                      key={r.value}
-                      onClick={() => setRating(movie.id, r.value)}
-                      className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border transition-all ${
-                        rating === r.value
-                          ? "border-orange-400 bg-orange-50"
-                          : "border-stone-200 bg-stone-50 hover:border-stone-300"
-                      }`}
-                    >
-                      <span className="text-base">{r.emoji}</span>
-                      <span className="text-[9px] text-stone-500 leading-tight text-center">{r.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+                  {/* Seen checkmark badge */}
+                  {seen && (
+                    <div className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center shadow-sm">
+                      <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                        <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                  )}
+
+                  {/* Tint overlay when selected */}
+                  {seen && (
+                    <div className="absolute inset-0 bg-orange-500/10 pointer-events-none" />
+                  )}
+                </button>
+              );
+            })}
+
+            {/* Batch 2 loading skeletons */}
+            {loadingMore && Array.from({ length: 9 }).map((_, i) => (
+              <div key={`sk-${i}`} className="aspect-[2/3] rounded-xl bg-stone-100 animate-pulse" />
             ))}
           </div>
         )}
 
-        {ratedCount >= 5 && (
+        {/* Load more — only shown after initial load, before batch 2 is fetched */}
+        {!anchorLoading && !batchLoaded && anchorMovies.length > 0 && (
           <button
-            onClick={handleContinue}
-            className="w-full bg-orange-600 text-white font-bold py-3.5 rounded-full hover:bg-orange-500 transition-colors text-sm shadow-sm"
+            onClick={loadMoreFilms}
+            disabled={loadingMore}
+            className="w-full mt-4 py-3 border border-dashed border-stone-300 rounded-xl text-sm text-stone-500 hover:border-orange-300 hover:text-orange-600 transition-colors disabled:opacity-40"
           >
-            Continue →
+            {loadingMore ? "Loading more…" : "Show more films →"}
           </button>
         )}
 
-        {ratedCount > 0 && ratedCount < 5 && (
-          <div className="text-center mt-2">
-            <p className="text-xs text-stone-400 mb-1">
-              {5 - ratedCount} more film{5 - ratedCount !== 1 ? "s" : ""} to go — the more you rate, the better your recommendations
-            </p>
+        {/* Sticky CTA */}
+        <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-4 bg-white/95 backdrop-blur-sm border-t border-stone-100">
+          <div className="max-w-lg mx-auto">
+            {seenIds.size > 0 && (
+              <p className="text-center text-xs text-stone-400 mb-3">
+                {seenIds.size} film{seenIds.size !== 1 ? "s" : ""} selected
+              </p>
+            )}
             <button
-              onClick={handleContinue}
-              className="text-xs text-stone-400 hover:text-stone-600 underline underline-offset-2 transition-colors"
+              onClick={handleSeenContinue}
+              disabled={seenIds.size === 0}
+              className="w-full bg-orange-600 text-white font-bold py-3.5 rounded-full hover:bg-orange-500 transition-colors text-sm disabled:opacity-40 shadow-sm"
             >
-              Skip — continue with {ratedCount} rated
+              {seenIds.size > 0
+                ? `Rate ${seenIds.size} film${seenIds.size !== 1 ? "s" : ""} I've seen →`
+                : "Tap films you've watched"}
+            </button>
+            <button
+              onClick={() => handleFinish([], [])}
+              className="w-full mt-2.5 text-stone-400 text-xs hover:text-stone-600 transition-colors"
+            >
+              Skip — I'll rate films later
             </button>
           </div>
-        )}
-
-        {selected.length > 0 && ratedCount === 0 && (
-          <p className="text-center text-xs text-stone-400 mt-4">Rate at least one film to continue</p>
-        )}
+        </div>
       </div>
     );
   }
 
-  // ── Step 4: Compare within same bucket ──
+  // ── Step 4: Rate seen films ──
   if (step === 4) {
+    const ratedCount = selected.filter(s => s.rating != null).length;
+
+    return (
+      <div className="max-w-lg mx-auto px-4 pt-10 pb-36">
+        <div className="mb-6">
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Almost there</p>
+          <h1 className="text-2xl font-black text-stone-900 mb-1">How did you feel about them?</h1>
+          <p className="text-stone-500 text-sm">
+            {ratedCount === 0
+              ? `Rate the ${selected.length} films you've seen`
+              : `${ratedCount} of ${selected.length} rated`}
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          {selected.map(({ movie, rating }) => (
+            <div
+              key={movie.id}
+              className={`bg-white border rounded-2xl p-4 shadow-sm transition-colors ${
+                rating != null ? "border-stone-200" : "border-orange-200"
+              }`}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-14 rounded-lg overflow-hidden bg-stone-100 shrink-0">
+                  {movie.poster_url
+                    ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" />
+                    : <div className="w-full h-full flex items-center justify-center text-lg">🎬</div>
+                  }
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-stone-900 truncate">{movie.title}</p>
+                  <p className="text-xs text-stone-400">{movie.year}</p>
+                  {rating == null && (
+                    <p className="text-[10px] text-orange-500 mt-0.5">Tap to rate ↓</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex gap-1.5">
+                {RATINGS.map(r => (
+                  <button
+                    key={r.value}
+                    onClick={() => setRating(movie.id, r.value)}
+                    className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border transition-all ${
+                      rating === r.value
+                        ? "border-orange-400 bg-orange-50"
+                        : "border-stone-200 bg-stone-50 hover:border-stone-300"
+                    }`}
+                  >
+                    <span className="text-base">{r.emoji}</span>
+                    <span className="text-[9px] text-stone-500 leading-tight text-center">{r.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Sticky CTA */}
+        <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-4 bg-white/95 backdrop-blur-sm border-t border-stone-100">
+          <div className="max-w-lg mx-auto">
+            <button
+              onClick={handleRatingContinue}
+              disabled={ratedCount === 0}
+              className="w-full bg-orange-600 text-white font-bold py-3.5 rounded-full hover:bg-orange-500 transition-colors text-sm disabled:opacity-40 shadow-sm"
+            >
+              {ratedCount > 0
+                ? `Continue with ${ratedCount} rating${ratedCount !== 1 ? "s" : ""} →`
+                : "Rate at least one film"}
+            </button>
+            {ratedCount > 0 && ratedCount < selected.length && (
+              <button
+                onClick={handleRatingContinue}
+                className="w-full mt-2.5 text-stone-400 text-xs hover:text-stone-600 transition-colors"
+              >
+                Skip — continue with {ratedCount} rated
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Step 5: Compare within same bucket ──
+  if (step === 5) {
     const pair = pairs[pairIdx];
 
     return (
@@ -773,7 +867,6 @@ export default function OnboardingPage() {
     );
   }
 
-  // Saving / redirect fallback
   return (
     <div className="max-w-sm mx-auto px-4 py-10 text-center">
       <p className="text-stone-400 text-sm">Setting up your profile…</p>
