@@ -191,8 +191,8 @@ export default function OnboardingPage() {
   function handleIdentityContinue() { setStep(1); }
   function handleLocationContinue() { setStep(2); }
 
-  // Decade buckets for stratified sampling — gives era diversity instead of recency bias
-  const DECADE_BUCKETS = [
+  // All possible decade buckets — batch 1 and adaptive batch 2 both draw from this
+  const ALL_DECADE_BUCKETS = [
     { min: 1900, max: 1979, limit: 8  },
     { min: 1980, max: 1989, limit: 8  },
     { min: 1990, max: 1999, limit: 10 },
@@ -201,9 +201,9 @@ export default function OnboardingPage() {
     { min: 2020, max: 2030, limit: 8  },
   ];
 
-  async function fetchStratified(langLabels, orderCol, extraLimit = 0) {
+  async function fetchStratified(buckets, langCodes, orderCol, extraLimit = 0) {
     const results = await Promise.all(
-      DECADE_BUCKETS.map(({ min, max, limit }) => {
+      buckets.map(({ min, max, limit }) => {
         let q = supabase
           .from("movies")
           .select("id, title, year, poster_url, genres")
@@ -212,7 +212,8 @@ export default function OnboardingPage() {
           .gte("tmdb_rating", 6.0)
           .order(orderCol, { ascending: false })
           .limit(limit + extraLimit);
-        if (langLabels.length > 0) q = q.overlaps("languages", langLabels);
+        // language is a single-value code column ("hi", "ta", etc.)
+        if (langCodes.length > 0) q = q.in("language", langCodes);
         return q;
       })
     );
@@ -223,18 +224,14 @@ export default function OnboardingPage() {
     setStep(3);
     setAnchorLoading(true);
 
-    const langLabels = languageRanking
-      .map(code => LANGUAGES.find(l => l.code === code)?.label)
-      .filter(Boolean);
+    let movies = await fetchStratified(ALL_DECADE_BUCKETS, languageRanking, "tmdb_popularity");
 
-    let movies = await fetchStratified(langLabels, "tmdb_popularity");
-
-    // Fallback: drop language filter if it returned too few results
+    // Fallback: if language filter returned too few, drop language constraint
     if (movies.length < 15) {
-      movies = await fetchStratified([], "tmdb_popularity");
+      movies = await fetchStratified(ALL_DECADE_BUCKETS, [], "tmdb_popularity");
     }
 
-    // Sort newest-first so users see recent familiar films at the top
+    // Newest-first: recent familiar films at top, classics below for those who scroll
     movies.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
     setAnchorMovies(movies);
     setAnchorLoading(false);
@@ -243,22 +240,50 @@ export default function OnboardingPage() {
   async function loadMoreFilms() {
     setLoadingMore(true);
 
-    const langLabels = languageRanking
-      .map(code => LANGUAGES.find(l => l.code === code)?.label)
-      .filter(Boolean);
-
     const existingIds = new Set(anchorMovies.map(m => m.id));
 
-    // Batch 2 ordered by rating instead of popularity — surfaces acclaimed films
-    // that weren't in the popularity-ordered first batch
-    let candidates = await fetchStratified(langLabels, "tmdb_rating", 10);
-    if (candidates.filter(m => !existingIds.has(m.id)).length < 10) {
-      candidates = await fetchStratified([], "tmdb_rating", 10);
+    // Derive era range and top genres from what the user actually tapped
+    const seenFilms = anchorMovies.filter(m => seenIds.has(m.id));
+    const seenYears = seenFilms.map(m => m.year).filter(Boolean);
+
+    // If user selected films, constrain batch 2 to their era range (±5yr buffer)
+    // so someone who only tapped 2010s+ films doesn't see 1970s classics
+    let adaptedBuckets;
+    if (seenYears.length > 0) {
+      const minYear = Math.min(...seenYears) - 5;
+      const maxYear = Math.max(...seenYears) + 5;
+      adaptedBuckets = ALL_DECADE_BUCKETS.filter(b => b.max >= minYear && b.min <= maxYear);
+    } else {
+      adaptedBuckets = ALL_DECADE_BUCKETS;
     }
 
-    const newMovies = candidates
-      .filter(m => !existingIds.has(m.id))
-      .sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
+    // Top genres from selections — weight batch 2 toward what they seem to like
+    const genreCounts = {};
+    seenFilms.forEach(m => (m.genres ?? []).forEach(g => { genreCounts[g] = (genreCounts[g] ?? 0) + 1; }));
+    const topGenres = Object.entries(genreCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([g]) => g);
+
+    // Batch 2: same language filter, adapted era buckets, sorted by rating
+    // (rating order surfaces acclaimed films missed by popularity order)
+    let candidates = await fetchStratified(adaptedBuckets, languageRanking, "tmdb_rating", 10);
+    if (candidates.filter(m => !existingIds.has(m.id)).length < 8) {
+      candidates = await fetchStratified(adaptedBuckets, [], "tmdb_rating", 10);
+    }
+
+    // If we have genre signal, prefer films matching top genres
+    let newMovies = candidates.filter(m => !existingIds.has(m.id));
+    if (topGenres.length > 0) {
+      newMovies.sort((a, b) => {
+        const aMatch = (a.genres ?? []).some(g => topGenres.includes(g)) ? 1 : 0;
+        const bMatch = (b.genres ?? []).some(g => topGenres.includes(g)) ? 1 : 0;
+        if (bMatch !== aMatch) return bMatch - aMatch;
+        return (b.year ?? 0) - (a.year ?? 0);
+      });
+    } else {
+      newMovies.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
+    }
 
     setAnchorMovies(prev => [...prev, ...newMovies]);
     setBatchLoaded(true);
