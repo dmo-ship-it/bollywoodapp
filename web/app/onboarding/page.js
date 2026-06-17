@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../lib/supabase-browser";
 
-// Indian diaspora + subcontinent countries shown first
 const COUNTRIES = [
   { code: "IN", label: "India" },
   { code: "US", label: "United States" },
@@ -35,7 +34,6 @@ const COUNTRIES = [
   { code: "OTHER", label: "Other" },
 ];
 
-// Ordered by popularity / audience size
 const LANGUAGES = [
   { code: "hi", label: "Hindi"     },
   { code: "ta", label: "Tamil"     },
@@ -66,6 +64,15 @@ const AVATAR_GRADIENTS = [
   "from-emerald-500 to-teal-500",
   "from-rose-500 to-pink-600",
   "from-indigo-500 to-purple-500",
+];
+
+const ALL_DECADE_BUCKETS = [
+  { min: 1900, max: 1979, limit: 8  },
+  { min: 1980, max: 1989, limit: 8  },
+  { min: 1990, max: 1999, limit: 10 },
+  { min: 2000, max: 2009, limit: 10 },
+  { min: 2010, max: 2019, limit: 12 },
+  { min: 2020, max: 2030, limit: 8  },
 ];
 
 function avatarGradient(userId = "") {
@@ -147,15 +154,19 @@ export default function OnboardingPage() {
   const [showCountryDrop, setShowCountryDrop] = useState(false);
   // Step 2: Languages
   const [languageRanking, setLanguageRanking] = useState([]);
-  // Step 3: Seen grid
-  const [anchorMovies,    setAnchorMovies]    = useState([]);
-  const [anchorLoading,   setAnchorLoading]   = useState(false);
-  const [loadingMore,     setLoadingMore]     = useState(false);
-  const [batchLoaded,     setBatchLoaded]     = useState(false);
-  const [seenIds,         setSeenIds]         = useState(new Set());
-  // Step 4: Rate seen films
-  const [selected,        setSelected]        = useState([]); // [{movie, rating}]
-  // Step 5: Compare within same bucket
+  // Step 3: Batch 1 selection
+  const [batch1Movies,    setBatch1Movies]    = useState([]);
+  const [batch1Loading,   setBatch1Loading]   = useState(false);
+  const [batch1Selected,  setBatch1Selected]  = useState(new Set());
+  // Step 4: Rate batch 1
+  const [batch1Rated,     setBatch1Rated]     = useState([]);
+  // Step 5: Batch 2 selection (adaptive)
+  const [batch2Movies,    setBatch2Movies]    = useState([]);
+  const [batch2Loading,   setBatch2Loading]   = useState(false);
+  const [batch2Selected,  setBatch2Selected]  = useState(new Set());
+  // Step 6: Rate batch 2
+  const [batch2Rated,     setBatch2Rated]     = useState([]);
+  // Step 7: Compare
   const [pairs,           setPairs]           = useState([]);
   const [pairIdx,         setPairIdx]         = useState(0);
   const [compResults,     setCompResults]     = useState([]);
@@ -188,19 +199,6 @@ export default function OnboardingPage() {
     init();
   }, []);
 
-  function handleIdentityContinue() { setStep(1); }
-  function handleLocationContinue() { setStep(2); }
-
-  // All possible decade buckets — batch 1 and adaptive batch 2 both draw from this
-  const ALL_DECADE_BUCKETS = [
-    { min: 1900, max: 1979, limit: 8  },
-    { min: 1980, max: 1989, limit: 8  },
-    { min: 1990, max: 1999, limit: 10 },
-    { min: 2000, max: 2009, limit: 10 },
-    { min: 2010, max: 2019, limit: 12 },
-    { min: 2020, max: 2030, limit: 8  },
-  ];
-
   async function fetchStratified(buckets, langCodes, orderCol, extraLimit = 0) {
     const results = await Promise.all(
       buckets.map(({ min, max, limit }) => {
@@ -212,7 +210,6 @@ export default function OnboardingPage() {
           .gte("tmdb_rating", 6.0)
           .order(orderCol, { ascending: false })
           .limit(limit + extraLimit);
-        // language is a single-value code column ("hi", "ta", etc.)
         if (langCodes.length > 0) q = q.in("language", langCodes);
         return q;
       })
@@ -220,102 +217,98 @@ export default function OnboardingPage() {
     return results.flatMap(r => r.data ?? []);
   }
 
+  function handleIdentityContinue() { setStep(1); }
+  function handleLocationContinue() { setStep(2); }
+
   async function handleLanguageContinue() {
     setStep(3);
-    setAnchorLoading(true);
-
+    setBatch1Loading(true);
     let movies = await fetchStratified(ALL_DECADE_BUCKETS, languageRanking, "tmdb_popularity");
-
-    // Fallback: if language filter returned too few, drop language constraint
     if (movies.length < 15) {
       movies = await fetchStratified(ALL_DECADE_BUCKETS, [], "tmdb_popularity");
     }
-
-    // Newest-first: recent familiar films at top, classics below for those who scroll
     movies.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
-    setAnchorMovies(movies);
-    setAnchorLoading(false);
+    setBatch1Movies(movies);
+    setBatch1Loading(false);
   }
 
-  async function loadMoreFilms() {
-    setLoadingMore(true);
+  function handleBatch1Continue() {
+    const selected = batch1Movies.filter(m => batch1Selected.has(m.id));
+    setBatch1Rated(selected.map(m => ({ movie: m, rating: null })));
+    setStep(4);
+  }
 
-    const existingIds = new Set(anchorMovies.map(m => m.id));
+  function setRating(batchNum, movieId, rating) {
+    if (batchNum === 1) {
+      setBatch1Rated(prev => prev.map(s => s.movie.id === movieId ? { ...s, rating } : s));
+    } else {
+      setBatch2Rated(prev => prev.map(s => s.movie.id === movieId ? { ...s, rating } : s));
+    }
+  }
 
-    // Derive era range and top genres from what the user actually tapped
-    const seenFilms = anchorMovies.filter(m => seenIds.has(m.id));
-    const seenYears = seenFilms.map(m => m.year).filter(Boolean);
+  async function handleBatch1RatingContinue() {
+    // Load batch 2 based on batch 1 ratings
+    setStep(5);
+    setBatch2Loading(true);
 
-    // If user selected films, constrain batch 2 to their era range (±5yr buffer)
-    // so someone who only tapped 2010s+ films doesn't see 1970s classics
+    const ratedBatch1 = batch1Rated.filter(s => s.rating != null);
+    const batch1Ids = new Set(batch1Rated.map(s => s.movie.id));
+
+    // Derive era and genre constraints from batch 1 ratings
+    const years = ratedBatch1.map(s => s.movie.year).filter(Boolean);
     let adaptedBuckets;
-    if (seenYears.length > 0) {
-      const minYear = Math.min(...seenYears) - 5;
-      const maxYear = Math.max(...seenYears) + 5;
+    if (years.length > 0) {
+      const minYear = Math.min(...years) - 5;
+      const maxYear = Math.max(...years) + 5;
       adaptedBuckets = ALL_DECADE_BUCKETS.filter(b => b.max >= minYear && b.min <= maxYear);
     } else {
       adaptedBuckets = ALL_DECADE_BUCKETS;
     }
 
-    // Top genres from selections — weight batch 2 toward what they seem to like
+    // Top genres from rated films
     const genreCounts = {};
-    seenFilms.forEach(m => (m.genres ?? []).forEach(g => { genreCounts[g] = (genreCounts[g] ?? 0) + 1; }));
+    ratedBatch1.forEach(s => (s.movie.genres ?? []).forEach(g => { genreCounts[g] = (genreCounts[g] ?? 0) + 1; }));
     const topGenres = Object.entries(genreCounts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
       .map(([g]) => g);
 
-    // Batch 2: same language filter, adapted era buckets, sorted by rating
-    // (rating order surfaces acclaimed films missed by popularity order)
-    let candidates = await fetchStratified(adaptedBuckets, languageRanking, "tmdb_rating", 10);
-    if (candidates.filter(m => !existingIds.has(m.id)).length < 8) {
-      candidates = await fetchStratified(adaptedBuckets, [], "tmdb_rating", 10);
+    let batch2 = await fetchStratified(adaptedBuckets, languageRanking, "tmdb_rating");
+    if (batch2.filter(m => !batch1Ids.has(m.id)).length < 20) {
+      batch2 = await fetchStratified(adaptedBuckets, [], "tmdb_rating");
     }
 
-    // If we have genre signal, prefer films matching top genres
-    let newMovies = candidates.filter(m => !existingIds.has(m.id));
+    // Filter out batch 1 films and sort by genre + year
+    let filtered = batch2.filter(m => !batch1Ids.has(m.id));
     if (topGenres.length > 0) {
-      newMovies.sort((a, b) => {
+      filtered.sort((a, b) => {
         const aMatch = (a.genres ?? []).some(g => topGenres.includes(g)) ? 1 : 0;
         const bMatch = (b.genres ?? []).some(g => topGenres.includes(g)) ? 1 : 0;
         if (bMatch !== aMatch) return bMatch - aMatch;
         return (b.year ?? 0) - (a.year ?? 0);
       });
     } else {
-      newMovies.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
+      filtered.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
     }
 
-    setAnchorMovies(prev => [...prev, ...newMovies]);
-    setBatchLoaded(true);
-    setLoadingMore(false);
+    setBatch2Movies(filtered);
+    setBatch2Loading(false);
   }
 
-  function toggleSeen(movieId) {
-    setSeenIds(prev => {
-      const next = new Set(prev);
-      if (next.has(movieId)) next.delete(movieId); else next.add(movieId);
-      return next;
-    });
+  function handleBatch2Continue() {
+    const selected = batch2Movies.filter(m => batch2Selected.has(m.id));
+    setBatch2Rated(selected.map(m => ({ movie: m, rating: null })));
+    setStep(6);
   }
 
-  function handleSeenContinue() {
-    const seenMovies = anchorMovies.filter(m => seenIds.has(m.id));
-    setSelected(seenMovies.map(m => ({ movie: m, rating: null })));
-    setStep(4);
-  }
-
-  function setRating(movieId, rating) {
-    setSelected(prev => prev.map(s => s.movie.id === movieId ? { ...s, rating } : s));
-  }
-
-  function handleRatingContinue() {
-    const rated = selected.filter(s => s.rating != null);
-    const p = generatePairs(rated);
+  function handleBatch2RatingContinue() {
+    const allRated = [...batch1Rated, ...batch2Rated];
+    const p = generatePairs(allRated);
     if (p.length > 0) {
       setPairs(p);
-      setStep(5);
+      setStep(7);
     } else {
-      handleFinish(selected, []);
+      handleFinish(allRated, []);
     }
   }
 
@@ -328,11 +321,11 @@ export default function OnboardingPage() {
       setCompResults(updatedCompResults);
       setPairIdx(i => i + 1);
     } else {
-      handleFinish(selected, updatedCompResults);
+      handleFinish([...batch1Rated, ...batch2Rated], updatedCompResults);
     }
   }
 
-  async function handleFinish(sel = selected, cr = compResults) {
+  async function handleFinish(sel = [...batch1Rated, ...batch2Rated], cr = compResults) {
     setSaving(true);
     const currentUser = user || (await supabase.auth.getUser()).data.user;
     if (currentUser) {
@@ -390,7 +383,7 @@ export default function OnboardingPage() {
     return (
       <div className="max-w-lg mx-auto px-4 py-10">
         <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 1 of 4</p>
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 1 of 6</p>
           <h1 className="text-2xl font-black text-stone-900 mb-1">Create your profile</h1>
           <p className="text-stone-500 text-sm">How you'll appear to others on Bolly</p>
         </div>
@@ -458,7 +451,7 @@ export default function OnboardingPage() {
     return (
       <div className="max-w-lg mx-auto px-4 py-10">
         <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 2 of 4</p>
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 2 of 6</p>
           <h1 className="text-2xl font-black text-stone-900 mb-1">Where are you based?</h1>
           <p className="text-stone-500 text-sm">Helps us surface locally relevant films and showtimes.</p>
         </div>
@@ -553,7 +546,7 @@ export default function OnboardingPage() {
     return (
       <div className="max-w-lg mx-auto px-4 py-10">
         <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 3 of 4</p>
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 3 of 6</p>
           <h1 className="text-2xl font-black text-stone-900 mb-1">Which languages do you watch most?</h1>
           <p className="text-stone-500 text-sm">Select in order — most-watched first. We'll show those films at the top of your feed.</p>
         </div>
@@ -628,17 +621,17 @@ export default function OnboardingPage() {
     );
   }
 
-  // ── Step 3: "Which of these have you seen?" ──
+  // ── Step 3: Batch 1 Selection ──
   if (step === 3) {
     return (
       <div className="max-w-lg mx-auto px-4 pt-10 pb-36">
         <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 4 of 4</p>
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 4 of 6</p>
           <h1 className="text-2xl font-black text-stone-900 mb-1">Which of these have you seen?</h1>
           <p className="text-stone-500 text-sm">Tap any film you've watched — even if it was years ago</p>
         </div>
 
-        {anchorLoading ? (
+        {batch1Loading ? (
           <div className="grid grid-cols-3 gap-2">
             {Array.from({ length: 18 }).map((_, i) => (
               <div key={i} className="aspect-[2/3] rounded-xl bg-stone-100 animate-pulse" />
@@ -646,12 +639,16 @@ export default function OnboardingPage() {
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-2">
-            {anchorMovies.map(movie => {
-              const seen = seenIds.has(movie.id);
+            {batch1Movies.map(movie => {
+              const seen = batch1Selected.has(movie.id);
               return (
                 <button
                   key={movie.id}
-                  onClick={() => toggleSeen(movie.id)}
+                  onClick={() => {
+                    const next = new Set(batch1Selected);
+                    if (next.has(movie.id)) next.delete(movie.id); else next.add(movie.id);
+                    setBatch1Selected(next);
+                  }}
                   className={`relative aspect-[2/3] rounded-xl overflow-hidden bg-stone-100 transition-all ${
                     seen
                       ? "ring-2 ring-orange-500 ring-offset-1 scale-[0.97]"
@@ -669,12 +666,10 @@ export default function OnboardingPage() {
                     <div className="w-full h-full flex items-center justify-center text-stone-300 text-2xl">🎬</div>
                   )}
 
-                  {/* Title gradient */}
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent px-1.5 pb-1.5 pt-6">
                     <p className="text-[9px] text-white font-semibold leading-tight line-clamp-2">{movie.title}</p>
                   </div>
 
-                  {/* Seen checkmark badge */}
                   {seen && (
                     <div className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center shadow-sm">
                       <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
@@ -683,54 +678,30 @@ export default function OnboardingPage() {
                     </div>
                   )}
 
-                  {/* Tint overlay when selected */}
                   {seen && (
                     <div className="absolute inset-0 bg-orange-500/10 pointer-events-none" />
                   )}
                 </button>
               );
             })}
-
-            {/* Batch 2 loading skeletons */}
-            {loadingMore && Array.from({ length: 9 }).map((_, i) => (
-              <div key={`sk-${i}`} className="aspect-[2/3] rounded-xl bg-stone-100 animate-pulse" />
-            ))}
           </div>
         )}
 
-        {/* Load more — only shown after initial load, before batch 2 is fetched */}
-        {!anchorLoading && !batchLoaded && anchorMovies.length > 0 && (
-          <button
-            onClick={loadMoreFilms}
-            disabled={loadingMore}
-            className="w-full mt-4 py-3 border border-dashed border-stone-300 rounded-xl text-sm text-stone-500 hover:border-orange-300 hover:text-orange-600 transition-colors disabled:opacity-40"
-          >
-            {loadingMore ? "Loading more…" : "Show more films →"}
-          </button>
-        )}
-
-        {/* Sticky CTA */}
         <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-4 bg-white/95 backdrop-blur-sm border-t border-stone-100">
           <div className="max-w-lg mx-auto">
-            {seenIds.size > 0 && (
+            {batch1Selected.size > 0 && (
               <p className="text-center text-xs text-stone-400 mb-3">
-                {seenIds.size} film{seenIds.size !== 1 ? "s" : ""} selected
+                {batch1Selected.size} film{batch1Selected.size !== 1 ? "s" : ""} selected
               </p>
             )}
             <button
-              onClick={handleSeenContinue}
-              disabled={seenIds.size === 0}
+              onClick={handleBatch1Continue}
+              disabled={batch1Selected.size === 0}
               className="w-full bg-orange-600 text-white font-bold py-3.5 rounded-full hover:bg-orange-500 transition-colors text-sm disabled:opacity-40 shadow-sm"
             >
-              {seenIds.size > 0
-                ? `Rate ${seenIds.size} film${seenIds.size !== 1 ? "s" : ""} I've seen →`
+              {batch1Selected.size > 0
+                ? `Rate ${batch1Selected.size} film${batch1Selected.size !== 1 ? "s" : ""} →`
                 : "Tap films you've watched"}
-            </button>
-            <button
-              onClick={() => handleFinish([], [])}
-              className="w-full mt-2.5 text-stone-400 text-xs hover:text-stone-600 transition-colors"
-            >
-              Skip — I'll rate films later
             </button>
           </div>
         </div>
@@ -738,24 +709,24 @@ export default function OnboardingPage() {
     );
   }
 
-  // ── Step 4: Rate seen films ──
+  // ── Step 4: Rate Batch 1 ──
   if (step === 4) {
-    const ratedCount = selected.filter(s => s.rating != null).length;
+    const ratedCount = batch1Rated.filter(s => s.rating != null).length;
 
     return (
       <div className="max-w-lg mx-auto px-4 pt-10 pb-36">
         <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Almost there</p>
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 5 of 6</p>
           <h1 className="text-2xl font-black text-stone-900 mb-1">How did you feel about them?</h1>
           <p className="text-stone-500 text-sm">
             {ratedCount === 0
-              ? `Rate the ${selected.length} films you've seen`
-              : `${ratedCount} of ${selected.length} rated`}
+              ? `Rate the ${batch1Rated.length} films you've seen`
+              : `${ratedCount} of ${batch1Rated.length} rated`}
           </p>
         </div>
 
         <div className="space-y-3">
-          {selected.map(({ movie, rating }) => (
+          {batch1Rated.map(({ movie, rating }) => (
             <div
               key={movie.id}
               className={`bg-white border rounded-2xl p-4 shadow-sm transition-colors ${
@@ -781,7 +752,7 @@ export default function OnboardingPage() {
                 {RATINGS.map(r => (
                   <button
                     key={r.value}
-                    onClick={() => setRating(movie.id, r.value)}
+                    onClick={() => setRating(1, movie.id, r.value)}
                     className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border transition-all ${
                       rating === r.value
                         ? "border-orange-400 bg-orange-50"
@@ -797,11 +768,10 @@ export default function OnboardingPage() {
           ))}
         </div>
 
-        {/* Sticky CTA */}
         <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-4 bg-white/95 backdrop-blur-sm border-t border-stone-100">
           <div className="max-w-lg mx-auto">
             <button
-              onClick={handleRatingContinue}
+              onClick={handleBatch1RatingContinue}
               disabled={ratedCount === 0}
               className="w-full bg-orange-600 text-white font-bold py-3.5 rounded-full hover:bg-orange-500 transition-colors text-sm disabled:opacity-40 shadow-sm"
             >
@@ -809,27 +779,188 @@ export default function OnboardingPage() {
                 ? `Continue with ${ratedCount} rating${ratedCount !== 1 ? "s" : ""} →`
                 : "Rate at least one film"}
             </button>
-            {ratedCount > 0 && ratedCount < selected.length && (
-              <button
-                onClick={handleRatingContinue}
-                className="w-full mt-2.5 text-stone-400 text-xs hover:text-stone-600 transition-colors"
-              >
-                Skip — continue with {ratedCount} rated
-              </button>
-            )}
           </div>
         </div>
       </div>
     );
   }
 
-  // ── Step 5: Compare within same bucket ──
+  // ── Step 5: Batch 2 Selection (Adaptive) ──
   if (step === 5) {
+    return (
+      <div className="max-w-lg mx-auto px-4 pt-10 pb-36">
+        <div className="mb-6">
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 6 of 6</p>
+          <h1 className="text-2xl font-black text-stone-900 mb-1">More recommendations for you</h1>
+          <p className="text-stone-500 text-sm">Based on what you've rated, here are more films we think you'll love</p>
+        </div>
+
+        {batch2Loading ? (
+          <div className="grid grid-cols-3 gap-2">
+            {Array.from({ length: 18 }).map((_, i) => (
+              <div key={i} className="aspect-[2/3] rounded-xl bg-stone-100 animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-2">
+            {batch2Movies.map(movie => {
+              const seen = batch2Selected.has(movie.id);
+              return (
+                <button
+                  key={movie.id}
+                  onClick={() => {
+                    const next = new Set(batch2Selected);
+                    if (next.has(movie.id)) next.delete(movie.id); else next.add(movie.id);
+                    setBatch2Selected(next);
+                  }}
+                  className={`relative aspect-[2/3] rounded-xl overflow-hidden bg-stone-100 transition-all ${
+                    seen
+                      ? "ring-2 ring-orange-500 ring-offset-1 scale-[0.97]"
+                      : "hover:ring-1 hover:ring-stone-300 hover:scale-[1.02]"
+                  }`}
+                >
+                  {movie.poster_url ? (
+                    <img
+                      src={movie.poster_url}
+                      alt={movie.title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-stone-300 text-2xl">🎬</div>
+                  )}
+
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent px-1.5 pb-1.5 pt-6">
+                    <p className="text-[9px] text-white font-semibold leading-tight line-clamp-2">{movie.title}</p>
+                  </div>
+
+                  {seen && (
+                    <div className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center shadow-sm">
+                      <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                        <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                  )}
+
+                  {seen && (
+                    <div className="absolute inset-0 bg-orange-500/10 pointer-events-none" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-4 bg-white/95 backdrop-blur-sm border-t border-stone-100">
+          <div className="max-w-lg mx-auto">
+            {batch2Selected.size > 0 && (
+              <p className="text-center text-xs text-stone-400 mb-3">
+                {batch2Selected.size} film{batch2Selected.size !== 1 ? "s" : ""} selected
+              </p>
+            )}
+            <button
+              onClick={handleBatch2Continue}
+              disabled={batch2Selected.size === 0}
+              className="w-full bg-orange-600 text-white font-bold py-3.5 rounded-full hover:bg-orange-500 transition-colors text-sm disabled:opacity-40 shadow-sm"
+            >
+              {batch2Selected.size > 0
+                ? `Rate ${batch2Selected.size} film${batch2Selected.size !== 1 ? "s" : ""} →`
+                : "Tap films you'd like to rate"}
+            </button>
+            <button
+              onClick={handleBatch2RatingContinue}
+              className="w-full mt-2.5 text-stone-400 text-xs hover:text-stone-600 transition-colors"
+            >
+              Skip — continue without these
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Step 6: Rate Batch 2 ──
+  if (step === 6) {
+    const ratedCount = batch2Rated.filter(s => s.rating != null).length;
+
+    return (
+      <div className="max-w-lg mx-auto px-4 pt-10 pb-36">
+        <div className="mb-6">
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Last step</p>
+          <h1 className="text-2xl font-black text-stone-900 mb-1">How did you feel about these?</h1>
+          <p className="text-stone-500 text-sm">
+            {ratedCount === 0
+              ? `Rate the ${batch2Rated.length} films`
+              : `${ratedCount} of ${batch2Rated.length} rated`}
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          {batch2Rated.map(({ movie, rating }) => (
+            <div
+              key={movie.id}
+              className={`bg-white border rounded-2xl p-4 shadow-sm transition-colors ${
+                rating != null ? "border-stone-200" : "border-orange-200"
+              }`}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-14 rounded-lg overflow-hidden bg-stone-100 shrink-0">
+                  {movie.poster_url
+                    ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" />
+                    : <div className="w-full h-full flex items-center justify-center text-lg">🎬</div>
+                  }
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-stone-900 truncate">{movie.title}</p>
+                  <p className="text-xs text-stone-400">{movie.year}</p>
+                  {rating == null && (
+                    <p className="text-[10px] text-orange-500 mt-0.5">Tap to rate ↓</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex gap-1.5">
+                {RATINGS.map(r => (
+                  <button
+                    key={r.value}
+                    onClick={() => setRating(2, movie.id, r.value)}
+                    className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border transition-all ${
+                      rating === r.value
+                        ? "border-orange-400 bg-orange-50"
+                        : "border-stone-200 bg-stone-50 hover:border-stone-300"
+                    }`}
+                  >
+                    <span className="text-base">{r.emoji}</span>
+                    <span className="text-[9px] text-stone-500 leading-tight text-center">{r.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-4 bg-white/95 backdrop-blur-sm border-t border-stone-100">
+          <div className="max-w-lg mx-auto">
+            <button
+              onClick={handleBatch2RatingContinue}
+              className="w-full bg-orange-600 text-white font-bold py-3.5 rounded-full hover:bg-orange-500 transition-colors text-sm shadow-sm"
+            >
+              {ratedCount > 0
+                ? `Continue with ${ratedCount} rating${ratedCount !== 1 ? "s" : ""} →`
+                : "Skip rating — finish up"}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Step 7: Pairwise Compare ──
+  if (step === 7) {
     const pair = pairs[pairIdx];
 
     return (
       <div className="max-w-lg mx-auto px-4 py-10 text-center">
-        <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Almost there</p>
+        <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Final refinement</p>
         <h1 className="text-2xl font-black text-stone-900 mb-1">Refine your ranking</h1>
         <p className="text-stone-500 text-sm mb-1">You rated these the same — which did you prefer?</p>
         <p className="text-stone-400 text-xs mb-8">{pairIdx + 1} of {pairs.length}</p>
