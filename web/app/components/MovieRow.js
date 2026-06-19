@@ -10,13 +10,13 @@ export default function MovieRow({ title, subtitle, movies, userScores = {}, use
       {/* Header */}
       <div className="flex items-end justify-between mb-3">
         <div>
-          <h2 className="text-lg font-bold text-stone-900">{title}</h2>
-          {subtitle && <p className="text-xs text-stone-400 mt-0.5">{subtitle}</p>}
+          <h2 style={{ fontSize: 17, fontWeight: 700, color: "var(--ink)", fontFamily: "var(--font-ui)" }}>{title}</h2>
+          {subtitle && <p style={{ fontSize: 12, color: "var(--ink-mute)", marginTop: 2, fontFamily: "var(--font-ui)" }}>{subtitle}</p>}
         </div>
         {onSeeAll && (
           <button
             onClick={onSeeAll}
-            className="text-xs text-stone-400 hover:text-stone-700 transition-colors shrink-0"
+            style={{ fontSize: 12, color: "var(--ink-mute)", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-ui)", flexShrink: 0 }}
           >
             See all →
           </button>

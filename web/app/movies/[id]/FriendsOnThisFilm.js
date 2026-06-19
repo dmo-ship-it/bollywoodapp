@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "../../../lib/supabase-browser";
 import Link from "next/link";
 
-const EMOJI_MAP = { 5: "😍", 4: "😊", 3: "😐", 2: "😕", 1: "😡" };
+const RATING_COLORS = { 5: "#E14B33", 4: "#E6A437", 3: "#C07A4E", 2: "#8C8A93", 1: "#8C8A93" };
 const COMMUNITY_THRESHOLD = 10;
 
 export default function FriendsOnThisFilm({ movieId }) {
@@ -74,7 +74,7 @@ export default function FriendsOnThisFilm({ movieId }) {
   })();
 
   return (
-    <div className="mt-5 pt-5 border-t border-stone-100">
+    <div className="mt-5 pt-5" style={{ borderTop: "1px solid var(--line)" }}>
       {showFriends && (
         <div className="mb-3">
           {/* Avatar row */}
@@ -86,16 +86,13 @@ export default function FriendsOnThisFilm({ movieId }) {
                   <Link
                     key={f.userId}
                     href={`/people/${f.userId}`}
-                    title={`${f.name} · ${EMOJI_MAP[f.rating]}`}
+                    title={f.name}
                     className="relative shrink-0 group"
                   >
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-[10px] font-black ring-2 ring-white">
+                    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 10, fontWeight: 900, outline: "2px solid var(--card)" }}>
                       {initials}
                     </div>
-                    {/* Emoji badge */}
-                    <span className="absolute -bottom-0.5 -right-0.5 text-[11px] leading-none">
-                      {EMOJI_MAP[f.rating]}
-                    </span>
+                    <div style={{ position: "absolute", bottom: -1, right: -1, width: 9, height: 9, borderRadius: "50%", background: RATING_COLORS[f.rating] ?? "var(--ink-mute)", border: "1.5px solid var(--card)" }} />
                   </Link>
                 );
               })}
@@ -112,7 +109,7 @@ export default function FriendsOnThisFilm({ movieId }) {
 
       {showCount && (
         <p className="text-xs text-stone-400">
-          {totalRatings.toLocaleString()} {totalRatings === 1 ? "person" : "people"} have rated this on Bolly
+          {totalRatings.toLocaleString()} {totalRatings === 1 ? "person" : "people"} have rated this on Rasika
         </p>
       )}
     </div>

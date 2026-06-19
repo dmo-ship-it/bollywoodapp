@@ -24,13 +24,13 @@ export const FILTER_DECADES = [
 ];
 
 export const EMPTY_FILTERS = {
-  language:     null,   // language code e.g. "hi"
-  decade:       null,   // { label, min, max }
-  actorId:      null,   // UUID from people table
+  language:     null,
+  decade:       null,
+  actorId:      null,
   actorName:    "",
-  directorId:   null,   // UUID from people table
+  directorId:   null,
   directorName: "",
-  seenFilter:   null,   // null | "seen" | "unseen"
+  seenFilter:   null,
 };
 
 export function countActiveFilters(filters) {
@@ -38,8 +38,6 @@ export function countActiveFilters(filters) {
     .filter(Boolean).length;
 }
 
-// Given active filters, resolve the list of movie IDs allowed by actor/director.
-// Returns null if no person filter is active (meaning: no restriction).
 export async function resolvePersonMovieIds(filters, supabaseClient) {
   const idSets = [];
 
@@ -65,6 +63,29 @@ export async function resolvePersonMovieIds(filters, supabaseClient) {
 
   const first = [...idSets[0]];
   return first.filter((id) => idSets.every((s) => s.has(id)));
+}
+
+// ─── Pill button helper ───────────────────────────────────────────────────────
+
+function Pill({ active, onClick, children }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        padding: "6px 14px",
+        borderRadius: "var(--radius-pill)",
+        border: "1.5px solid",
+        borderColor: active ? "var(--brand)" : "var(--line)",
+        background: active ? "var(--brand)" : "transparent",
+        color: active ? "#fff" : "var(--ink-soft)",
+        fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: active ? 600 : 400,
+        cursor: "pointer", transition: "all 0.15s",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {children}
+    </button>
+  );
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -116,25 +137,52 @@ export default function FilterPanel({ open, onClose, filters, onChange }) {
 
   if (!open) return null;
 
+  const inputStyle = {
+    width: "100%", background: "var(--sunk)", border: "1.5px solid var(--line)",
+    borderRadius: 10, padding: "10px 14px",
+    fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--ink)",
+    outline: "none", boxSizing: "border-box",
+  };
+
+  const sectionLabel = {
+    fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em",
+    textTransform: "uppercase", color: "var(--ink-mute)",
+    marginBottom: 10, display: "block",
+  };
+
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
+      <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 40 }} onClick={onClose} />
 
-      {/* Centered modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm flex flex-col max-h-[85vh]">
+      {/* Modal */}
+      <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+        <div style={{
+          background: "var(--card)", borderRadius: "var(--radius)",
+          boxShadow: "var(--shadow-card-elevated)",
+          width: "100%", maxWidth: 380,
+          display: "flex", flexDirection: "column", maxHeight: "85vh",
+        }}>
 
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100 shrink-0">
-            <h2 className="font-bold text-stone-900 text-base">Filter</h2>
-            <div className="flex items-center gap-4">
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            padding: "16px 20px", borderBottom: "1px solid var(--line)", flexShrink: 0,
+          }}>
+            <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 16, color: "var(--ink)", margin: 0 }}>Filter</h2>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               {hasAny && (
-                <button onClick={clearAll} className="text-sm text-orange-600 font-semibold">
+                <button
+                  onClick={clearAll}
+                  style={{ fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 600, color: "var(--brand)", background: "none", border: "none", cursor: "pointer" }}
+                >
                   Clear all
                 </button>
               )}
-              <button onClick={onClose} className="text-stone-400 hover:text-stone-600 transition-colors">
+              <button
+                onClick={onClose}
+                style={{ color: "var(--ink-mute)", background: "none", border: "none", cursor: "pointer", display: "flex" }}
+              >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M18 6 6 18M6 6l12 12" />
                 </svg>
@@ -143,75 +191,63 @@ export default function FilterPanel({ open, onClose, filters, onChange }) {
           </div>
 
           {/* Scrollable body */}
-          <div className="overflow-y-auto flex-1 px-5 py-5 space-y-6">
+          <div style={{ overflowY: "auto", flex: 1, padding: "20px", display: "flex", flexDirection: "column", gap: 24 }}>
 
             {/* Seen / Unseen */}
             <section>
-              <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-2.5">Watched</p>
-              <div className="flex gap-2">
+              <span style={sectionLabel}>Watched</span>
+              <div style={{ display: "flex", gap: 8 }}>
                 {[
                   { value: "seen",   label: "Only Rated" },
                   { value: "unseen", label: "Not Rated"  },
                 ].map(({ value, label }) => (
-                  <button
+                  <Pill
                     key={value}
+                    active={filters.seenFilter === value}
                     onClick={() => patch({ seenFilter: filters.seenFilter === value ? null : value })}
-                    className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-all ${
-                      filters.seenFilter === value
-                        ? "bg-stone-900 text-white border-stone-900 shadow-sm"
-                        : "bg-white text-stone-600 border-stone-200 hover:border-stone-300"
-                    }`}
                   >
                     {label}
-                  </button>
+                  </Pill>
                 ))}
               </div>
             </section>
 
             {/* Language */}
             <section>
-              <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-2.5">Language</p>
-              <div className="flex flex-wrap gap-2">
+              <span style={sectionLabel}>Language</span>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {FILTER_LANGUAGES.map((l) => (
-                  <button
+                  <Pill
                     key={l.code}
+                    active={filters.language === l.code}
                     onClick={() => patch({ language: filters.language === l.code ? null : l.code })}
-                    className={`px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                      filters.language === l.code
-                        ? "bg-orange-600 text-white border-orange-600 shadow-sm"
-                        : "bg-white text-stone-600 border-stone-200 hover:border-stone-300"
-                    }`}
                   >
                     {l.label}
-                  </button>
+                  </Pill>
                 ))}
               </div>
             </section>
 
             {/* Decade */}
             <section>
-              <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-2.5">Decade</p>
-              <div className="flex flex-wrap gap-2">
+              <span style={sectionLabel}>Decade</span>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {FILTER_DECADES.map((d) => (
-                  <button
+                  <Pill
                     key={d.label}
+                    active={filters.decade?.label === d.label}
                     onClick={() => patch({ decade: filters.decade?.label === d.label ? null : d })}
-                    className={`px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                      filters.decade?.label === d.label
-                        ? "bg-stone-900 text-white border-stone-900 shadow-sm"
-                        : "bg-white text-stone-600 border-stone-200 hover:border-stone-300"
-                    }`}
                   >
                     {d.label}
-                  </button>
+                  </Pill>
                 ))}
               </div>
             </section>
 
             {/* Actor */}
             <section>
-              <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-2.5">Actor</p>
-              <div className="relative">
+              <span style={sectionLabel}>Actor</span>
+              <div style={{ position: "relative" }}>
                 <input
                   type="text"
                   placeholder="Search actor…"
@@ -220,23 +256,27 @@ export default function FilterPanel({ open, onClose, filters, onChange }) {
                     setActorQuery(e.target.value);
                     if (!e.target.value) patch({ actorId: null, actorName: "" });
                   }}
-                  className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all"
+                  style={inputStyle}
+                  onFocus={e => e.target.style.borderColor = "var(--brand)"}
+                  onBlur={e => e.target.style.borderColor = "var(--line)"}
                 />
                 {actorQuery && (
                   <button
                     onClick={() => { setActorQuery(""); setActorSuggestions([]); patch({ actorId: null, actorName: "" }); }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
+                    style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", color: "var(--ink-mute)", background: "none", border: "none", cursor: "pointer", display: "flex" }}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12" /></svg>
                   </button>
                 )}
                 {actorSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-stone-200 rounded-xl shadow-lg z-10 overflow-hidden">
+                  <div style={{ position: "absolute", top: "100%", left: 0, right: 0, marginTop: 4, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 10, boxShadow: "var(--shadow-card)", zIndex: 10, overflow: "hidden" }}>
                     {actorSuggestions.map((p) => (
                       <button
                         key={p.id}
                         onClick={() => { setActorQuery(p.name); setActorSuggestions([]); patch({ actorId: p.id, actorName: p.name }); }}
-                        className="w-full text-left px-4 py-2.5 text-sm text-stone-800 hover:bg-stone-50 border-b border-stone-100 last:border-0 transition-colors"
+                        style={{ width: "100%", textAlign: "left", padding: "10px 14px", fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--ink)", background: "none", border: "none", borderBottom: "1px solid var(--line)", cursor: "pointer" }}
+                        onMouseEnter={e => e.currentTarget.style.background = "var(--sunk)"}
+                        onMouseLeave={e => e.currentTarget.style.background = "none"}
                       >
                         {p.name}
                       </button>
@@ -245,14 +285,16 @@ export default function FilterPanel({ open, onClose, filters, onChange }) {
                 )}
               </div>
               {filters.actorId && (
-                <p className="text-xs text-orange-600 mt-2 font-medium">✓ {filters.actorName}</p>
+                <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--brand)", marginTop: 6, fontWeight: 500 }}>
+                  {filters.actorName}
+                </p>
               )}
             </section>
 
             {/* Director */}
             <section>
-              <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-2.5">Director</p>
-              <div className="relative">
+              <span style={sectionLabel}>Director</span>
+              <div style={{ position: "relative" }}>
                 <input
                   type="text"
                   placeholder="Search director…"
@@ -261,23 +303,27 @@ export default function FilterPanel({ open, onClose, filters, onChange }) {
                     setDirectorQuery(e.target.value);
                     if (!e.target.value) patch({ directorId: null, directorName: "" });
                   }}
-                  className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all"
+                  style={inputStyle}
+                  onFocus={e => e.target.style.borderColor = "var(--brand)"}
+                  onBlur={e => e.target.style.borderColor = "var(--line)"}
                 />
                 {directorQuery && (
                   <button
                     onClick={() => { setDirectorQuery(""); setDirectorSuggestions([]); patch({ directorId: null, directorName: "" }); }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
+                    style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", color: "var(--ink-mute)", background: "none", border: "none", cursor: "pointer", display: "flex" }}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12" /></svg>
                   </button>
                 )}
                 {directorSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-stone-200 rounded-xl shadow-lg z-10 overflow-hidden">
+                  <div style={{ position: "absolute", top: "100%", left: 0, right: 0, marginTop: 4, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 10, boxShadow: "var(--shadow-card)", zIndex: 10, overflow: "hidden" }}>
                     {directorSuggestions.map((p) => (
                       <button
                         key={p.id}
                         onClick={() => { setDirectorQuery(p.name); setDirectorSuggestions([]); patch({ directorId: p.id, directorName: p.name }); }}
-                        className="w-full text-left px-4 py-2.5 text-sm text-stone-800 hover:bg-stone-50 border-b border-stone-100 last:border-0 transition-colors"
+                        style={{ width: "100%", textAlign: "left", padding: "10px 14px", fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--ink)", background: "none", border: "none", borderBottom: "1px solid var(--line)", cursor: "pointer" }}
+                        onMouseEnter={e => e.currentTarget.style.background = "var(--sunk)"}
+                        onMouseLeave={e => e.currentTarget.style.background = "none"}
                       >
                         {p.name}
                       </button>
@@ -286,16 +332,24 @@ export default function FilterPanel({ open, onClose, filters, onChange }) {
                 )}
               </div>
               {filters.directorId && (
-                <p className="text-xs text-orange-600 mt-2 font-medium">✓ {filters.directorName}</p>
+                <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--brand)", marginTop: 6, fontWeight: 500 }}>
+                  {filters.directorName}
+                </p>
               )}
             </section>
           </div>
 
           {/* Done button */}
-          <div className="px-5 pb-5 pt-3 shrink-0 border-t border-stone-100">
+          <div style={{ padding: "12px 20px 20px", flexShrink: 0, borderTop: "1px solid var(--line)" }}>
             <button
               onClick={onClose}
-              className="w-full bg-stone-900 text-white font-bold py-3 rounded-xl hover:bg-stone-800 transition-colors text-sm"
+              style={{
+                width: "100%", background: "var(--brand)", color: "#fff",
+                border: "none", borderRadius: "var(--radius-pill)",
+                padding: "13px 20px",
+                fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 14,
+                cursor: "pointer", boxShadow: "var(--shadow-brand)",
+              }}
             >
               Done
             </button>

@@ -120,21 +120,26 @@ export default function NewCommunityPost() {
   if (!user) return null;
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
-      <Link href="/community" className="text-stone-400 text-sm hover:text-stone-700 transition-colors mb-6 block">← Community</Link>
+    <div className="max-w-xl mx-auto px-4 py-8 min-h-screen" style={{ background: "var(--paper)" }}>
+      <Link href="/community" style={{ color: "var(--ink-mute)", fontSize: 13, textDecoration: "none", display: "block", marginBottom: 24 }}>← Community</Link>
 
-      <h1 className="text-2xl font-black text-stone-900 mb-6">Create</h1>
+      <h1 style={{ fontSize: 22, fontWeight: 900, color: "var(--ink)", fontFamily: "var(--font-ui)", marginBottom: 24 }}>Create</h1>
 
       {/* Type tabs */}
-      <div className="flex gap-1 bg-stone-100 rounded-xl p-1 mb-6">
+      <div style={{ display: "flex", gap: 4, background: "var(--sunk)", borderRadius: 12, padding: 4, marginBottom: 24 }}>
         {[
-          { id: "discussion", label: "💬 Discussion" },
-          { id: "review",     label: "⭐ Review"     },
-          { id: "list",       label: "📋 List"       },
-          { id: "poll",       label: "📊 Poll"       },
+          { id: "discussion", label: "Discussion" },
+          { id: "review",     label: "Review"     },
+          { id: "list",       label: "List"       },
+          { id: "poll",       label: "Poll"       },
         ].map(t => (
           <button key={t.id} onClick={() => setType(t.id)}
-            className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-all ${type === t.id ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}>
+            style={{
+              flex: 1, padding: "8px 0", borderRadius: 8, fontSize: 12, fontWeight: 600, border: "none", cursor: "pointer", transition: "all 0.15s",
+              background: type === t.id ? "var(--card)" : "transparent",
+              color: type === t.id ? "var(--ink)" : "var(--ink-mute)",
+              boxShadow: type === t.id ? "var(--shadow-card)" : "none",
+            }}>
             {t.label}
           </button>
         ))}
@@ -147,7 +152,7 @@ export default function NewCommunityPost() {
           <div>
             <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">Film</label>
             {linkedMovie ? (
-              <div className="flex items-center gap-3 bg-white border border-stone-200 rounded-xl p-3">
+              <div style={{ display: "flex", alignItems: "center", gap: 12, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, padding: 12 }}>
                 {linkedMovie.poster_url && <img src={linkedMovie.poster_url} className="w-8 h-11 rounded-lg object-cover" alt=""/>}
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-stone-900">{linkedMovie.title}</p>
@@ -158,9 +163,9 @@ export default function NewCommunityPost() {
             ) : (
               <div className="relative">
                 <input type="text" placeholder="Search for a film…" value={movieQuery} onChange={e => setMovieQuery(e.target.value)}
-                  className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-all"/>
+                  style={{ width: "100%", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, padding: "12px 16px", color: "var(--ink)", fontSize: 13, fontFamily: "var(--font-ui)", outline: "none", boxSizing: "border-box" }}/>
                 {movieResults.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-stone-200 rounded-xl overflow-hidden z-10 shadow-lg">
+                  <div style={{ position: "absolute", top: "100%", left: 0, right: 0, marginTop: 4, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, overflow: "hidden", zIndex: 10, boxShadow: "var(--shadow-card)" }}>
                     {movieResults.map(m => (
                       <button type="button" key={m.id} onClick={() => { setLinkedMovie(m); setMovieQuery(""); setMovieResults([]); }}
                         className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-stone-50 text-left">
@@ -181,12 +186,12 @@ export default function NewCommunityPost() {
             <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">People pick from…</label>
             <div className="flex gap-2">
               {[
-                { id: "movies", label: "🎬 Films"  },
-                { id: "people", label: "🎭 People" },
-                { id: "other",  label: "🗂️ Other"  },
+                { id: "movies", label: "Films"  },
+                { id: "people", label: "People" },
+                { id: "other",  label: "Other"  },
               ].map(s => (
                 <button key={s.id} type="button" onClick={() => setPollSubject(s.id)}
-                  className={`flex-1 py-2 rounded-xl border text-sm font-semibold transition-all ${pollSubject === s.id ? "bg-violet-600 text-white border-violet-600" : "bg-white border-stone-200 text-stone-600 hover:border-stone-300"}`}>
+                  style={{ flex: 1, padding: "8px 0", borderRadius: 12, fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s", background: pollSubject === s.id ? "#7c3aed" : "var(--card)", color: pollSubject === s.id ? "#fff" : "var(--ink-soft)", border: `1px solid ${pollSubject === s.id ? "#7c3aed" : "var(--line)"}` }}>
                   {s.label}
                 </button>
               ))}
@@ -209,7 +214,7 @@ export default function NewCommunityPost() {
               : type === "list"   ? "e.g. Essential 90s Bollywood"
               : "What's on your mind?"
             }
-            className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-all text-sm"/>
+            style={{ width: "100%", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, padding: "12px 16px", color: "var(--ink)", fontSize: 14, fontFamily: "var(--font-ui)", outline: "none", boxSizing: "border-box" }}/>
         </div>
 
         {/* Content or Description */}
@@ -220,7 +225,7 @@ export default function NewCommunityPost() {
             </label>
             <textarea value={content} onChange={e => setContent(e.target.value)} required rows={6}
               placeholder={type === "review" ? "Share what you thought…" : "Start the conversation…"}
-              className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-all text-sm resize-none"/>
+              style={{ width: "100%", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, padding: "12px 16px", color: "var(--ink)", fontSize: 14, fontFamily: "var(--font-ui)", outline: "none", resize: "none", boxSizing: "border-box" }}/>
           </div>
         ) : type === "list" ? (
           <>
@@ -228,18 +233,18 @@ export default function NewCommunityPost() {
               <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">Description <span className="text-stone-300 normal-case tracking-normal">(optional)</span></label>
               <textarea value={description} onChange={e => setDescription(e.target.value)} rows={2}
                 placeholder="What makes these films special?"
-                className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-all text-sm resize-none"/>
+                style={{ width: "100%", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, padding: "12px 16px", color: "var(--ink)", fontSize: 14, fontFamily: "var(--font-ui)", outline: "none", resize: "none", boxSizing: "border-box" }}/>
             </div>
 
             {/* Ranked toggle */}
-            <div className="flex items-center justify-between bg-white border border-stone-200 rounded-xl px-4 py-3">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, padding: "12px 16px" }}>
               <div>
                 <p className="text-sm font-medium text-stone-900">Ranked list</p>
                 <p className="text-xs text-stone-400">Films are numbered #1, #2…</p>
               </div>
               <button type="button" onClick={() => setIsRanked(r => !r)}
-                className={`w-11 h-6 rounded-full transition-colors relative ${isRanked ? "bg-orange-600" : "bg-stone-200"}`}>
-                <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${isRanked ? "translate-x-5" : "translate-x-0"}`}/>
+                style={{ width: 44, height: 24, borderRadius: 999, transition: "background 0.2s", position: "relative", background: isRanked ? "var(--brand)" : "var(--sunk)", border: "none", cursor: "pointer" }}>
+                <span style={{ position: "absolute", top: 2, left: 2, width: 20, height: 20, background: "#fff", borderRadius: "50%", boxShadow: "0 1px 3px rgba(0,0,0,0.2)", transition: "transform 0.2s", transform: isRanked ? "translateX(20px)" : "translateX(0)" }}/>
               </button>
             </div>
 
@@ -248,9 +253,9 @@ export default function NewCommunityPost() {
               <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">Films</label>
               <div className="relative mb-3">
                 <input type="text" placeholder="Search and add films…" value={movieQuery} onChange={e => setMovieQuery(e.target.value)}
-                  className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-all"/>
+                  style={{ width: "100%", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, padding: "12px 16px", color: "var(--ink)", fontSize: 13, fontFamily: "var(--font-ui)", outline: "none", boxSizing: "border-box" }}/>
                 {movieResults.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-stone-200 rounded-xl overflow-hidden z-10 shadow-lg">
+                  <div style={{ position: "absolute", top: "100%", left: 0, right: 0, marginTop: 4, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, overflow: "hidden", zIndex: 10, boxShadow: "var(--shadow-card)" }}>
                     {movieResults.map(m => (
                       <button type="button" key={m.id} onClick={() => addToList(m)} disabled={!!listMovies.find(x => x.id === m.id)}
                         className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-stone-50 text-left disabled:opacity-40">
@@ -266,7 +271,7 @@ export default function NewCommunityPost() {
               {listMovies.length > 0 && (
                 <div className="space-y-2">
                   {listMovies.map((m, i) => (
-                    <div key={m.id} className="bg-white border border-stone-200 rounded-xl p-3">
+                    <div key={m.id} style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, padding: 12 }}>
                       <div className="flex items-center gap-3 mb-2">
                         {isRanked && <span className="text-stone-400 text-sm font-bold w-5 shrink-0">#{i+1}</span>}
                         {m.poster_url && <img src={m.poster_url} className="w-8 h-11 rounded-lg object-cover shrink-0" alt=""/>}
@@ -284,7 +289,7 @@ export default function NewCommunityPost() {
                       </div>
                       <input type="text" placeholder="Add a note about this film (optional)" value={m.note}
                         onChange={e => updateNote(m.id, e.target.value)}
-                        className="w-full text-xs text-stone-600 bg-stone-50 border border-stone-100 rounded-lg px-3 py-1.5 placeholder-stone-300 focus:outline-none focus:border-stone-300"/>
+                        style={{ width: "100%", fontSize: 11, color: "var(--ink-soft)", background: "var(--sunk)", border: "1px solid var(--line)", borderRadius: 8, padding: "6px 12px", outline: "none", boxSizing: "border-box" }}/>
                     </div>
                   ))}
                 </div>
@@ -300,7 +305,7 @@ export default function NewCommunityPost() {
               <label className="text-xs text-stone-500 uppercase tracking-widest block mb-2">Description <span className="text-stone-300 normal-case tracking-normal">(optional)</span></label>
               <textarea value={description} onChange={e => setDescription(e.target.value)} rows={2}
                 placeholder="Any extra context for the poll…"
-                className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-all text-sm resize-none"/>
+                style={{ width: "100%", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, padding: "12px 16px", color: "var(--ink)", fontSize: 14, fontFamily: "var(--font-ui)", outline: "none", resize: "none", boxSizing: "border-box" }}/>
             </div>
 
             {/* Custom options builder for "Other" polls */}
@@ -321,7 +326,7 @@ export default function NewCommunityPost() {
                           setPollOptions(next);
                         }}
                         placeholder={`Option ${i + 1}…`}
-                        className="flex-1 bg-white border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-all"/>
+                        style={{ flex: 1, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, padding: "10px 16px", fontSize: 13, color: "var(--ink)", fontFamily: "var(--font-ui)", outline: "none", boxSizing: "border-box" }}/>
                       {pollOptions.length > 2 && (
                         <button type="button" onClick={() => setPollOptions(prev => prev.filter((_, j) => j !== i))}
                           className="text-stone-300 hover:text-rose-500 text-xl px-1">×</button>
@@ -346,7 +351,7 @@ export default function NewCommunityPost() {
               <div className="flex gap-2">
                 {[1, 2, 3, 5, 10].map(n => (
                   <button key={n} type="button" onClick={() => setMaxPicks(n)}
-                    className={`flex-1 py-2 rounded-xl border text-sm font-bold transition-all ${maxPicks === n ? "bg-violet-600 text-white border-violet-600" : "bg-white border-stone-200 text-stone-600 hover:border-stone-300"}`}>
+                    style={{ flex: 1, padding: "8px 0", borderRadius: 12, fontSize: 13, fontWeight: 700, cursor: "pointer", transition: "all 0.15s", background: maxPicks === n ? "#7c3aed" : "var(--card)", color: maxPicks === n ? "#fff" : "var(--ink-soft)", border: `1px solid ${maxPicks === n ? "#7c3aed" : "var(--line)"}` }}>
                     {n}
                   </button>
                 ))}
@@ -357,7 +362,7 @@ export default function NewCommunityPost() {
         )}
 
         <button type="submit" disabled={saving || (type === "list" && listMovies.length === 0) || !title.trim()}
-          className="w-full bg-orange-600 text-white font-bold py-3 rounded-full hover:bg-orange-500 transition-colors text-sm disabled:opacity-40">
+          style={{ width: "100%", background: "var(--brand)", color: "#fff", fontWeight: 700, padding: "12px 0", borderRadius: 999, border: "none", cursor: "pointer", fontSize: 13, fontFamily: "var(--font-ui)", opacity: (saving || (type === "list" && listMovies.length === 0) || !title.trim()) ? 0.4 : 1 }}>
           {saving ? "Saving…" : type === "list" ? `Publish list (${listMovies.length} films)` : "Publish"}
         </button>
       </form>

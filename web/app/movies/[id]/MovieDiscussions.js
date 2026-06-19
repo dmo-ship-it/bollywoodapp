@@ -48,13 +48,13 @@ export default function MovieDiscussions({ movieId, movieTitle }) {
         <div className="flex gap-2">
           <Link
             href={`/community/new?type=review&movie=${movieId}`}
-            className="text-xs bg-white border border-stone-200 text-stone-600 font-medium px-3 py-1.5 rounded-full hover:border-orange-300 hover:text-orange-600 transition-colors"
+            style={{ fontSize: 12, background: "var(--card)", border: "1px solid var(--line)", color: "var(--ink-soft)", fontWeight: 500, padding: "6px 12px", borderRadius: 999, textDecoration: "none", fontFamily: "var(--font-ui)" }}
           >
             + Write review
           </Link>
           <Link
             href={`/community/new?type=discussion&movie=${movieId}`}
-            className="text-xs bg-orange-600 text-white font-medium px-3 py-1.5 rounded-full hover:bg-orange-500 transition-colors"
+            style={{ fontSize: 12, background: "var(--brand)", color: "#fff", fontWeight: 600, padding: "6px 12px", borderRadius: 999, textDecoration: "none", fontFamily: "var(--font-ui)" }}
           >
             + Discuss
           </Link>
@@ -76,24 +76,24 @@ export default function MovieDiscussions({ movieId, movieTitle }) {
             return (
               <Link key={post.id} href={`/community/posts/${post.id}`}
                 className="flex items-center gap-3 bg-white border border-stone-200 rounded-xl p-3 hover:border-stone-300 transition-all group">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-[9px] font-black shrink-0">{ini}</div>
+                <div style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 9, fontWeight: 900, flexShrink: 0 }}>{ini}</div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 mb-0.5">
                     <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${TYPE_STYLES[post.post_type] ?? TYPE_STYLES.discussion}`}>
                       {TYPE_LABELS[post.post_type] ?? post.post_type}
                     </span>
                   </div>
-                  <p className="text-sm font-medium text-stone-900 group-hover:text-orange-600 transition-colors truncate">{post.title}</p>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: "var(--ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "var(--font-ui)" }}>{post.title}</p>
                   <p className="text-[10px] text-stone-400">{name} · {timeAgo(post.created_at)}</p>
                 </div>
                 <div className="shrink-0 flex items-center gap-3 text-[10px] text-stone-400">
                   <span>↑ {post.upvotes}</span>
-                  <span>💬 {post.comment_count}</span>
+                  <span>{post.comment_count} comments</span>
                 </div>
               </Link>
             );
           })}
-          <Link href={`/community?movie=${movieId}`} className="block text-center text-xs text-orange-600 hover:underline pt-1">
+          <Link href={`/community?movie=${movieId}`} style={{ display: "block", textAlign: "center", fontSize: 11, color: "var(--brand)", paddingTop: 4, textDecoration: "none", fontFamily: "var(--font-ui)" }}>
             See all discussions →
           </Link>
         </div>

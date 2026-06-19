@@ -6,14 +6,10 @@ import { createClient } from "../../../lib/supabase-browser";
 import Link from "next/link";
 import WatchlistButton from "../../components/WatchlistButton";
 
-const RATING_EMOJI  = { 5: "❤️", 4: "👍", 3: "😐", 2: "👎", 1: "💔" };
+const RATING_COLORS = { 5: "#E14B33", 4: "#E6A437", 3: "#C07A4E", 2: "#8C8A93", 1: "#8C8A93" };
+const RATING_TEXT   = { 5: "Loved", 4: "Liked", 3: "Okay", 2: "Meh", 1: "Hated" };
 const ROLE_ORDER    = ["Director", "Actor", "Music", "Producer", "Writer"];
 const ROLE_LABELS   = { Director: "Directed", Actor: "Acted in", Music: "Music for", Producer: "Produced", Writer: "Written" };
-
-function RoleIcon({ role }) {
-  const icons = { Director: "🎬", Actor: "🎭", Music: "🎶", Producer: "💼", Writer: "✍️" };
-  return <span>{icons[role] ?? "🎬"}</span>;
-}
 
 export default function PersonPage() {
   const { id } = useParams();
@@ -100,17 +96,15 @@ export default function PersonPage() {
   }, [id]);
 
   if (loading) return (
-    <div className="max-w-4xl mx-auto px-4 py-16 text-center text-stone-400">
-      <div className="text-4xl mb-4 animate-pulse">🎬</div>
+    <div className="max-w-4xl mx-auto px-4 py-16 text-center" style={{ color: "var(--ink-mute)" }}>
       Loading…
     </div>
   );
 
   if (!person) return (
-    <div className="max-w-4xl mx-auto px-4 py-20 text-center text-stone-400">
-      <p className="text-4xl mb-3">🎭</p>
-      <p className="font-medium text-stone-600">Person not found</p>
-      <Link href="/" className="text-orange-600 hover:underline mt-3 block">← Home</Link>
+    <div className="max-w-4xl mx-auto px-4 py-20 text-center" style={{ color: "var(--ink-mute)" }}>
+      <p style={{ fontFamily: "var(--font-serif)", fontSize: 20, color: "var(--ink-soft)", marginBottom: 8 }}>Person not found</p>
+      <Link href="/" style={{ color: "var(--brand)", fontWeight: 600 }}>← Home</Link>
     </div>
   );
 
@@ -124,7 +118,7 @@ export default function PersonPage() {
   const initials   = person.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
+    <div className="max-w-4xl mx-auto px-4 py-8 min-h-screen" style={{ background: "var(--paper)" }}>
 
       {/* Hero */}
       <div className="flex items-start gap-6 mb-8">
@@ -137,7 +131,7 @@ export default function PersonPage() {
               className="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-cover shadow-md"
             />
           ) : (
-            <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-3xl font-black shadow-md">
+            <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl flex items-center justify-center text-white text-3xl font-black shadow-md" style={{ background: "var(--brand)" }}>
               {initials}
             </div>
           )}
@@ -148,7 +142,7 @@ export default function PersonPage() {
           <div className="flex items-start gap-3 flex-wrap mb-1">
             <h1 className="text-2xl md:text-3xl font-black text-stone-900 leading-tight">{person.name}</h1>
             {person.primary_role && (
-              <span className="mt-1 text-xs font-semibold bg-orange-100 text-orange-700 border border-orange-200 px-2.5 py-1 rounded-full">
+              <span style={{ marginTop: 4, fontSize: 11, fontWeight: 600, background: "rgba(225,75,51,0.08)", color: "var(--brand)", border: "1px solid rgba(225,75,51,0.2)", padding: "4px 10px", borderRadius: 999, fontFamily: "var(--font-ui)" }}>
                 {person.primary_role}
               </span>
             )}
@@ -175,7 +169,7 @@ export default function PersonPage() {
             </div>
             {user && seenCount > 0 && (
               <div>
-                <span className="font-black text-orange-600 text-lg">{seenCount}</span>
+                <span style={{ fontWeight: 900, color: "var(--brand)", fontSize: 18 }}>{seenCount}</span>
                 <span className="text-stone-400 ml-1">you've seen</span>
               </div>
             )}
@@ -199,15 +193,17 @@ export default function PersonPage() {
             <button
               key={role}
               onClick={() => setActiveRole(role)}
-              className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border transition-all ${
-                activeRole === role
-                  ? "bg-stone-900 text-white border-stone-900"
-                  : "bg-white text-stone-500 border-stone-200 hover:border-stone-300"
-              }`}
+              style={{
+                flexShrink: 0, display: "inline-flex", alignItems: "center", gap: 6,
+                padding: "8px 16px", borderRadius: "var(--radius-pill)", fontSize: 14, fontWeight: 500,
+                fontFamily: "var(--font-ui)", border: "1.5px solid", cursor: "pointer", transition: "all 0.15s",
+                background: activeRole === role ? "var(--brand)" : "var(--card)",
+                color: activeRole === role ? "#fff" : "var(--ink-soft)",
+                borderColor: activeRole === role ? "var(--brand)" : "var(--line)",
+              }}
             >
-              <RoleIcon role={role} />
               {role}
-              <span className={`text-xs ${activeRole === role ? "text-stone-300" : "text-stone-400"}`}>
+              <span style={{ fontSize: 11, color: activeRole === role ? "rgba(255,255,255,0.65)" : "var(--ink-mute)" }}>
                 {filmsByRole[role].length}
               </span>
             </button>
@@ -247,13 +243,13 @@ export default function PersonPage() {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-stone-400 text-3xl">🎬</div>
+                    <div className="w-full h-full" style={{ background: "var(--sunk)" }} />
                   )}
 
                   {/* User rating badge */}
                   {userRating && (
-                    <div className="absolute top-1.5 right-1.5 text-sm leading-none drop-shadow">
-                      {RATING_EMOJI[userRating]}
+                    <div style={{ position: "absolute", top: 6, right: 6, background: RATING_COLORS[userRating], color: "#fff", fontSize: 9, fontWeight: 700, padding: "3px 5px", borderRadius: "28%", fontFamily: "var(--font-ui)", lineHeight: 1 }}>
+                      {RATING_TEXT[userRating]}
                     </div>
                   )}
 
@@ -273,7 +269,7 @@ export default function PersonPage() {
                 </div>
 
                 {/* Title + year */}
-                <p className="text-[11px] font-semibold text-stone-800 leading-tight line-clamp-1 group-hover:text-orange-600 transition-colors">
+                <p style={{ fontSize: 11, fontWeight: 600, color: "var(--ink-soft)", lineHeight: 1.35, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical" }}>
                   {film.title}
                 </p>
                 <div className="flex items-center gap-1.5 mt-0.5">
@@ -303,7 +299,7 @@ export default function PersonPage() {
               {activeFilms.filter((f) => !userRatings[f.id]).length} film{activeFilms.filter((f) => !userRatings[f.id]).length !== 1 ? "s" : ""} you haven't rated yet
             </p>
           ) : (
-            <p className="text-orange-600 font-medium">🎉 You've seen everything!</p>
+            <p style={{ color: "var(--brand)", fontWeight: 600 }}>You've seen everything!</p>
           )}
         </div>
       )}

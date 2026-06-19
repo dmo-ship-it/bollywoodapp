@@ -47,82 +47,79 @@ export default function PointsCard({ userId, displayName }) {
     <div className="space-y-4">
 
       {/* Points & Tier */}
-      <div className="bg-gradient-to-r from-orange-100 to-rose-100 border border-orange-200 rounded-2xl p-6">
-        <div className="flex items-start justify-between mb-4">
+      <div style={{ background: "rgba(225,75,51,0.06)", border: "1px solid rgba(225,75,51,0.15)", borderRadius: 20, padding: 24 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
           <div>
-            <p className="text-sm text-stone-600 uppercase tracking-widest font-medium mb-1">Your Tier</p>
-            <p className="text-2xl font-black text-stone-900">{tier.label}</p>
+            <p style={{ fontSize: 11, color: "var(--ink-mute)", textTransform: "uppercase", letterSpacing: "0.14em", fontWeight: 500, marginBottom: 4, fontFamily: "var(--font-mono)" }}>Your Tier</p>
+            <p style={{ fontSize: 22, fontWeight: 900, color: "var(--ink)", fontFamily: "var(--font-ui)" }}>{tier.label}</p>
           </div>
-          <div className="text-right">
-            <p className="text-4xl font-black text-orange-600">{points.total_points.toLocaleString()}</p>
-            <p className="text-xs text-stone-500">total points</p>
+          <div style={{ textAlign: "right" }}>
+            <p style={{ fontSize: 36, fontWeight: 900, color: "var(--brand)", fontFamily: "var(--font-ui)" }}>{points.total_points.toLocaleString()}</p>
+            <p style={{ fontSize: 11, color: "var(--ink-mute)" }}>total points</p>
           </div>
         </div>
 
         {/* Progress to next tier */}
         {nextTier && (
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-medium text-stone-600">Next: {nextTier.label}</p>
-              <p className="text-xs font-bold text-orange-600">{pointsNeeded} points to go</p>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+              <p style={{ fontSize: 12, fontWeight: 500, color: "var(--ink-soft)", fontFamily: "var(--font-ui)" }}>Next: {nextTier.label}</p>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "var(--brand)", fontFamily: "var(--font-ui)" }}>{pointsNeeded} points to go</p>
             </div>
-            <div className="h-2 bg-white rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-orange-400 to-rose-400 transition-all duration-500"
-                style={{ width: `${Math.min(100, progressPercent)}%` }}
-              />
+            <div style={{ height: 8, background: "var(--card)", borderRadius: 999, overflow: "hidden" }}>
+              <div style={{ height: 8, background: "var(--brand)", borderRadius: 999, width: `${Math.min(100, progressPercent)}%`, transition: "width 0.5s" }} />
             </div>
           </div>
         )}
         {!nextTier && (
-          <p className="text-xs text-orange-600 font-bold">🎉 Max tier reached!</p>
+          <p style={{ fontSize: 12, color: "var(--brand)", fontWeight: 700, fontFamily: "var(--font-ui)" }}>Max tier reached!</p>
         )}
       </div>
 
       {/* Referral Code */}
       {referralCode && (
-        <div className="bg-white border border-stone-200 rounded-2xl p-6">
-          <p className="text-sm text-stone-600 uppercase tracking-widest font-medium mb-3">Your Referral Code</p>
-          <div className="flex items-center gap-2 mb-3">
-            <code className="flex-1 bg-stone-100 px-4 py-3 rounded-lg font-mono font-bold text-stone-900">
+        <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20, padding: 24 }}>
+          <p style={{ fontSize: 11, color: "var(--ink-mute)", textTransform: "uppercase", letterSpacing: "0.14em", fontWeight: 500, marginBottom: 12, fontFamily: "var(--font-mono)" }}>Your Referral Code</p>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+            <code style={{ flex: 1, background: "var(--sunk)", padding: "12px 16px", borderRadius: 10, fontFamily: "var(--font-mono)", fontWeight: 700, color: "var(--ink)" }}>
               {referralCode}
             </code>
             <button
               onClick={copyReferralCode}
-              className="px-4 py-3 bg-orange-600 text-white font-bold rounded-lg hover:bg-orange-500 transition-colors whitespace-nowrap text-sm"
+              style={{ padding: "12px 16px", background: "var(--brand)", color: "#fff", fontWeight: 700, borderRadius: 10, border: "none", cursor: "pointer", whiteSpace: "nowrap", fontSize: 14, fontFamily: "var(--font-ui)" }}
             >
               {copied ? "✓ Copied" : "Copy"}
             </button>
           </div>
-          <p className="text-xs text-stone-500">
+          <p style={{ fontSize: 12, color: "var(--ink-mute)", fontFamily: "var(--font-ui)" }}>
             Share this code or your unique link to earn points when friends sign up
           </p>
         </div>
       )}
 
       {/* How to earn points */}
-      <div className="bg-white border border-stone-200 rounded-2xl p-4">
-        <p className="text-sm font-bold text-stone-900 mb-3">Earn Points</p>
-        <div className="space-y-2 text-xs text-stone-600">
-          <div className="flex justify-between">
+      <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20, padding: 16 }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: "var(--ink)", marginBottom: 12, fontFamily: "var(--font-ui)" }}>Earn Points</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 12, color: "var(--ink-soft)", fontFamily: "var(--font-ui)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>Rate a film</span>
-            <span className="font-bold text-orange-600">+5</span>
+            <span style={{ fontWeight: 700, color: "var(--brand)" }}>+5</span>
           </div>
-          <div className="flex justify-between">
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>Follow a user</span>
-            <span className="font-bold text-orange-600">+10</span>
+            <span style={{ fontWeight: 700, color: "var(--brand)" }}>+10</span>
           </div>
-          <div className="flex justify-between">
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>Compare films</span>
-            <span className="font-bold text-orange-600">+15</span>
+            <span style={{ fontWeight: 700, color: "var(--brand)" }}>+15</span>
           </div>
-          <div className="flex justify-between">
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>Create a list</span>
-            <span className="font-bold text-orange-600">+20</span>
+            <span style={{ fontWeight: 700, color: "var(--brand)" }}>+20</span>
           </div>
-          <div className="flex justify-between border-t border-stone-100 pt-2 mt-2">
+          <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid var(--line)", paddingTop: 8, marginTop: 4 }}>
             <span>Refer a friend</span>
-            <span className="font-bold text-orange-600">+100</span>
+            <span style={{ fontWeight: 700, color: "var(--brand)" }}>+100</span>
           </div>
         </div>
       </div>

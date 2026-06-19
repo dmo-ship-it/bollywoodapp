@@ -20,7 +20,6 @@ export default function TriviaLeaderboardsPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { router.push("/login"); return; }
       setUser(user);
-
       await loadLeaderboard("accuracy");
     }
     load();
@@ -29,13 +28,11 @@ export default function TriviaLeaderboardsPage() {
   async function loadLeaderboard(type) {
     setLoading(true);
     let data = [];
-
     if (type === "accuracy") {
       data = await getTriviaLeaderboard(supabase, "all_time", 100);
     } else if (type === "streak") {
       data = await getStreakLeaderboard(supabase, 100);
     }
-
     setLeaderboard(data);
     setLoading(false);
   }
@@ -46,39 +43,43 @@ export default function TriviaLeaderboardsPage() {
   };
 
   const LeaderboardRow = ({ entry, isUser = false }) => (
-    <Link href={`/u/${entry.username}`}>
-      <div className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
-        isUser
-          ? "bg-gradient-to-r from-orange-50 to-rose-50 border-orange-200"
-          : "bg-white border-stone-200 hover:border-orange-300"
-      }`}>
+    <Link href={`/u/${entry.username}`} style={{ textDecoration: "none" }}>
+      <div style={{
+        display: "flex", alignItems: "center", gap: 16, padding: 16, borderRadius: 14,
+        border: "1px solid", transition: "box-shadow 0.15s",
+        background: isUser ? "rgba(225,75,51,0.04)" : "var(--card)",
+        borderColor: isUser ? "rgba(225,75,51,0.2)" : "var(--line)",
+      }}>
         {/* Rank */}
-        <div className="w-12 shrink-0 text-center">
-          {entry.rank === 1 && <span className="text-2xl">🥇</span>}
-          {entry.rank === 2 && <span className="text-2xl">🥈</span>}
-          {entry.rank === 3 && <span className="text-2xl">🥉</span>}
-          {entry.rank > 3 && <span className="text-lg font-bold text-stone-400">#{entry.rank}</span>}
+        <div style={{ width: 48, textAlign: "center", flexShrink: 0 }}>
+          {entry.rank <= 3 ? (
+            <span style={{ fontSize: 18, fontWeight: 900, color: entry.rank === 1 ? "#E6A437" : entry.rank === 2 ? "#9ca3af" : "#C07A4E", fontFamily: "var(--font-mono)" }}>
+              #{entry.rank}
+            </span>
+          ) : (
+            <span style={{ fontSize: 16, fontWeight: 700, color: "var(--ink-mute)", fontFamily: "var(--font-mono)" }}>#{entry.rank}</span>
+          )}
         </div>
 
         {/* User Info */}
-        <div className="flex-1 min-w-0">
-          <p className="font-bold text-stone-900">{entry.displayName}</p>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontWeight: 700, color: "var(--ink)", fontSize: 14, fontFamily: "var(--font-ui)" }}>{entry.displayName}</p>
           {entry.username && (
-            <p className="text-xs text-stone-400">@{entry.username}</p>
+            <p style={{ fontSize: 12, color: "var(--ink-mute)" }}>@{entry.username}</p>
           )}
         </div>
 
         {/* Score */}
-        <div className="text-right shrink-0">
+        <div style={{ textAlign: "right", flexShrink: 0 }}>
           {tab === "accuracy" ? (
             <>
-              <p className="text-2xl font-black text-orange-600">{entry.accuracy}%</p>
-              <p className="text-[10px] text-stone-400">{entry.total} correct</p>
+              <p style={{ fontSize: 22, fontWeight: 900, color: "var(--brand)", fontFamily: "var(--font-ui)" }}>{entry.accuracy}%</p>
+              <p style={{ fontSize: 10, color: "var(--ink-mute)", fontFamily: "var(--font-mono)" }}>{entry.total} correct</p>
             </>
           ) : (
             <>
-              <p className="text-2xl font-black text-rose-600">🔥 {entry.streak}</p>
-              <p className="text-[10px] text-stone-400">day streak</p>
+              <p style={{ fontSize: 22, fontWeight: 900, color: "#E6A437", fontFamily: "var(--font-ui)" }}>{entry.streak}</p>
+              <p style={{ fontSize: 10, color: "var(--ink-mute)", fontFamily: "var(--font-mono)" }}>day streak</p>
             </>
           )}
         </div>
@@ -86,28 +87,28 @@ export default function TriviaLeaderboardsPage() {
     </Link>
   );
 
+  const tabStyle = (active) => ({
+    flex: 1, padding: "8px 16px", borderRadius: 8, fontSize: 14, fontWeight: 500,
+    fontFamily: "var(--font-ui)", border: "none", cursor: "pointer", transition: "all 0.15s",
+    background: active ? "var(--card)" : "transparent",
+    color: active ? "var(--ink)" : "var(--ink-mute)",
+    boxShadow: active ? "var(--shadow-card)" : "none",
+  });
+
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
+    <div className="max-w-3xl mx-auto px-4 py-8 min-h-screen" style={{ background: "var(--paper)" }}>
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-black text-stone-900 mb-2">🏆 Trivia Leaderboards</h1>
-        <p className="text-stone-600">Top Bollywood cinema experts</p>
+        <h1 style={{ fontSize: 28, fontWeight: 900, color: "var(--ink)", fontFamily: "var(--font-serif)", marginBottom: 6 }}>Trivia Leaderboards</h1>
+        <p style={{ color: "var(--ink-mute)", fontSize: 14 }}>Top Bollywood cinema experts</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-stone-100 rounded-xl p-1 mb-6">
+      <div style={{ display: "flex", gap: 4, background: "var(--sunk)", borderRadius: 12, padding: 4, marginBottom: 24 }}>
         {["accuracy", "streak"].map(t => (
-          <button
-            key={t}
-            onClick={() => handleTabChange(t)}
-            className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === t
-                ? "bg-white text-stone-900 shadow-sm"
-                : "text-stone-500 hover:text-stone-700"
-            }`}
-          >
-            {t === "accuracy" ? "📊 Accuracy" : "🔥 Streaks"}
+          <button key={t} onClick={() => handleTabChange(t)} style={tabStyle(tab === t)}>
+            {t === "accuracy" ? "Accuracy" : "Streaks"}
           </button>
         ))}
       </div>
@@ -116,7 +117,7 @@ export default function TriviaLeaderboardsPage() {
       {loading ? (
         <div className="space-y-3">
           {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="h-20 rounded-xl bg-stone-200 animate-pulse" />
+            <div key={i} className="h-20 rounded-xl shimmer" />
           ))}
         </div>
       ) : leaderboard.length > 0 ? (
@@ -130,15 +131,14 @@ export default function TriviaLeaderboardsPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white border border-stone-200 rounded-2xl">
-          <p className="text-4xl mb-3">🎬</p>
-          <p className="text-stone-600">No trivia responses yet</p>
+        <div style={{ textAlign: "center", padding: "48px 20px", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20 }}>
+          <p style={{ fontFamily: "var(--font-serif)", fontSize: 16, color: "var(--ink-soft)", marginBottom: 8 }}>No trivia responses yet</p>
         </div>
       )}
 
       {/* Back Link */}
-      <div className="mt-8 text-center">
-        <Link href="/trivia" className="text-orange-600 hover:underline font-medium">
+      <div style={{ marginTop: 32, textAlign: "center" }}>
+        <Link href="/trivia" style={{ color: "var(--brand)", fontWeight: 600, fontSize: 14, textDecoration: "none", fontFamily: "var(--font-ui)" }}>
           ← Back to Today's Trivia
         </Link>
       </div>

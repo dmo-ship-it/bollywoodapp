@@ -42,13 +42,15 @@ export default function WahWahButton({ targetType, targetId, initialCount = 0, i
     <button
       onClick={toggleWahWah}
       disabled={pending}
-      className={`flex items-center gap-1 border rounded-full font-medium transition-all ${sizeClass} ${
-        voted
-          ? "bg-orange-50 border-orange-400 text-orange-600"
-          : "bg-white border-stone-200 text-stone-500 hover:border-orange-300 hover:text-orange-600"
-      } disabled:opacity-40`}
+      className={`flex items-center gap-1 border rounded-full font-medium transition-all ${sizeClass} disabled:opacity-40`}
+      style={{
+        background: voted ? "rgba(225,75,51,0.07)" : "var(--card)",
+        borderColor: voted ? "var(--brand)" : "var(--line)",
+        color: voted ? "var(--brand)" : "var(--ink-soft)",
+        fontFamily: "var(--font-ui)",
+      }}
     >
-      👏 {count > 0 ? count : "Wah"}
+      {count > 0 ? count : "Wah"}
     </button>
   );
 }

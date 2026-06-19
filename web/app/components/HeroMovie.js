@@ -2,12 +2,6 @@
 
 import Link from "next/link";
 
-const VIBE_ICONS = {
-  "feel-good": "🫶", "emotionally devastating": "😭",
-  "edge-of-your-seat thriller": "😰", "laugh-out-loud comedy": "😂",
-  "dark": "🌑", "high energy": "🔥", "slow burn": "🕯️", "bittersweet": "💛",
-};
-
 export default function HeroMovie({ movie }) {
   if (!movie?.backdrop_url) return null;
 
@@ -21,51 +15,108 @@ export default function HeroMovie({ movie }) {
         className="absolute inset-0 w-full h-full object-cover object-top"
       />
 
-      {/* Dark overlay on the image */}
+      {/* Dark overlay */}
       <div className="absolute inset-0 hero-gradient" />
       <div className="absolute inset-0 bg-black/30" />
 
-      {/* Fade to warm white at the bottom */}
+      {/* Fade to paper at bottom */}
       <div className="absolute inset-x-0 bottom-0 h-32 hero-fade-bottom" />
 
       {/* Content */}
       <div className="absolute inset-0 flex items-end">
         <div className="w-full max-w-7xl mx-auto px-4 pb-10">
           <div className="max-w-md">
+
+            {/* Vibe tags */}
             {vibes.length > 0 && (
-              <div className="flex gap-2 mb-2.5">
+              <div className="flex gap-2 mb-3">
                 {vibes.map((v) => (
-                  <span key={v} className="text-[11px] font-medium bg-black/30 backdrop-blur-sm border border-white/20 text-white/90 px-2.5 py-1 rounded-full">
-                    {VIBE_ICONS[v.toLowerCase()] ?? "✨"} {v}
+                  <span
+                    key={v}
+                    className="backdrop-blur-sm border border-white/20 text-white/90 px-3 py-1"
+                    style={{
+                      fontSize: 11,
+                      fontFamily: "var(--font-mono)",
+                      fontWeight: 500,
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      background: "rgba(0,0,0,0.30)",
+                      borderRadius: "var(--radius-pill)",
+                    }}
+                  >
+                    {v}
                   </span>
                 ))}
               </div>
             )}
 
-            <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight text-white mb-2 drop-shadow-lg">
+            <h1
+              className="leading-tight mb-2 drop-shadow-lg"
+              style={{
+                fontFamily: "var(--font-serif)",
+                fontSize: "clamp(28px, 5vw, 44px)",
+                fontWeight: 400,
+                color: "var(--cream-light)",
+                letterSpacing: "-0.01em",
+              }}
+            >
               {movie.title}
             </h1>
 
-            <div className="flex items-center gap-3 text-sm mb-4">
-              {movie.year && <span className="text-white/70">{movie.year}</span>}
+            <div className="flex items-center gap-3 mb-4">
+              {movie.year && (
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--cream-body)", letterSpacing: "0.08em" }}>
+                  {movie.year}
+                </span>
+              )}
               {movie.tmdb_rating > 0 && (
-                <span className="text-white/70 font-semibold">{Math.round(movie.tmdb_rating * 10)}</span>
+                <span
+                  style={{
+                    display: "inline-flex", alignItems: "center", justifyContent: "center",
+                    width: 32, height: 32, borderRadius: "28%",
+                    background: scoreColor(Math.round(movie.tmdb_rating * 10)),
+                    color: scoreText(Math.round(movie.tmdb_rating * 10)),
+                    fontFamily: "var(--font-ui)", fontWeight: 800, fontSize: 12,
+                    letterSpacing: "-0.02em",
+                  }}
+                >
+                  {Math.round(movie.tmdb_rating * 10)}
+                </span>
               )}
               {movie.genres?.slice(0, 2).map((g) => (
-                <span key={g} className="text-white/50 text-xs">{g}</span>
+                <span key={g} style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--cream-nav)" }}>{g}</span>
               ))}
             </div>
 
             <div className="flex items-center gap-3">
               <Link
                 href={`/movies/${movie.id}`}
-                className="bg-orange-600 text-white text-sm font-bold px-5 py-2.5 rounded-full hover:bg-orange-500 transition-colors shadow-lg"
+                className="font-bold transition-all hover:-translate-y-px"
+                style={{
+                  background: "var(--brand)",
+                  color: "#fff",
+                  fontSize: 14,
+                  fontFamily: "var(--font-ui)",
+                  padding: "10px 20px",
+                  borderRadius: "var(--radius-pill)",
+                  boxShadow: "var(--shadow-brand-dark)",
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                }}
               >
-                See reactions →
+                See reactions
+                <span style={{ opacity: 0.8 }}>→</span>
               </Link>
               {movie.ott_platforms?.[0] && (
-                <span className="text-white/80 text-xs border border-white/20 bg-black/20 backdrop-blur-sm px-4 py-2.5 rounded-full">
-                  ▶ {movie.ott_platforms[0]}
+                <span
+                  className="border border-white/20 backdrop-blur-sm"
+                  style={{
+                    fontSize: 12, color: "var(--cream-ui)",
+                    padding: "10px 16px", borderRadius: "var(--radius-pill)",
+                    background: "rgba(0,0,0,0.20)",
+                    fontFamily: "var(--font-ui)",
+                  }}
+                >
+                  {movie.ott_platforms[0]}
                 </span>
               )}
             </div>
@@ -74,4 +125,15 @@ export default function HeroMovie({ movie }) {
       </div>
     </div>
   );
+}
+
+function scoreColor(v) {
+  if (v >= 90) return "#E14B33";
+  if (v >= 70) return "#E6A437";
+  if (v >= 50) return "#C07A4E";
+  return "#8C8A93";
+}
+
+function scoreText(v) {
+  return v >= 70 && v < 90 ? "#261E19" : "#FFFFFF";
 }

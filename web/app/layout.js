@@ -1,19 +1,17 @@
 import "./globals.css";
-import Header from "./components/Header";
-import BottomNav from "./components/BottomNav";
+import NavWrapper from "./components/NavWrapper";
 
 export const metadata = {
-  title: "Bolly — Feel Indian Cinema",
-  description: "Discover Indian films through emotional reactions, taste profiles, and trusted recommendations.",
+  title: "Rasika — Discover stories you'll love.",
+  description: "A film-ranking home for the curious. Indian cinema first, and open to every story worth savouring.",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="bg-stone-50 text-stone-900 min-h-screen antialiased">
-        <Header />
+      <body className="min-h-screen antialiased" style={{ background: "var(--paper)", color: "var(--ink)" }}>
+        <NavWrapper />
         <main className="pb-20 md:pb-0">{children}</main>
-        <BottomNav />
       </body>
     </html>
   );

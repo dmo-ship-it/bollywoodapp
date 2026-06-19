@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; }
+  ::selection { background:#E14B33; color:#fff; }
+  input::placeholder { color:#A89C8C; }
+  @keyframes glowpulse { 0%,100% { opacity:0.55; transform:scale(1); } 50% { opacity:0.85; transform:scale(1.08); } }
+</style>
+</helmet>
+
+<div style="--brand:{{ brand }}; --brand-deep:{{ brandDeep }}; --brand-soft:{{ brandSoft }}; --radius:{{ radius }}; background:#FAF7F1; color:#261E19; font-family:'Hanken Grotesk',sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh; overflow-x:hidden;">
+
+  <!-- ===== HERO (dark theater) ===== -->
+  <section style="position:relative; background:#17110D; overflow:hidden;">
+    <div style="position:absolute; top:-160px; right:-80px; width:620px; height:620px; border-radius:50%; background:radial-gradient(circle, rgba(225,75,51,0.50), rgba(225,75,51,0) 65%); filter:blur(24px); animation:glowpulse 7s ease-in-out infinite; pointer-events:none;"></div>
+    <div style="position:absolute; bottom:-220px; left:-160px; width:560px; height:560px; border-radius:50%; background:radial-gradient(circle, rgba(230,164,55,0.26), rgba(230,164,55,0) 65%); filter:blur(24px); animation:glowpulse 9s ease-in-out infinite; pointer-events:none;"></div>
+
+    <!-- nav -->
+    <div style="position:relative; z-index:2; max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:24px 36px;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="width:34px; height:34px; border-radius:22%; background:var(--brand,#E14B33); display:flex; align-items:center; justify-content:center; box-shadow:0 0 22px rgba(225,75,51,0.5);">
+          <span style="font-family:'Instrument Serif',serif; font-size:24px; line-height:1; color:#fff; margin-top:-2px;">R</span>
+        </div>
+        <span style="font-family:'Instrument Serif',serif; font-size:25px; color:#F4ECDE;">Rasika</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:32px;">
+        <span style="font-weight:600; font-size:15px; color:#B7A993; cursor:pointer;">Charts</span>
+        <span style="font-weight:600; font-size:15px; color:#B7A993; cursor:pointer;">Lists</span>
+        <span style="font-weight:600; font-size:15px; color:#B7A993; cursor:pointer;">Fandoms</span>
+        <span style="width:1px; height:20px; background:rgba(244,236,222,0.18);"></span>
+        <span style="font-weight:600; font-size:15px; color:#F4ECDE; cursor:pointer;">Log in</span>
+        <button style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:15px; white-space:nowrap; color:#fff; background:var(--brand,#E14B33); border:none; border-radius:999px; padding:11px 22px; cursor:pointer; box-shadow:0 0 26px rgba(225,75,51,0.45);" style-hover="filter:brightness(1.07); transform:translateY(-1px);">Join Rasika</button>
+      </div>
+    </div>
+
+    <!-- hero body -->
+    <div style="position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:52px 36px 104px; display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;">
+      <div>
+        <div style="display:inline-flex; align-items:center; gap:9px; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#F0C98A; border:1px solid rgba(230,164,55,0.4); border-radius:999px; padding:7px 14px; margin-bottom:30px;">Trending across Indian cinema</div>
+        <h1 style="font-family:'Instrument Serif',serif; font-weight:400; font-size:86px; line-height:0.97; letter-spacing:-0.01em; margin:0; color:#F7F0E4;">Discover stories<br>you'll love<span style="color:var(--brand,#E14B33);">.</span></h1>
+        <p style="font-size:19px; line-height:1.6; color:#C3B6A2; margin:28px 0 38px; max-width:470px;">Rank what you've seen, follow taste you trust, and always know what to watch next — across every language of Indian film.</p>
+
+        <div style="display:flex; gap:10px; max-width:470px;">
+          <input type="email" placeholder="you@email.com" style="flex:1; font-family:'Hanken Grotesk',sans-serif; font-size:16px; color:#F4ECDE; background:rgba(255,255,255,0.06); border:1.5px solid rgba(244,236,222,0.22); border-radius:999px; padding:15px 22px; outline:none;">
+          <button style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:16px; white-space:nowrap; color:#fff; background:var(--brand,#E14B33); border:none; border-radius:999px; padding:15px 28px; cursor:pointer; box-shadow:0 10px 30px rgba(225,75,51,0.4);" style-hover="filter:brightness(1.07); transform:translateY(-1px);">Get started</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:18px; font-family:'JetBrains Mono',monospace; font-size:12px; color:#8A7D6B; margin-top:18px;">
+          <span>Free forever</span><span style="color:#4A3F33;">·</span><span>No ads</span><span style="color:#4A3F33;">·</span><span>4,200+ films</span>
+        </div>
+      </div>
+
+      <!-- poster cluster -->
+      <div style="position:relative; height:520px;">
+        <sc-for list="{{ heroCards }}" as="c" hint-placeholder-count="3">
+          <div style="position:absolute; top:{{ c.top }}; left:{{ c.left }}; width:{{ c.w }}; transform:rotate({{ c.rot }}); z-index:{{ c.z }}; background:#1F1711; border:1px solid #322519; border-radius:18px; padding:10px; box-shadow:0 30px 60px rgba(0,0,0,0.55);">
+            <div style="position:relative; aspect-ratio:3/4; border-radius:11px; overflow:hidden; background:repeating-linear-gradient(135deg,#241A14,#241A14 7px,#2E2219 7px,#2E2219 14px); display:flex; align-items:center; justify-content:center;">
+              <span style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.12em; color:#6E6052;">[ POSTER ]</span>
+              <div style="position:absolute; top:10px; right:10px; width:42px; height:42px; border-radius:28%; background:{{ c.fill }}; color:{{ c.text }}; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:17px; box-shadow:0 0 20px rgba(225,75,51,0.45);">{{ c.score }}</div>
+            </div>
+            <div style="padding:11px 8px 6px;">
+              <div style="font-family:'Instrument Serif',serif; font-size:20px; line-height:1.05; color:#F4ECDE;">{{ c.title }}</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; color:#8A7D6B; margin-top:5px;">{{ c.meta }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section style="background:#F3EDE3; border-top:1px solid #E7DFD3; border-bottom:1px solid #E7DFD3;">
+    <div style="max-width:1200px; margin:0 auto; padding:80px 36px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:#9C9084; margin-bottom:14px;">How Rasika works</div>
+      <h2 style="font-family:'Instrument Serif',serif; font-weight:400; font-size:44px; line-height:1.05; margin:0 0 52px; max-width:520px;">Your taste, turned into a number you trust.</h2>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;">
+        <sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+          <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:34px 30px 36px;">
+            <div style="font-family:'Instrument Serif',serif; font-size:46px; color:var(--brand,#E14B33); line-height:1;">{{ s.n }}</div>
+            <div style="font-family:'Instrument Serif',serif; font-size:26px; margin-top:18px;">{{ s.title }}</div>
+            <div style="font-size:15.5px; line-height:1.6; color:#6E635A; margin-top:12px;">{{ s.body }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== YOUR SCORE ===== -->
+  <section>
+    <div style="max-width:1200px; margin:0 auto; padding:88px 36px; display:grid; grid-template-columns:0.92fr 1.08fr; gap:60px; align-items:center;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:var(--brand,#E14B33); margin-bottom:16px;">What makes Rasika different</div>
+        <h2 style="font-family:'Instrument Serif',serif; font-weight:400; font-size:52px; line-height:1.0; margin:0 0 20px;">Not just a score.<br>Your score.</h2>
+        <p style="font-size:17.5px; line-height:1.6; color:#6E635A; margin:0 0 26px; max-width:440px;">Most ratings hand everyone the same number. Rasika learns <em style="font-style:italic; color:#5E544B;">your</em> taste and predicts how much you, specifically, will love a film — then introduces you to the people who share it.</p>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div style="display:flex; align-items:flex-start; gap:12px;">
+            <span style="width:9px; height:9px; border-radius:50%; background:var(--brand,#E14B33); margin-top:7px; flex:none;"></span>
+            <span style="font-size:16px; color:#3E362F;"><strong style="font-weight:700;">Your match</strong> predicts your verdict before the opening credits.</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:12px;">
+            <span style="width:9px; height:9px; border-radius:50%; background:#E6A437; margin-top:7px; flex:none;"></span>
+            <span style="font-size:16px; color:#3E362F;"><strong style="font-weight:700;">Taste twins</strong> are members whose ratings track yours, film after film.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- demo card -->
+      <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:30px 32px 26px; box-shadow:0 24px 50px rgba(38,30,25,0.10);">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div style="width:52px; height:70px; flex:none; border-radius:8px; background:repeating-linear-gradient(135deg,#efe7da,#efe7da 5px,#e7ddcd 5px,#e7ddcd 10px);"></div>
+          <div>
+            <div style="font-family:'Instrument Serif',serif; font-size:27px; line-height:1.04;">Eeb Allay Ooo!</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#9C9084; margin-top:6px;">2019 · Hindi · Dark comedy</div>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:28px; margin:26px 0; padding:24px 0; border-top:1px solid #F1EBE1; border-bottom:1px solid #F1EBE1;">
+          <!-- your match ring -->
+          <div style="display:flex; flex-direction:column; align-items:center; gap:11px; flex:1;">
+            <div style="width:104px; height:104px; border-radius:50%; background:conic-gradient(var(--brand,#E14B33) 0% 95%, #EFE1DC 95% 100%); display:flex; align-items:center; justify-content:center;">
+              <div style="width:80px; height:80px; border-radius:50%; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                <span style="font-weight:800; font-size:27px; color:var(--brand,#E14B33); line-height:1;">95%</span>
+                <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:#A89C8C; margin-top:2px;">match</span>
+              </div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; color:var(--brand,#E14B33); font-weight:600;">Your match</div>
+              <div style="font-size:12.5px; color:#9C9084; margin-top:3px;">almost certainly you</div>
+            </div>
+          </div>
+
+          <div style="width:1px; height:96px; background:#EFE8DD; flex:none;"></div>
+
+          <!-- global squircle -->
+          <div style="display:flex; flex-direction:column; align-items:center; gap:11px; flex:1;">
+            <div style="width:76px; height:76px; border-radius:28%; background:#C07A4E; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:30px;">68</div>
+            <div style="text-align:center; margin-top:14px;">
+              <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; color:#9C9084; font-weight:600;">Global score</div>
+              <div style="font-size:12.5px; color:#9C9084; margin-top:3px;">mixed reviews</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-family:'Instrument Serif',serif; font-style:italic; font-size:19px; color:#3E362F; text-align:center; margin-bottom:22px;">“The world shrugs. You'll probably love it.”</div>
+
+        <div style="display:flex; align-items:center; gap:14px; padding-top:18px; border-top:1px solid #F1EBE1;">
+          <div style="display:flex;">
+            <div style="width:34px; height:34px; border-radius:50%; background:#E14B33; color:#fff; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px;">A</div>
+            <div style="width:34px; height:34px; border-radius:50%; background:#E6A437; color:#fff; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; margin-left:-11px;">M</div>
+            <div style="width:34px; height:34px; border-radius:50%; background:#C07A4E; color:#fff; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; margin-left:-11px;">S</div>
+            <div style="width:34px; height:34px; border-radius:50%; background:#7A6A5C; color:#fff; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; margin-left:-11px;">R</div>
+            <div style="width:34px; height:34px; border-radius:50%; background:#F1EBE1; color:#7A6A5C; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11px; margin-left:-11px;">+1.2k</div>
+          </div>
+          <span style="font-size:14.5px; color:#6E635A;">Loved by <strong style="color:#3E362F;">1,240</strong> of your taste twins</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHARTS PREVIEW ===== -->
+  <section style="background:#F3EDE3; border-top:1px solid #E7DFD3; border-bottom:1px solid #E7DFD3;">
+    <div style="max-width:1200px; margin:0 auto; padding:80px 36px; display:grid; grid-template-columns:0.9fr 1.1fr; gap:56px; align-items:center;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:#9C9084; margin-bottom:14px;">The Rasika 100</div>
+        <h2 style="font-family:'Instrument Serif',serif; font-weight:400; font-size:44px; line-height:1.06; margin:0 0 18px;">A living chart of the films worth your evening.</h2>
+        <p style="font-size:17px; line-height:1.6; color:#6E635A; margin:0 0 28px; max-width:420px;">Updated every week from thousands of ranked verdicts — not star averages. The higher the score, the warmer the badge.</p>
+        <button style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:15px; white-space:nowrap; color:#261E19; background:transparent; border:1.5px solid #261E19; border-radius:999px; padding:13px 26px; cursor:pointer;" style-hover="background:#261E19; color:#fff;">Explore the full chart ▸</button>
+      </div>
+      <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:8px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 22px 14px;">
+          <div style="font-family:'Instrument Serif',serif; font-size:22px;">This week's top five</div>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#9C9084;">Pan-Indian</span>
+        </div>
+        <sc-for list="{{ chart }}" as="m" hint-placeholder-count="5">
+          <div style="display:flex; align-items:center; gap:16px; padding:13px 22px; border-top:1px solid #F1EBE1;" style-hover="background:#FAF7F1;">
+            <span style="font-family:'Instrument Serif',serif; font-size:28px; color:#C9BDAB; width:30px; flex:none; text-align:center;">{{ m.rank }}</span>
+            <div style="width:42px; height:58px; flex:none; border-radius:7px; background:repeating-linear-gradient(135deg,#efe7da,#efe7da 5px,#e7ddcd 5px,#e7ddcd 10px);"></div>
+            <div style="flex:1; min-width:0;">
+              <div style="font-weight:700; font-size:16px; color:#261E19;">{{ m.title }}</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#9C9084; margin-top:4px;">{{ m.meta }}</div>
+            </div>
+            <div style="width:42px; height:42px; flex:none; border-radius:28%; background:{{ m.fill }}; color:{{ m.text }}; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px;">{{ m.score }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SIGN-UP BAND ===== -->
+  <section style="position:relative; background:#17110D; color:#F3ECE1; overflow:hidden;">
+    <div style="position:absolute; top:-200px; left:50%; transform:translateX(-50%); width:760px; height:520px; border-radius:50%; background:radial-gradient(circle, rgba(225,75,51,0.34), rgba(225,75,51,0) 65%); filter:blur(30px); animation:glowpulse 8s ease-in-out infinite; pointer-events:none;"></div>
+    <div style="position:relative; max-width:1200px; margin:0 auto; padding:96px 36px; text-align:center;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:#7E746A; margin-bottom:22px;">Join in 30 seconds</div>
+      <h2 style="font-family:'Instrument Serif',serif; font-weight:400; font-size:60px; line-height:1.02; margin:0 0 16px; color:#F8F2E8; max-width:720px; margin-left:auto; margin-right:auto;">Start ranking tonight<span style="color:var(--brand,#E14B33);">.</span></h2>
+      <p style="font-size:18px; color:#B6A99C; margin:0 0 40px; max-width:480px; margin-left:auto; margin-right:auto;">Rank ten films and Rasika starts learning what you'll love. It only gets better from there.</p>
+      <div style="display:flex; gap:10px; max-width:470px; margin:0 auto;">
+        <input type="email" placeholder="you@email.com" style="flex:1; font-family:'Hanken Grotesk',sans-serif; font-size:16px; color:#F3ECE1; background:#2A231E; border:1.5px solid #3A322B; border-radius:999px; padding:16px 24px; outline:none;">
+        <button style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:16px; white-space:nowrap; color:#fff; background:var(--brand,#E14B33); border:none; border-radius:999px; padding:16px 30px; cursor:pointer; box-shadow:0 8px 22px rgba(225,75,51,0.34);" style-hover="filter:brightness(1.07); transform:translateY(-1px);">Create account</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <div style="max-width:1200px; margin:0 auto; padding:40px 36px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+    <div style="display:flex; align-items:center; gap:11px;">
+      <div style="width:30px; height:30px; border-radius:22%; background:var(--brand,#E14B33); display:flex; align-items:center; justify-content:center;">
+        <span style="font-family:'Instrument Serif',serif; font-size:21px; color:#fff; margin-top:-1px;">R</span>
+      </div>
+      <span style="font-family:'Instrument Serif',serif; font-size:21px;">Rasika</span>
+      <span style="font-family:'Instrument Serif',serif; font-style:italic; font-size:15px; color:#9C9084; margin-left:6px;">Discover stories you'll love.</span>
+    </div>
+    <div style="display:flex; gap:24px; font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.04em; color:#9C9084;">
+      <span style="cursor:pointer;">About</span>
+      <span style="cursor:pointer;">Charts</span>
+      <span style="cursor:pointer;">Apps</span>
+      <span style="cursor:pointer;">Contact</span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;brand&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#E14B33&quot;,&quot;options&quot;:[&quot;#E14B33&quot;,&quot;#0E9B8E&quot;,&quot;#C0392B&quot;,&quot;#7A3E9D&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;cornerStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Soft&quot;,&quot;options&quot;:[&quot;Soft&quot;,&quot;Sharp&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  mix(hex, target, a) {
+    const p = h => [1,3,5].map(i => parseInt(h.slice(i,i+2),16));
+    const A = p(hex), B = p(target);
+    const r = A.map((v,i) => Math.round(v + (B[i]-v)*a));
+    return '#' + r.map(v => v.toString(16).padStart(2,'0')).join('');
+  }
+  scoreFill(v) {
+    if (v >= 90) return '#E14B33';
+    if (v >= 70) return '#E6A437';
+    if (v >= 50) return '#C07A4E';
+    return '#8C8A93';
+  }
+  scoreText(v) { return (v >= 70 && v < 90) ? '#261E19' : '#FFFFFF'; }
+
+  renderVals() {
+    const brand = this.props.brand ?? '#E14B33';
+    const brandDeep = this.mix(brand, '#000000', 0.16);
+    const brandSoft = this.mix(brand, '#FAF7F1', 0.87);
+    const radius = (this.props.cornerStyle ?? 'Soft') === 'Sharp' ? '4px' : '16px';
+    const sc = v => ({ fill:this.scoreFill(v), text:this.scoreText(v) });
+
+    return {
+      brand, brandDeep, brandSoft, radius,
+
+      heroCards: [
+        { title:'Tumbbad',       meta:'2018 · Hindi',   score:'91', ...sc(91), w:'232px', top:'40px',  left:'120px', rot:'3deg',  z:3 },
+        { title:'Super Deluxe',  meta:'2019 · Tamil',   score:'88', ...sc(88), w:'190px', top:'0px',   left:'0px',   rot:'-6deg', z:2 },
+        { title:'Jallikattu',    meta:'2019 · Malayalam',score:'84',...sc(84), w:'180px', top:'250px', left:'30px',  rot:'-4deg', z:1 },
+      ],
+
+      steps: [
+        { n:'01', title:'Rank',     body:'Compare two films head to head. Quick gut calls build a taste profile that\u2019s truly yours.' },
+        { n:'02', title:'Discover', body:'Rasika surfaces films you\u2019ll actually love — matched to your taste, not the crowd\u2019s.' },
+        { n:'03', title:'Share',    body:'Publish lists and verdicts your friends trust, and follow the taste-makers you admire.' },
+      ],
+
+      chart: [
+        { rank:1, title:'Tumbbad',           meta:'2018 · Hindi · Horror',       score:'91', ...sc(91) },
+        { rank:2, title:'Super Deluxe',      meta:'2019 · Tamil · Anthology',    score:'88', ...sc(88) },
+        { rank:3, title:'Pariyerum Perumal', meta:'2018 · Tamil · Drama',        score:'87', ...sc(87) },
+        { rank:4, title:'Jallikattu',        meta:'2019 · Malayalam · Thriller', score:'84', ...sc(84) },
+        { rank:5, title:'Court',             meta:'2014 · Marathi · Drama',      score:'82', ...sc(82) },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

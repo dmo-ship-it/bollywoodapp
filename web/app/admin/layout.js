@@ -17,7 +17,6 @@ export default function AdminLayout({ children }) {
 
   useEffect(() => {
     async function checkAdmin() {
-      // Get current user
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) {
         router.push("/login");
@@ -25,7 +24,6 @@ export default function AdminLayout({ children }) {
       }
       setUser(authUser);
 
-      // Check if user is admin
       const { data: profile } = await supabase
         .from("user_profiles")
         .select("role")
@@ -45,42 +43,37 @@ export default function AdminLayout({ children }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-stone-50">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--paper)" }}>
         <div className="text-center">
-          <div className="text-4xl mb-4 animate-pulse">⚙️</div>
-          <p className="text-stone-600">Loading admin panel...</p>
+          <div className="shimmer" style={{ width: 48, height: 48, borderRadius: "28%", margin: "0 auto 16px" }} />
+          <p style={{ color: "var(--ink-mute)", fontSize: 14, fontFamily: "var(--font-ui)" }}>Loading admin panel…</p>
         </div>
       </div>
     );
   }
 
-  if (!isAdmin) {
-    return null;
-  }
+  if (!isAdmin) return null;
 
   const navItems = [
-    { href: "/admin", label: "📊 Dashboard", icon: "📊" },
-    { href: "/admin/trivia", label: "🎬 Trivia", icon: "🎬" },
+    { href: "/admin",        label: "Dashboard" },
+    { href: "/admin/trivia", label: "Trivia"    },
   ];
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen" style={{ background: "var(--paper)" }}>
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white border-b border-stone-200">
+      <header style={{ position: "sticky", top: 0, zIndex: 40, background: "var(--card)", borderBottom: "1px solid var(--line)" }}>
         <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/admin" className="flex items-center gap-2">
-            <span className="text-xl font-black text-stone-900">bolly</span>
-            <span className="text-orange-500 text-xl leading-none">•</span>
-            <span className="text-xs font-bold text-orange-600 ml-2">ADMIN</span>
+          <Link href="/admin" style={{ display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
+            <span style={{ fontSize: 20, fontWeight: 900, color: "var(--ink)", fontFamily: "var(--font-serif)" }}>Rasika</span>
+            <span style={{ color: "var(--brand)", fontSize: 20, lineHeight: 1 }}>•</span>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "var(--brand)", marginLeft: 4, fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Admin</span>
           </Link>
           <div className="flex items-center gap-4 text-sm">
-            <span className="text-stone-600">{user?.email}</span>
+            <span style={{ color: "var(--ink-mute)", fontSize: 13 }}>{user?.email}</span>
             <button
-              onClick={() => {
-                supabase.auth.signOut();
-                router.push("/");
-              }}
-              className="text-stone-500 hover:text-stone-700 transition-colors"
+              onClick={() => { supabase.auth.signOut(); router.push("/"); }}
+              style={{ color: "var(--ink-mute)", fontSize: 13, background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-ui)" }}
             >
               Sign out
             </button>
@@ -90,7 +83,7 @@ export default function AdminLayout({ children }) {
 
       <div className="flex">
         {/* Sidebar Navigation */}
-        <aside className="w-48 border-r border-stone-200 bg-white hidden md:block">
+        <aside style={{ width: 192, borderRight: "1px solid var(--line)", background: "var(--card)" }} className="hidden md:block">
           <nav className="p-4 space-y-2">
             {navItems.map(item => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
@@ -98,11 +91,14 @@ export default function AdminLayout({ children }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-orange-50 text-orange-900 border-l-4 border-orange-600"
-                      : "text-stone-700 hover:bg-stone-50"
-                  }`}
+                  style={{
+                    display: "block", padding: "10px 16px", borderRadius: 10, fontSize: 13,
+                    fontWeight: 500, textDecoration: "none", transition: "all 0.15s",
+                    fontFamily: "var(--font-ui)",
+                    background: isActive ? "rgba(225,75,51,0.06)" : "transparent",
+                    color: isActive ? "var(--brand)" : "var(--ink-soft)",
+                    borderLeft: isActive ? "3px solid var(--brand)" : "3px solid transparent",
+                  }}
                 >
                   {item.label}
                 </Link>

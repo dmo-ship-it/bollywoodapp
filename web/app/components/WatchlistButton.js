@@ -59,11 +59,11 @@ export default function WatchlistButton({ movieId, movieTitle, initialSaved = fa
       className={`transition-all ${pulse ? "scale-125" : "scale-100"} ${className}`}
     >
       {saved ? (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="text-orange-600">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ color: "var(--brand)" }}>
           <path d="M5 4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v18l-7-3.5L5 22V4z"/>
         </svg>
       ) : (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-stone-400 hover:text-orange-500 transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--ink-mute)" }}>
           <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
         </svg>
       )}

@@ -63,10 +63,9 @@ export default async function MoviePage({ params }) {
 
   if (!movie) {
     return (
-      <div className="text-center py-32 text-zinc-500">
-        <p className="text-5xl mb-4">🎬</p>
-        <p className="text-lg">Film not found</p>
-        <Link href="/" className="text-amber-400 hover:underline mt-4 block">← Back</Link>
+      <div style={{ textAlign: "center", padding: "128px 16px", color: "var(--ink-mute)" }}>
+        <p style={{ fontFamily: "var(--font-serif)", fontSize: 20, color: "var(--ink-soft)", marginBottom: 8 }}>Film not found</p>
+        <Link href="/" style={{ color: "var(--brand)", fontWeight: 600 }}>← Back</Link>
       </div>
     );
   }
@@ -87,7 +86,7 @@ export default async function MoviePage({ params }) {
   const director = directors[0]?.people?.name;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ background: "var(--paper)" }}>
 
       <div className="max-w-4xl mx-auto px-4 pt-6 pb-16">
 
@@ -104,7 +103,7 @@ export default async function MoviePage({ params }) {
             <div className="aspect-[2/3] rounded-xl overflow-hidden bg-stone-100 shadow-sm">
               {movie.poster_url
                 ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover object-top" />
-                : <div className="w-full h-full flex items-center justify-center text-4xl text-stone-300">🎬</div>
+                : <div className="w-full h-full" style={{ background: "var(--sunk)" }} />
               }
             </div>
 
@@ -175,7 +174,7 @@ export default async function MoviePage({ params }) {
             {movie.genres?.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mb-4">
                 {movie.genres.map((g) => (
-                  <span key={g} className="bg-stone-100 text-stone-500 text-[11px] px-2.5 py-1 rounded-full">
+                  <span key={g} style={{ background: "var(--sunk)", color: "var(--ink-mute)", fontSize: 11, padding: "4px 10px", borderRadius: 999, fontFamily: "var(--font-ui)" }}>
                     {g}
                   </span>
                 ))}
@@ -198,7 +197,7 @@ export default async function MoviePage({ params }) {
         {allTags.length > 0 && (
           <div className="mt-8 flex flex-wrap gap-1.5">
             {allTags.slice(0, 12).map((tag) => (
-              <span key={tag} className="bg-stone-50 text-stone-400 text-[11px] px-2.5 py-1 rounded-full border border-stone-100 capitalize">
+              <span key={tag} style={{ background: "var(--sunk)", color: "var(--ink-mute)", fontSize: 11, padding: "4px 10px", borderRadius: 999, border: "1px solid var(--line)", textTransform: "capitalize", fontFamily: "var(--font-ui)", display: "inline-block" }}>
                 {tag}
               </span>
             ))}
@@ -208,8 +207,8 @@ export default async function MoviePage({ params }) {
         {/* ───── Film Details ───── */}
         <section className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
           {directors.length > 0 && (
-            <div className="p-3 rounded-lg bg-stone-50">
-              <p className="text-[10px] text-stone-400 uppercase tracking-widest mb-1">Director</p>
+            <div className="p-3 rounded-lg" style={{ background: "var(--sunk)" }}>
+              <p style={{ fontSize: 10, color: "var(--ink-mute)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 4, fontFamily: "var(--font-mono)" }}>Director</p>
               {directors.map((d) => (
                 <Link key={d.people?.id} href={`/person/${d.people?.id}`} className="text-sm text-stone-700 hover:text-stone-900 transition-colors block">
                   {d.people?.name}
@@ -218,8 +217,8 @@ export default async function MoviePage({ params }) {
             </div>
           )}
           {composers.length > 0 && (
-            <div className="p-3 rounded-lg bg-stone-50">
-              <p className="text-[10px] text-stone-400 uppercase tracking-widest mb-1">Music</p>
+            <div className="p-3 rounded-lg" style={{ background: "var(--sunk)" }}>
+              <p style={{ fontSize: 10, color: "var(--ink-mute)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 4, fontFamily: "var(--font-mono)" }}>Music</p>
               {composers.map((c) => (
                 <Link key={c.people?.id} href={`/person/${c.people?.id}`} className="text-sm text-stone-700 hover:text-stone-900 transition-colors block">
                   {c.people?.name}
@@ -228,15 +227,15 @@ export default async function MoviePage({ params }) {
             </div>
           )}
           {movie.production_houses?.length > 0 && (
-            <div className="p-3 rounded-lg bg-stone-50">
-              <p className="text-[10px] text-stone-400 uppercase tracking-widest mb-1">Production</p>
-              <p className="text-sm text-stone-700">{movie.production_houses[0]}</p>
+            <div className="p-3 rounded-lg" style={{ background: "var(--sunk)" }}>
+              <p style={{ fontSize: 10, color: "var(--ink-mute)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 4, fontFamily: "var(--font-mono)" }}>Production</p>
+              <p style={{ fontSize: 13, color: "var(--ink-soft)", fontFamily: "var(--font-ui)" }}>{movie.production_houses[0]}</p>
             </div>
           )}
           {movie.box_office_india_crore && (
-            <div className="p-3 rounded-lg bg-stone-50">
-              <p className="text-[10px] text-stone-400 uppercase tracking-widest mb-1">Box Office</p>
-              <p className="text-sm text-stone-700">₹{movie.box_office_india_crore} Cr</p>
+            <div className="p-3 rounded-lg" style={{ background: "var(--sunk)" }}>
+              <p style={{ fontSize: 10, color: "var(--ink-mute)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 4, fontFamily: "var(--font-mono)" }}>Box Office</p>
+              <p style={{ fontSize: 13, color: "var(--ink-soft)", fontFamily: "var(--font-ui)" }}>₹{movie.box_office_india_crore} Cr</p>
             </div>
           )}
         </section>
@@ -255,7 +254,7 @@ export default async function MoviePage({ params }) {
                   <div className="w-16 h-16 rounded-full overflow-hidden bg-stone-100 mb-1.5">
                     {c.people?.photo_url
                       ? <img src={c.people.photo_url} alt={c.people.name} className="w-full h-full object-cover" />
-                      : <div className="w-full h-full flex items-center justify-center text-xl text-stone-300">👤</div>
+                      : <div className="w-full h-full" style={{ background: "var(--sunk)" }} />
                     }
                   </div>
                   <p className="text-[10px] text-stone-600 leading-tight line-clamp-2 group-hover:text-stone-900 transition-colors">{c.people?.name}</p>
@@ -278,10 +277,10 @@ export default async function MoviePage({ params }) {
                   <div className="aspect-[2/3] rounded-lg overflow-hidden bg-stone-100">
                     {m.poster_url
                       ? <img src={m.poster_url} alt={m.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-                      : <div className="w-full h-full flex items-center justify-center text-xl text-stone-300">🎬</div>
+                      : <div className="w-full h-full" style={{ background: "var(--sunk)" }} />
                     }
                   </div>
-                  <p className="mt-1 text-[10px] text-stone-400 truncate group-hover:text-stone-700 transition-colors">{m.title}</p>
+                  <p className="mt-1 text-[10px] truncate transition-colors" style={{ color: "var(--ink-mute)" }}>{m.title}</p>
                 </Link>
               ))}
             </div>

@@ -50,11 +50,13 @@ export default function FollowButton({ userId, initialFollowing = false, size = 
       <button
         onClick={toggleFollow}
         disabled={pending}
-        className={`font-bold rounded-full transition-all ${sizeClass} ${
-          following
-            ? "bg-stone-100 text-stone-700 border border-stone-200 hover:bg-stone-200"
-            : "bg-orange-600 text-white hover:bg-orange-500 border border-orange-600"
-        } disabled:opacity-40`}
+        className={`font-bold rounded-full transition-all ${sizeClass} disabled:opacity-40`}
+        style={{
+          background: following ? "var(--sunk)" : "var(--brand)",
+          color: following ? "var(--ink-soft)" : "#fff",
+          border: following ? "1px solid var(--line)" : "none",
+          fontFamily: "var(--font-ui)",
+        }}
       >
         {following ? "Following" : "+ Follow"}
       </button>

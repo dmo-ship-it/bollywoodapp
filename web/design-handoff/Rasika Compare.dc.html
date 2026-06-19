@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; }
+  ::selection { background:#E14B33; color:#fff; }
+</style>
+</helmet>
+
+<div style="--brand:{{ brand }}; --brand-soft:{{ brandSoft }}; --radius:{{ radius }}; background:#FAF7F1; color:#261E19; font-family:'Hanken Grotesk',sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh; display:flex; flex-direction:column;">
+
+  <!-- top bar -->
+  <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 36px; border-bottom:1px solid #E7DFD3;">
+    <div style="display:flex; align-items:center; gap:11px;">
+      <div style="width:32px; height:32px; border-radius:22%; background:var(--brand,#E14B33); display:flex; align-items:center; justify-content:center;">
+        <span style="font-family:'Instrument Serif',serif; font-size:23px; color:#fff; margin-top:-2px;">R</span>
+      </div>
+      <span style="font-family:'Instrument Serif',serif; font-size:23px;">Rasika</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:22px;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.04em; color:#9C9084;">{{ count }} compared</span>
+        <div style="width:120px; height:6px; border-radius:999px; background:#EAE2D6; overflow:hidden;">
+          <div style="height:100%; width:{{ mappedPct }}; background:var(--brand,#E14B33); border-radius:999px; transition:width .4s ease;"></div>
+        </div>
+        <span style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--brand,#E14B33);">{{ mappedPct }} mapped</span>
+      </div>
+      <span style="font-weight:600; font-size:14px; color:#9C9084; cursor:pointer;">Skip for now</span>
+    </div>
+  </div>
+
+  <!-- main -->
+  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 36px 64px;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.18em; text-transform:uppercase; color:var(--brand,#E14B33); margin-bottom:18px;">Build your taste</div>
+    <h1 style="font-family:'Instrument Serif',serif; font-weight:400; font-size:52px; line-height:1.05; text-align:center; margin:0 0 44px; max-width:680px;">{{ prompt }}</h1>
+
+    <!-- matchup -->
+    <div style="display:flex; align-items:center; justify-content:center; gap:24px;">
+      <!-- left -->
+      <div onClick="{{ pickLeft }}" style="{{ selLeft }}">
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:18px; padding:12px; width:288px;">
+          <div style="position:relative; aspect-ratio:3/4; border-radius:11px; overflow:hidden; background:repeating-linear-gradient(135deg,#efe7da,#efe7da 7px,#e7ddcd 7px,#e7ddcd 14px); display:flex; align-items:center; justify-content:center;">
+            <span style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.12em; color:#B7AB98;">{{ left.tag }}</span>
+            <sc-if value="{{ leftPicked }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute; top:12px; left:12px; font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:12px; color:#fff; background:var(--brand,#E14B33); border-radius:999px; padding:6px 13px;">✓ Your pick</div>
+            </sc-if>
+          </div>
+          <div style="padding:14px 8px 8px;">
+            <div style="font-family:'Instrument Serif',serif; font-size:25px; line-height:1.04;">{{ left.title }}</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#9C9084; margin-top:6px;">{{ left.meta }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- vs -->
+      <div style="width:56px; height:56px; flex:none; border-radius:50%; background:#fff; border:1px solid #E0D7C9; display:flex; align-items:center; justify-content:center; font-family:'Instrument Serif',serif; font-style:italic; font-size:22px; color:#9C9084; box-shadow:0 4px 14px rgba(38,30,25,0.06);">vs</div>
+
+      <!-- right -->
+      <div onClick="{{ pickRight }}" style="{{ selRight }}">
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:18px; padding:12px; width:288px;">
+          <div style="position:relative; aspect-ratio:3/4; border-radius:11px; overflow:hidden; background:repeating-linear-gradient(135deg,#efe7da,#efe7da 7px,#e7ddcd 7px,#e7ddcd 14px); display:flex; align-items:center; justify-content:center;">
+            <span style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.12em; color:#B7AB98;">{{ right.tag }}</span>
+            <sc-if value="{{ rightPicked }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute; top:12px; left:12px; font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:12px; color:#fff; background:var(--brand,#E14B33); border-radius:999px; padding:6px 13px;">✓ Your pick</div>
+            </sc-if>
+          </div>
+          <div style="padding:14px 8px 8px;">
+            <div style="font-family:'Instrument Serif',serif; font-size:25px; line-height:1.04;">{{ right.title }}</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#9C9084; margin-top:6px;">{{ right.meta }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- secondary options -->
+    <div style="display:flex; gap:10px; margin-top:34px;">
+      <span onClick="{{ pickBoth }}" style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:14px; color:#5E544B; background:#F1EBE1; border-radius:999px; padding:10px 18px; cursor:pointer;" style-hover="background:#E9E1D4;">Loved both equally</span>
+      <span onClick="{{ pickNeither }}" style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:14px; color:#5E544B; background:#F1EBE1; border-radius:999px; padding:10px 18px; cursor:pointer;" style-hover="background:#E9E1D4;">Haven't seen one</span>
+      <span onClick="{{ skip }}" style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:14px; color:#9C9084; background:transparent; border-radius:999px; padding:10px 16px; cursor:pointer;" style-hover="color:#5E544B;">Skip ▸</span>
+    </div>
+
+    <!-- taste signal -->
+    <div style="height:30px; margin-top:26px; display:flex; align-items:center;">
+      <span style="font-family:'Instrument Serif',serif; font-style:italic; font-size:21px; color:var(--brand,#E14B33);">{{ signal }}</span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;brand&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#E14B33&quot;,&quot;options&quot;:[&quot;#E14B33&quot;,&quot;#0E9B8E&quot;,&quot;#C0392B&quot;,&quot;#7A3E9D&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;cornerStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Soft&quot;,&quot;options&quot;:[&quot;Soft&quot;,&quot;Sharp&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { index: 0, picked: null, signal: '', count: 0 };
+
+  matchups = [
+    { prompt: 'Which did you enjoy more?',
+      left:  { title: 'Vikram',  meta: '2022 · Tamil · Action', tag: '[ POSTER ]' },
+      right: { title: 'Jailer',  meta: '2023 · Tamil · Action', tag: '[ POSTER ]' },
+      sigL: 'Noted — you lean into Lokesh-universe action.',
+      sigR: 'Got it — you love a mass Rajini ride.',
+      sigBoth: 'A true Tamil-cinema heart. Noted.' },
+    { prompt: 'Whose films do you reach for?',
+      left:  { title: 'Shah Rukh Khan', meta: 'Actor · romance & drama', tag: '[ PORTRAIT ]' },
+      right: { title: 'Aamir Khan',     meta: 'Actor · craft & cause',   tag: '[ PORTRAIT ]' },
+      sigL: 'A romantic at heart. We\u2019ll lean warmer.',
+      sigR: 'You like a perfectionist\u2019s craft.',
+      sigBoth: 'Range over loyalty \u2014 good to know.' },
+    { prompt: 'Which one hit harder?',
+      left:  { title: 'Super Deluxe', meta: '2019 · Tamil · Anthology',  tag: '[ POSTER ]' },
+      right: { title: 'Jallikattu',   meta: '2019 · Malayalam · Thriller', tag: '[ POSTER ]' },
+      sigL: 'You like bold, tangled storytelling.',
+      sigR: 'Raw, kinetic cinema is your thing.',
+      sigBoth: 'You go where the swing is biggest.' },
+    { prompt: 'Pick your comfort re-watch.',
+      left:  { title: '3 Idiots',     meta: '2009 · Hindi · Comedy-drama', tag: '[ POSTER ]' },
+      right: { title: 'Hera Pheri',   meta: '2000 · Hindi · Comedy',       tag: '[ POSTER ]' },
+      sigL: 'Feel-good with a lump in the throat. Noted.',
+      sigR: 'Pure comfort-comedy energy.',
+      sigBoth: 'Comfort cinema is clearly your safe place.' },
+  ];
+
+  cur() { return this.matchups[this.state.index % this.matchups.length]; }
+
+  pick(side) {
+    const m = this.cur();
+    const sig = side === 'left' ? m.sigL : side === 'right' ? m.sigR : m.sigBoth;
+    this.setState(s => ({ picked: side, signal: sig, count: s.count + 1 }));
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.advance(), 1250);
+  }
+  pass(msg) {
+    this.setState({ signal: msg });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.advance(), 950);
+  }
+  advance() { this.setState(s => ({ index: s.index + 1, picked: null, signal: '' })); }
+
+  styleFor(side) {
+    const p = this.state.picked;
+    const base = 'cursor:pointer; border-radius:20px; transition:all .25s ease;';
+    if (p === null)  return base + ' border:2px solid transparent; opacity:1;';
+    if (p === side)  return base + ' border:2px solid #E14B33; opacity:1; box-shadow:0 18px 44px rgba(225,75,51,0.22); transform:translateY(-5px);';
+    return base + ' border:2px solid transparent; opacity:0.42;';
+  }
+
+  renderVals() {
+    const brand = this.props.brand ?? '#E14B33';
+    const brandSoft = ['#E14B33','#0E9B8E','#C0392B','#7A3E9D'].includes(brand) ? brand : brand;
+    const radius = (this.props.cornerStyle ?? 'Soft') === 'Sharp' ? '4px' : '16px';
+    const m = this.cur();
+    return {
+      brand, brandSoft, radius,
+      prompt: m.prompt,
+      left: m.left,
+      right: m.right,
+      selLeft: this.styleFor('left'),
+      selRight: this.styleFor('right'),
+      leftPicked: this.state.picked === 'left',
+      rightPicked: this.state.picked === 'right',
+      signal: this.state.signal,
+      count: this.state.count,
+      mappedPct: Math.min(this.state.count * 8, 99) + '%',
+      pickLeft: () => this.pick('left'),
+      pickRight: () => this.pick('right'),
+      pickBoth: () => this.pick('both'),
+      pickNeither: () => this.pass('No worries — we\u2019ll find a better pair.'),
+      skip: () => this.pass('Skipped.'),
+    };
+  }
+}
+</script>
+</body>
+</html>

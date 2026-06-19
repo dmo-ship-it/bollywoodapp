@@ -2,8 +2,8 @@ import { supabase } from "../../../lib/supabase";
 import UserProfileHeader from "../UserProfileHeader";
 import Link from "next/link";
 
-const RATING_EMOJI = { 5: "❤️", 4: "👍", 3: "😐", 2: "👎", 1: "💔" };
-const RATING_LABEL = { 5: "Loved", 4: "Liked", 3: "Okay", 2: "Didn't like", 1: "Disliked" };
+const RATING_COLORS = { 5: "#E14B33", 4: "#E6A437", 3: "#C07A4E", 2: "#8C8A93", 1: "#8C8A93" };
+const RATING_LABEL  = { 5: "Loved", 4: "Liked", 3: "Okay", 2: "Didn't like", 1: "Disliked" };
 const FLAGS = { IN:"🇮🇳",US:"🇺🇸",GB:"🇬🇧",CA:"🇨🇦",AU:"🇦🇺",AE:"🇦🇪",SG:"🇸🇬",NZ:"🇳🇿",ZA:"🇿🇦",MY:"🇲🇾",QA:"🇶🇦" };
 
 export default async function UserProfilePage({ params }) {
@@ -25,10 +25,9 @@ export default async function UserProfilePage({ params }) {
 
   if (!profile) {
     return (
-      <div className="text-center py-32 text-stone-400">
-        <p className="text-4xl mb-4">🎭</p>
-        <p className="text-stone-600 font-medium">User not found</p>
-        <Link href="/people" className="text-orange-600 hover:underline mt-4 block">← People</Link>
+      <div style={{ textAlign: "center", padding: "128px 16px", color: "var(--ink-mute)" }}>
+        <p style={{ fontFamily: "var(--font-serif)", fontSize: 20, color: "var(--ink-soft)", marginBottom: 8 }}>User not found</p>
+        <Link href="/people" style={{ color: "var(--brand)", fontWeight: 600 }}>← People</Link>
       </div>
     );
   }
@@ -44,7 +43,7 @@ export default async function UserProfilePage({ params }) {
   const scored = [...rated].filter((r) => r.score != null).sort((a, b) => b.score - a.score);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
+    <div className="max-w-2xl mx-auto px-4 py-8 min-h-screen" style={{ background: "var(--paper)" }}>
 
       <Link href="/people" className="inline-flex items-center gap-1.5 text-stone-400 text-sm hover:text-stone-700 transition-colors mb-6">
         ← Taste Twins
@@ -55,19 +54,18 @@ export default async function UserProfilePage({ params }) {
 
       {/* DNA */}
       {profile.dna?.length > 0 && (
-        <div className="bg-white border border-stone-200 rounded-2xl p-5 mb-6 shadow-sm">
-          <p className="text-xs text-stone-400 uppercase tracking-widest mb-4 font-medium">🧬 Entertainment DNA</p>
-          <div className="space-y-3">
+        <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20, padding: 20, marginBottom: 24, boxShadow: "var(--shadow-card)" }}>
+          <p style={{ fontSize: 11, color: "var(--ink-mute)", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: 16, fontWeight: 500, fontFamily: "var(--font-mono)" }}>Entertainment DNA</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {profile.dna.map((arc, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <span className="text-lg w-7 shrink-0">{arc.icon}</span>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-stone-700">{arc.label}</span>
-                    <span className="text-orange-600 text-sm font-bold">{arc.pct}%</span>
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                    <span style={{ fontSize: 13, fontWeight: 500, color: "var(--ink-soft)", fontFamily: "var(--font-ui)" }}>{arc.label}</span>
+                    <span style={{ color: "var(--brand)", fontSize: 13, fontWeight: 700, fontFamily: "var(--font-ui)" }}>{arc.pct}%</span>
                   </div>
-                  <div className="h-1.5 bg-stone-100 rounded-full">
-                    <div className="h-1.5 bg-gradient-to-r from-orange-400 to-rose-400 rounded-full" style={{ width: `${arc.pct}%` }} />
+                  <div style={{ height: 6, background: "var(--sunk)", borderRadius: 999 }}>
+                    <div style={{ height: 6, background: "var(--brand)", borderRadius: 999, width: `${arc.pct}%` }} />
                   </div>
                 </div>
               </div>
@@ -78,9 +76,8 @@ export default async function UserProfilePage({ params }) {
 
       {/* Films — tabs between grid and ranked list */}
       {rated.length === 0 ? (
-        <div className="text-center py-16 text-stone-400 bg-white border border-stone-200 rounded-2xl">
-          <p className="text-3xl mb-3">🎬</p>
-          <p>No films rated yet</p>
+        <div style={{ textAlign: "center", padding: "64px 20px", color: "var(--ink-mute)", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20 }}>
+          <p style={{ fontFamily: "var(--font-serif)", fontSize: 16, color: "var(--ink-soft)" }}>No films rated yet</p>
         </div>
       ) : (
         <FilmsTabs rated={rated} scored={scored} />
@@ -108,13 +105,11 @@ function FilmsTabs({ rated, scored }) {
                 <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-stone-200 shadow-sm mb-1.5">
                   {movie.poster_url
                     ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-                    : <div className="w-full h-full flex items-center justify-center text-2xl">🎬</div>
+                    : <div className="w-full h-full" style={{ background: "var(--sunk)" }} />
                   }
-                  <div className="absolute top-1.5 right-1.5 text-sm leading-none drop-shadow">
-                    {RATING_EMOJI[r.rating]}
-                  </div>
+                  <div style={{ position: "absolute", top: 6, right: 6, background: RATING_COLORS[r.rating], borderRadius: "28%", width: 8, height: 8 }} />
                 </div>
-                <p className="text-[10px] text-stone-500 truncate group-hover:text-orange-600 transition-colors leading-tight">{movie.title}</p>
+                <p style={{ fontSize: 10, color: "var(--ink-mute)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.35 }}>{movie.title}</p>
                 <p className="text-[10px] text-stone-400">{movie.year}</p>
               </Link>
             );
@@ -133,28 +128,24 @@ function FilmsTabs({ rated, scored }) {
               const movie      = r.movies;
               if (!movie) return null;
               const score      = Math.round(r.score);
-              const scoreColor = r.rating === 5 ? "text-rose-600" : r.rating === 4 ? "text-orange-600" : "text-stone-500";
-              const barColor   = r.rating === 5 ? "bg-rose-500"  : r.rating === 4 ? "bg-orange-500"  : "bg-stone-300";
+              const scoreColor = RATING_COLORS[r.rating] ?? "var(--ink-mute)";
               return (
-                <Link key={movie.id} href={`/movies/${movie.id}`} className="flex items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3 hover:border-stone-300 hover:shadow-sm transition-all group">
-                  <span className="text-stone-400 text-sm font-bold w-6 text-center shrink-0">#{i + 1}</span>
-                  <div className="w-9 h-12 rounded-lg overflow-hidden bg-stone-100 shrink-0">
+                <Link key={movie.id} href={`/movies/${movie.id}`} style={{ display: "flex", alignItems: "center", gap: 12, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, padding: 12, textDecoration: "none" }}>
+                  <span style={{ color: "var(--ink-mute)", fontSize: 13, fontWeight: 700, width: 24, textAlign: "center", flexShrink: 0 }}>#{i + 1}</span>
+                  <div style={{ width: 36, height: 48, borderRadius: 8, overflow: "hidden", background: "var(--sunk)", flexShrink: 0 }}>
                     {movie.poster_url
-                      ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" />
-                      : <div className="w-full h-full flex items-center justify-center text-lg">🎬</div>
+                      ? <img src={movie.poster_url} alt={movie.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      : <div style={{ width: "100%", height: "100%", background: "var(--sunk)" }} />
                     }
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-stone-900 group-hover:text-orange-600 transition-colors truncate">{movie.title}</p>
-                    <p className="text-xs text-stone-400">{movie.year} · {RATING_LABEL[r.rating]}</p>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "var(--ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "var(--font-ui)" }}>{movie.title}</p>
+                    <p style={{ fontSize: 11, color: "var(--ink-mute)", fontFamily: "var(--font-ui)" }}>{movie.year} · {RATING_LABEL[r.rating]}</p>
                   </div>
-                  <div className="shrink-0 flex items-center gap-3">
-                    <span>{RATING_EMOJI[r.rating]}</span>
-                    <div className="flex flex-col items-end gap-1">
-                      <p className={`text-base font-black ${scoreColor}`}>{score}</p>
-                      <div className="w-12 h-1.5 bg-stone-100 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full ${barColor}`} style={{ width: `${score}%` }} />
-                      </div>
+                  <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+                    <p style={{ fontSize: 16, fontWeight: 900, color: scoreColor, fontFamily: "var(--font-ui)" }}>{score}</p>
+                    <div style={{ width: 48, height: 6, background: "var(--sunk)", borderRadius: 999, overflow: "hidden" }}>
+                      <div style={{ height: "100%", borderRadius: 999, background: scoreColor, width: `${score}%` }} />
                     </div>
                   </div>
                 </Link>

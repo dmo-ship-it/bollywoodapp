@@ -186,10 +186,9 @@ export default function PollPage() {
   );
 
   if (!poll) return (
-    <div className="max-w-xl mx-auto px-4 py-16 text-center text-stone-400">
-      <p className="text-4xl mb-4">📊</p>
-      <p className="font-medium text-stone-600">Poll not found</p>
-      <Link href="/community" className="text-orange-600 hover:underline mt-4 block">← Community</Link>
+    <div className="max-w-xl mx-auto px-4 py-16 text-center" style={{ color: "var(--ink-mute)" }}>
+      <p style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "var(--ink-soft)", marginBottom: 12 }}>Poll not found</p>
+      <Link href="/community" style={{ color: "var(--brand)", textDecoration: "none", fontSize: 13 }}>← Community</Link>
     </div>
   );
 
@@ -198,13 +197,13 @@ export default function PollPage() {
   const subjectPlural = isMoviePoll ? "films" : isPeoplePoll ? "people" : "options";
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
-      <Link href="/community" className="text-stone-400 text-sm hover:text-stone-700 transition-colors mb-6 block">← Community</Link>
+    <div className="max-w-xl mx-auto px-4 py-8 min-h-screen" style={{ background: "var(--paper)" }}>
+      <Link href="/community" style={{ color: "var(--ink-mute)", fontSize: 13, textDecoration: "none", display: "block", marginBottom: 24 }}>← Community</Link>
 
       {/* Poll header */}
-      <div className="bg-white border border-stone-200 rounded-2xl p-5 mb-5 shadow-sm">
+      <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, padding: 20, marginBottom: 20, boxShadow: "var(--shadow-card)" }}>
         <span className="text-[10px] font-semibold bg-violet-100 text-violet-700 border border-violet-200 px-2 py-0.5 rounded-full">
-          📊 Poll · {isMoviePoll ? "🎬 Films" : isPeoplePoll ? "🎭 People" : "🗂️ Other"}
+          Poll · {isMoviePoll ? "Films" : isPeoplePoll ? "People" : "Other"}
         </span>
         <h1 className="text-xl font-black text-stone-900 mt-2 mb-1 leading-snug">{poll.title}</h1>
         {poll.description && <p className="text-stone-500 text-sm mb-3">{poll.description}</p>}
@@ -217,14 +216,14 @@ export default function PollPage() {
 
       {/* Vote section */}
       {!hasResponded && (
-        <div className="bg-white border border-stone-200 rounded-2xl p-5 mb-5 shadow-sm">
+        <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, padding: 20, marginBottom: 20, boxShadow: "var(--shadow-card)" }}>
           <h2 className="font-bold text-stone-900 mb-1 text-sm">
             {user
               ? `Pick up to ${poll.max_picks} ${poll.max_picks === 1 ? subjectLabel : subjectPlural}`
               : "Sign in to vote"}
           </h2>
           {!user ? (
-            <Link href="/login" className="inline-block mt-2 bg-orange-600 text-white font-bold text-sm px-5 py-2 rounded-full hover:bg-orange-500 transition-colors">
+            <Link href="/login" style={{ display: "inline-block", marginTop: 8, background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 13, padding: "8px 20px", borderRadius: 999, textDecoration: "none" }}>
               Sign in →
             </Link>
           ) : isOtherPoll ? (
@@ -238,7 +237,7 @@ export default function PollPage() {
                     <button key={opt} type="button"
                       disabled={maxed}
                       onClick={() => picked ? removePick(opt) : addPick({ id: opt, title: opt })}
-                      className={`w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all ${picked ? "bg-violet-600 text-white border-violet-600" : "bg-stone-50 border-stone-200 text-stone-800 hover:border-violet-300 disabled:opacity-40"}`}>
+                      style={{ width: "100%", textAlign: "left", padding: "12px 16px", borderRadius: 12, fontSize: 13, fontWeight: 500, cursor: maxed ? "not-allowed" : "pointer", transition: "all 0.15s", background: picked ? "#7c3aed" : "var(--sunk)", color: picked ? "#fff" : "var(--ink)", border: `1px solid ${picked ? "#7c3aed" : "var(--line)"}`, opacity: maxed ? 0.4 : 1 }}>
                       {picked && <span className="mr-2">✓</span>}{opt}
                     </button>
                   );
@@ -262,10 +261,10 @@ export default function PollPage() {
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                   disabled={myPicks.length >= poll.max_picks}
-                  className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-violet-400 transition-all disabled:opacity-40"
+                  style={{ width: "100%", background: "var(--sunk)", border: "1px solid var(--line)", borderRadius: 12, padding: "10px 16px", fontSize: 13, color: "var(--ink)", fontFamily: "var(--font-ui)", outline: "none", boxSizing: "border-box" }}
                 />
                 {queryResults.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-stone-200 rounded-xl overflow-hidden z-10 shadow-lg">
+                  <div style={{ position: "absolute", top: "100%", left: 0, right: 0, marginTop: 4, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, overflow: "hidden", zIndex: 10, boxShadow: "var(--shadow-card)" }}>
                     {queryResults.map(item => (
                       <button key={item.id} type="button" onClick={() => addPick(item)}
                         disabled={!!myPicks.find(p => p.id === item.id) || myPicks.length >= poll.max_picks}
@@ -277,7 +276,7 @@ export default function PollPage() {
                         ) : (
                           item.photo_url
                             ? <img src={item.photo_url} className="w-8 h-8 rounded-full object-cover shrink-0" alt=""/>
-                            : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xs font-black shrink-0">{item.name.slice(0,2).toUpperCase()}</div>
+                            : <div style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12, fontWeight: 900, flexShrink: 0 }}>{item.name.slice(0,2).toUpperCase()}</div>
                         )}
                         <div>
                           <p className="text-sm font-medium text-stone-900">{isMoviePoll ? item.title : item.name}</p>
@@ -300,7 +299,7 @@ export default function PollPage() {
                       ) : (
                         item.photo_url
                           ? <img src={item.photo_url} className="w-8 h-8 rounded-full object-cover shrink-0" alt=""/>
-                          : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xs font-black shrink-0">{item.name?.slice(0,2).toUpperCase()}</div>
+                          : <div style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12, fontWeight: 900, flexShrink: 0 }}>{item.name?.slice(0,2).toUpperCase()}</div>
                       )}
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-stone-900 truncate">{isMoviePoll ? item.title : item.name}</p>
@@ -344,7 +343,7 @@ export default function PollPage() {
                   ) : (
                     item?.photo_url
                       ? <img src={item.photo_url} className="w-9 h-9 rounded-full object-cover" alt={item.name}/>
-                      : <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xs font-black">{item?.name?.slice(0,2).toUpperCase()}</div>
+                      : <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12, fontWeight: 900 }}>{item?.name?.slice(0,2).toUpperCase()}</div>
                   )}
                 </div>
               ))}
@@ -359,7 +358,7 @@ export default function PollPage() {
       )}
 
       {/* Results */}
-      <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm">
+      <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, padding: 20, boxShadow: "var(--shadow-card)" }}>
         <h2 className="font-bold text-stone-900 mb-4 text-sm">
           Global Results
           {results.length === 0 && <span className="font-normal text-stone-400 ml-2">— no votes yet</span>}
@@ -367,8 +366,8 @@ export default function PollPage() {
 
         {results.length === 0 ? (
           <div className="text-center py-8 text-stone-400">
-            <p className="text-3xl mb-2">🗳️</p>
-            <p className="text-sm">Be the first to vote!</p>
+            <p style={{ fontFamily: "var(--font-serif)", fontSize: 15, color: "var(--ink-soft)", marginBottom: 4 }}>No votes yet</p>
+            <p style={{ fontSize: 13, color: "var(--ink-mute)" }}>Be the first to vote!</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -409,12 +408,12 @@ export default function PollPage() {
                   ) : (
                     thumb
                       ? <img src={thumb} className="w-10 h-10 rounded-full object-cover shrink-0" alt=""/>
-                      : <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-sm font-black shrink-0">{name?.slice(0,2).toUpperCase()}</div>
+                      : <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 13, fontWeight: 900, flexShrink: 0 }}>{name?.slice(0,2).toUpperCase()}</div>
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <div>
-                        <Link href={href} className="text-sm font-semibold text-stone-900 hover:text-orange-600 transition-colors">
+                        <Link href={href} style={{ fontSize: 13, fontWeight: 600, color: "var(--ink)", textDecoration: "none" }}>
                           {name ?? "Unknown"}
                         </Link>
                         {sub && <span className="text-xs text-stone-400 ml-1.5">{sub}</span>}

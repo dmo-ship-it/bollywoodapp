@@ -36,12 +36,8 @@ export default function WrappedPage() {
       const rated = reactions.filter(r => r.rating > 0);
       const scored = reactions.filter(r => r.score != null).sort((a, b) => b.score - a.score);
 
-      // Top film (highest score)
-      if (scored.length > 0) {
-        setTopFilm(scored[0].movies);
-      }
+      if (scored.length > 0) setTopFilm(scored[0].movies);
 
-      // Top director — look up actual director credits for rated films
       const ratedMovieIds = rated.map(r => r.movies?.id).filter(Boolean);
       if (ratedMovieIds.length > 0) {
         const { data: credits } = await supabase
@@ -61,7 +57,6 @@ export default function WrappedPage() {
         }
       }
 
-      // Stats
       setStats({
         total: rated.length,
         loved: rated.filter(r => r.rating === 5).length,
@@ -77,37 +72,42 @@ export default function WrappedPage() {
 
   if (!user) return null;
   if (loading) return (
-    <div className="max-w-md mx-auto px-4 py-16 text-center text-stone-400">
-      <div className="text-4xl animate-pulse mb-3">🎬</div>
-      Preparing your Wrapped…
+    <div style={{ maxWidth: 448, margin: "0 auto", padding: "64px 16px", textAlign: "center", color: "var(--ink-mute)" }}>
+      <div className="shimmer" style={{ width: 48, height: 48, borderRadius: "28%", margin: "0 auto 16px" }} />
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 14 }}>Preparing your Wrapped…</p>
     </div>
   );
 
   const displayName = profile?.display_name || user.email?.split("@")[0] || "You";
 
+  const statLabel = { fontSize: 11, color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: "var(--font-mono)", marginBottom: 4 };
+  const statValue = { fontSize: 28, fontWeight: 900, color: "#fff", fontFamily: "var(--font-ui)" };
+  const glassCard = { background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)", borderRadius: 16, padding: "20px", textAlign: "center" };
+  const glassCardSm = { ...glassCard, borderRadius: 12, padding: 16 };
+
   return (
-    <div className="max-w-md mx-auto px-4 py-8 bg-stone-50 min-h-screen flex flex-col">
+    <div className="max-w-md mx-auto px-4 py-8 min-h-screen flex flex-col" style={{ background: "var(--paper)" }}>
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-black text-stone-900 mb-1">Your 2026</h1>
-        <p className="text-stone-500">Bollywood Wrapped</p>
+        <h1 style={{ fontSize: 28, fontWeight: 900, color: "var(--ink)", fontFamily: "var(--font-ui)", marginBottom: 4 }}>Your 2026</h1>
+        <p style={{ color: "var(--ink-mute)", fontSize: 14, fontFamily: "var(--font-ui)" }}>Bollywood Wrapped</p>
       </div>
 
       {/* Wrapped card */}
-      <div className="flex-1 bg-gradient-to-br from-orange-600 to-rose-600 rounded-3xl p-8 shadow-xl mb-6 text-white space-y-8">
+      <div className="flex-1 rounded-3xl p-8 shadow-xl mb-6 text-white space-y-8" style={{ background: "linear-gradient(135deg, var(--brand) 0%, #C73527 100%)" }}>
 
         {/* Title */}
         <div className="text-center">
-          <p className="text-orange-100 text-sm mb-2">🎬 Your 2026 Bollywood Journey</p>
-          <h2 className="text-4xl font-black">{displayName}'s Year</h2>
+          <p style={{ ...statLabel, color: "rgba(255,255,255,0.6)", marginBottom: 8 }}>Your 2026 Bollywood Journey</p>
+          <h2 style={{ fontSize: 32, fontWeight: 900, color: "#fff", fontFamily: "var(--font-serif)" }}>{displayName}'s Year</h2>
         </div>
 
         {/* Top film */}
         {topFilm && (
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-center">
-            <p className="text-orange-100 text-xs uppercase tracking-widest mb-2">Your #1 Film</p>
-            <p className="text-2xl font-black mb-2">{topFilm.title}</p>
+          <div style={glassCard}>
+            <p style={statLabel}>Your #1 Film</p>
+            <p style={{ fontSize: 20, fontWeight: 900, color: "#fff", marginBottom: 8, fontFamily: "var(--font-serif)" }}>{topFilm.title}</p>
             {topFilm.poster_url && (
               <img src={topFilm.poster_url} alt={topFilm.title} className="w-16 h-24 rounded-lg object-cover mx-auto" />
             )}
@@ -116,44 +116,44 @@ export default function WrappedPage() {
 
         {/* Stats grid */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-            <p className="text-orange-100 text-xs mb-1">Films Watched</p>
-            <p className="text-3xl font-black">{stats?.total ?? 0}</p>
+          <div style={glassCardSm}>
+            <p style={statLabel}>Films Watched</p>
+            <p style={statValue}>{stats?.total ?? 0}</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-            <p className="text-orange-100 text-xs mb-1">Avg Rating</p>
-            <p className="text-3xl font-black">{stats?.avg ?? 0}/100</p>
+          <div style={glassCardSm}>
+            <p style={statLabel}>Avg Rating</p>
+            <p style={statValue}>{stats?.avg ?? 0}/100</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-            <p className="text-orange-100 text-xs mb-1">Loved 🔴</p>
-            <p className="text-3xl font-black">{stats?.loved ?? 0}</p>
+          <div style={glassCardSm}>
+            <p style={statLabel}>Loved</p>
+            <p style={statValue}>{stats?.loved ?? 0}</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-            <p className="text-orange-100 text-xs mb-1">🔥 Streak</p>
-            <p className="text-3xl font-black">{stats?.streak ?? 0}w</p>
+          <div style={glassCardSm}>
+            <p style={statLabel}>Streak</p>
+            <p style={statValue}>{stats?.streak ?? 0}w</p>
           </div>
         </div>
 
         {/* Top director */}
         {topDirector && (
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-center">
-            <p className="text-orange-100 text-xs uppercase tracking-widest mb-2">Your Favourite Director</p>
-            <p className="text-2xl font-black">{topDirector}</p>
+          <div style={glassCard}>
+            <p style={statLabel}>Your Favourite Director</p>
+            <p style={{ fontSize: 20, fontWeight: 900, color: "#fff", fontFamily: "var(--font-serif)" }}>{topDirector}</p>
           </div>
         )}
 
         {/* Top vibe */}
         {dna.length > 0 && (
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 text-center">
-            <p className="text-orange-100 text-xs uppercase tracking-widest mb-2">Your Vibe</p>
-            <p className="text-xl font-bold">{dna[0]?.icon} {dna[0]?.label}</p>
-            <p className="text-orange-100 text-sm mt-1">{dna[0]?.pct}% of your taste</p>
+          <div style={glassCard}>
+            <p style={statLabel}>Your Vibe</p>
+            <p style={{ fontSize: 18, fontWeight: 700, color: "#fff", fontFamily: "var(--font-serif)" }}>{dna[0]?.label}</p>
+            <p style={{ ...statLabel, marginTop: 4 }}>{dna[0]?.pct}% of your taste</p>
           </div>
         )}
 
         {/* CTA */}
         <div className="text-center">
-          <p className="text-orange-100 text-xs">Share your Wrapped →</p>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", fontFamily: "var(--font-ui)" }}>Share your Wrapped →</p>
         </div>
       </div>
 
@@ -161,17 +161,17 @@ export default function WrappedPage() {
       <div className="space-y-3">
         <button
           onClick={() => {
-            const text = `My 2026 Bollywood Wrapped: ${stats?.total} films watched, ${stats?.loved} loved ❤️, ${stats?.avg}/100 avg rating 🎬 on @bollyapp`;
+            const text = `My 2026 Bollywood Wrapped: ${stats?.total} films watched, ${stats?.loved} loved, ${stats?.avg}/100 avg rating on Rasika`;
             navigator.clipboard.writeText(text);
             alert("Copied to clipboard! Paste on social media.");
           }}
-          className="w-full bg-orange-600 text-white font-bold py-3 rounded-full hover:bg-orange-500 transition-colors"
+          style={{ width: "100%", background: "var(--brand)", color: "#fff", fontWeight: 700, padding: "12px 0", borderRadius: "var(--radius-pill)", border: "none", cursor: "pointer", fontFamily: "var(--font-ui)", fontSize: 15, boxShadow: "var(--shadow-brand)" }}
         >
-          📋 Copy to clipboard
+          Copy to clipboard
         </button>
         <Link
           href="/profile"
-          className="w-full bg-white text-stone-900 font-bold py-3 rounded-full hover:bg-stone-50 transition-colors text-center border border-stone-200"
+          style={{ display: "block", width: "100%", background: "var(--card)", color: "var(--ink)", fontWeight: 700, padding: "12px 0", borderRadius: "var(--radius-pill)", border: "1px solid var(--line)", textAlign: "center", textDecoration: "none", fontFamily: "var(--font-ui)", fontSize: 15 }}
         >
           Back to profile
         </Link>

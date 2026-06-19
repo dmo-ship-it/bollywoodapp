@@ -42,7 +42,7 @@ export default function RankingsShareCard({ movies, totalRated, isPersonal, lang
       });
 
       canvas.toBlob(async (blob) => {
-        const file = new File([blob], "my-bolly-rankings.png", { type: "image/png" });
+        const file = new File([blob], "my-rasika-rankings.png", { type: "image/png" });
 
         if (navigator.share && navigator.canShare?.({ files: [file] })) {
           await navigator.share({ title: "My Film Rankings", files: [file] });
@@ -50,7 +50,7 @@ export default function RankingsShareCard({ movies, totalRated, isPersonal, lang
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-          a.download = "my-bolly-rankings.png";
+          a.download = "my-rasika-rankings.png";
           a.click();
           URL.revokeObjectURL(url);
         }
@@ -103,15 +103,15 @@ export default function RankingsShareCard({ movies, totalRated, isPersonal, lang
 
               {/* Logo */}
               <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "24px" }}>
-                <span style={{ color: "#ffffff", fontWeight: 900, fontSize: "22px", letterSpacing: "-0.5px", fontFamily: "system-ui, sans-serif" }}>bolly</span>
-                <span style={{ color: "#f97316", fontSize: "22px", lineHeight: 1, fontFamily: "system-ui, sans-serif" }}>•</span>
+                <span style={{ color: "#ffffff", fontWeight: 900, fontSize: "22px", letterSpacing: "-0.5px", fontFamily: "serif" }}>Rasika</span>
+                <span style={{ color: "#E14B33", fontSize: "22px", lineHeight: 1, fontFamily: "serif" }}>.</span>
               </div>
 
               {/* Headline */}
               <div style={{ marginBottom: "20px" }}>
                 {isPersonal && totalRated > 0 && (
                   <p style={{ color: "#ffffff", fontSize: "15px", fontWeight: 700, fontFamily: "system-ui, sans-serif", marginBottom: "4px", lineHeight: 1.3 }}>
-                    I've ranked {totalRated} movies on Bolly
+                    I've ranked {totalRated} movies on Rasika
                   </p>
                 )}
                 <p style={{ color: "#9ca3af", fontSize: "11px", fontFamily: "system-ui, sans-serif", letterSpacing: "0.5px" }}>
@@ -136,8 +136,8 @@ export default function RankingsShareCard({ movies, totalRated, isPersonal, lang
                           {movie.year}
                         </p>
                       </div>
-                      <div style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1.5px solid #f97316", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                        <span style={{ color: "#f97316", fontSize: "11px", fontWeight: 700, fontFamily: "system-ui, sans-serif" }}>{score}</span>
+                      <div style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1.5px solid #E14B33", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <span style={{ color: "#E14B33", fontSize: "11px", fontWeight: 700, fontFamily: "system-ui, sans-serif" }}>{score}</span>
                       </div>
                     </div>
                   );
@@ -147,7 +147,7 @@ export default function RankingsShareCard({ movies, totalRated, isPersonal, lang
               {/* Footer */}
               <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "16px" }}>
                 <p style={{ color: "#4b5563", fontSize: "10px", textAlign: "center", fontFamily: "system-ui, sans-serif", letterSpacing: "1px" }}>
-                  BOLLY.APP
+                  RASIKA.APP
                 </p>
               </div>
             </div>
@@ -158,7 +158,7 @@ export default function RankingsShareCard({ movies, totalRated, isPersonal, lang
             <button
               onClick={handleShare}
               disabled={sharing || !bgReady}
-              className="flex-1 flex items-center justify-center gap-2 bg-white text-stone-900 font-bold text-sm py-3 rounded-xl hover:bg-stone-100 transition-colors disabled:opacity-50"
+              style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "var(--card)", color: "var(--ink)", fontWeight: 700, fontSize: 14, padding: "12px 0", borderRadius: 12, border: "none", cursor: "pointer", opacity: (sharing || !bgReady) ? 0.5 : 1 }}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />

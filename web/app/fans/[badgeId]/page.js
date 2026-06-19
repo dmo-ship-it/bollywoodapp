@@ -19,7 +19,6 @@ export default function FanCommunityPage() {
 
   useEffect(() => {
     async function load() {
-      // Find badge definition
       const badgeDef = BADGES.find(b => b.id === badgeId);
       if (!badgeDef) {
         router.push("/community");
@@ -27,7 +26,6 @@ export default function FanCommunityPage() {
       }
       setBadge(badgeDef);
 
-      // Fetch all users with this badge
       const { data: badgeUsers } = await supabase
         .from("user_badges")
         .select(`
@@ -46,7 +44,6 @@ export default function FanCommunityPage() {
         .eq("badge_id", badgeId);
 
       if (badgeUsers) {
-        // Enrich with count of rated films
         const enriched = badgeUsers.map(bu => ({
           ...bu,
           filmCount: bu.user_reactions?.length || 0,
@@ -60,30 +57,32 @@ export default function FanCommunityPage() {
   }, [badgeId]);
 
   if (loading) return (
-    <div className="max-w-4xl mx-auto px-4 py-16 text-center text-stone-400">
-      <div className="text-4xl mb-4 animate-pulse">🎬</div>
-      Loading community…
+    <div style={{ maxWidth: 896, margin: "0 auto", padding: "64px 16px", textAlign: "center", color: "var(--ink-mute)" }}>
+      <div className="shimmer" style={{ width: 48, height: 48, borderRadius: "28%", margin: "0 auto 16px" }} />
+      <p style={{ fontFamily: "var(--font-ui)", fontSize: 14 }}>Loading community…</p>
     </div>
   );
 
   if (!badge) return null;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
+    <div className="max-w-4xl mx-auto px-4 py-8 min-h-screen" style={{ background: "var(--paper)" }}>
 
       {/* Header */}
       <div className="mb-8">
-        <Link href="/community" className="text-orange-600 text-sm font-medium hover:underline mb-4 block">
+        <Link href="/community" style={{ color: "var(--brand)", fontSize: 13, fontWeight: 600, textDecoration: "none", display: "block", marginBottom: 16, fontFamily: "var(--font-ui)" }}>
           ← Back to Communities
         </Link>
         <div className="flex items-start gap-4">
-          <div className="text-5xl">{badge.icon}</div>
+          <div style={{ width: 56, height: 56, borderRadius: "28%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 18, fontWeight: 900, fontFamily: "var(--font-mono)", flexShrink: 0 }}>
+            {badge.label.slice(0, 2).toUpperCase()}
+          </div>
           <div className="flex-1">
-            <h1 className="text-3xl font-black text-stone-900 mb-1">{badge.label}</h1>
-            <p className="text-stone-500 mb-3">{badge.desc}</p>
-            <div className="flex items-center gap-2 text-sm">
-              <span className="bg-orange-100 text-orange-600 font-bold px-3 py-1 rounded-full">
-                👥 {users.length} fan{users.length !== 1 ? "s" : ""}
+            <h1 style={{ fontSize: 28, fontWeight: 900, color: "var(--ink)", fontFamily: "var(--font-ui)", marginBottom: 4 }}>{badge.label}</h1>
+            <p style={{ color: "var(--ink-mute)", fontSize: 14, marginBottom: 12 }}>{badge.desc}</p>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ background: "rgba(225,75,51,0.08)", border: "1px solid rgba(225,75,51,0.2)", color: "var(--brand)", fontWeight: 700, fontSize: 12, padding: "4px 12px", borderRadius: "var(--radius-pill)", fontFamily: "var(--font-ui)" }}>
+                {users.length} fan{users.length !== 1 ? "s" : ""}
               </span>
             </div>
           </div>
@@ -92,11 +91,10 @@ export default function FanCommunityPage() {
 
       {/* Users grid */}
       {users.length === 0 ? (
-        <div className="text-center py-20 text-stone-400">
-          <p className="text-4xl mb-3">🎭</p>
-          <p className="font-medium text-stone-600 mb-1">No one has this badge yet</p>
-          <p className="text-sm mb-4">Be the first to unlock "{badge.label}"!</p>
-          <Link href="/" className="inline-block bg-orange-600 text-white font-bold text-sm px-6 py-3 rounded-full hover:bg-orange-500 transition-colors">
+        <div style={{ textAlign: "center", padding: "80px 20px", color: "var(--ink-mute)" }}>
+          <p style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "var(--ink-soft)", marginBottom: 8 }}>No one has this badge yet</p>
+          <p style={{ fontSize: 14, color: "var(--ink-mute)", marginBottom: 24 }}>Be the first to unlock "{badge.label}"!</p>
+          <Link href="/" style={{ display: "inline-block", background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 14, padding: "12px 24px", borderRadius: "var(--radius-pill)", textDecoration: "none", fontFamily: "var(--font-ui)", boxShadow: "var(--shadow-brand)" }}>
             Start discovering films →
           </Link>
         </div>
@@ -109,21 +107,21 @@ export default function FanCommunityPage() {
             const earnedDate = u.earned_at ? new Date(u.earned_at).toLocaleDateString() : "";
 
             return (
-              <div key={u.user_id} className="bg-white border border-stone-200 rounded-xl p-4 hover:shadow-md transition-all">
+              <div key={u.user_id} style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, padding: 16, transition: "box-shadow 0.15s" }}>
                 <Link href={profile?.username ? `/u/${profile.username}` : "#"} className="group block">
-                  <div className="w-full aspect-square rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-2xl font-black mb-3">
+                  <div style={{ width: "100%", aspectRatio: "1", borderRadius: 12, background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 22, fontWeight: 900, marginBottom: 12, fontFamily: "var(--font-mono)" }}>
                     {initials}
                   </div>
-                  <h3 className="font-bold text-stone-900 group-hover:text-orange-600 transition-colors truncate">
+                  <h3 style={{ fontWeight: 700, color: "var(--ink)", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "var(--font-ui)" }}>
                     {displayName}
                   </h3>
                   {profile?.username && (
-                    <p className="text-xs text-stone-400 truncate">@{profile.username}</p>
+                    <p style={{ fontSize: 11, color: "var(--ink-mute)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>@{profile.username}</p>
                   )}
-                  <p className="text-xs text-orange-600 font-bold mt-2">
+                  <p style={{ fontSize: 11, color: "var(--brand)", fontWeight: 700, marginTop: 8, fontFamily: "var(--font-mono)" }}>
                     {u.filmCount} films rated
                   </p>
-                  <p className="text-[10px] text-stone-400 mt-1">
+                  <p style={{ fontSize: 10, color: "var(--ink-mute)", marginTop: 4 }}>
                     Earned {earnedDate}
                   </p>
                 </Link>
@@ -135,13 +133,13 @@ export default function FanCommunityPage() {
 
       {/* Stats */}
       {users.length > 0 && (
-        <div className="mt-12 bg-white border border-stone-200 rounded-2xl p-6 text-center">
-          <p className="text-sm text-stone-500 mb-4">Welcome to the {badge.label} community! 🎉</p>
-          <p className="text-stone-600 mb-6">
+        <div style={{ marginTop: 48, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20, padding: 24, textAlign: "center", boxShadow: "var(--shadow-card)" }}>
+          <p style={{ fontSize: 14, color: "var(--ink-mute)", marginBottom: 16 }}>Welcome to the {badge.label} community!</p>
+          <p style={{ color: "var(--ink-soft)", fontSize: 14, marginBottom: 24, fontFamily: "var(--font-ui)" }}>
             Join these {users.length} passionate film enthusiasts who share your love for
-            <strong className="block text-stone-900 text-lg mt-1">{badge.desc}</strong>
+            <strong style={{ display: "block", color: "var(--ink)", fontSize: 18, marginTop: 4, fontFamily: "var(--font-serif)" }}>{badge.desc}</strong>
           </p>
-          <Link href="/badges" className="inline-block bg-orange-600 text-white font-bold px-6 py-3 rounded-full hover:bg-orange-500 transition-colors">
+          <Link href="/badges" style={{ display: "inline-block", background: "var(--brand)", color: "#fff", fontWeight: 700, padding: "12px 24px", borderRadius: "var(--radius-pill)", textDecoration: "none", fontFamily: "var(--font-ui)", boxShadow: "var(--shadow-brand)" }}>
             Explore more fan cultures →
           </Link>
         </div>

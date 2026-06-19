@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; }
+  ::selection { background:#E14B33; color:#fff; }
+</style>
+</helmet>
+
+<div style="--brand:{{ brand }}; --brand-deep:{{ brandDeep }}; --brand-soft:{{ brandSoft }}; --radius:{{ radius }}; --score-radius:{{ scoreRadius }}; background:#FAF7F1; color:#261E19; font-family:'Hanken Grotesk',sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh;">
+
+  <!-- ===== TOP BAR ===== -->
+  <div style="display:flex; align-items:center; justify-content:space-between; max-width:1180px; margin:0 auto; padding:22px 36px;">
+    <div style="display:flex; align-items:center; gap:13px;">
+      <div style="width:38px; height:38px; border-radius:22%; background:var(--brand,#E14B33); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(225,75,51,0.28);">
+        <span style="font-family:'Instrument Serif',serif; font-size:26px; line-height:1; color:#fff; margin-top:-2px;">R</span>
+      </div>
+      <span style="font-family:'Instrument Serif',serif; font-size:27px; letter-spacing:0.01em;">Rasika</span>
+    </div>
+    <span style="font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.16em; text-transform:uppercase; color:#9C9084;">Visual&nbsp;Identity&nbsp;· v1.0&nbsp;· 2026</span>
+  </div>
+  <div style="height:1px; background:#E7DFD3; max-width:1180px; margin:0 auto;"></div>
+
+  <!-- ===== MASTHEAD ===== -->
+  <section style="max-width:1180px; margin:0 auto; padding:96px 36px 88px;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:var(--brand,#E14B33); margin-bottom:30px;">The brand system</div>
+    <h1 style="font-family:'Instrument Serif',serif; font-weight:400; font-size:140px; line-height:0.92; letter-spacing:-0.01em; margin:0; color:#261E19;">Rasika<span style="color:var(--brand,#E14B33);">.</span></h1>
+    <p style="font-family:'Instrument Serif',serif; font-style:italic; font-size:34px; line-height:1.25; color:#6E635A; margin:26px 0 0; max-width:640px;">Discover stories you'll love.</p>
+    <p style="font-size:18px; line-height:1.6; color:#6E635A; margin:34px 0 0; max-width:560px;">A film-ranking home for the curious — Indian cinema first, and open to every story worth savouring. This sheet is the source of truth for the logo, colour, type and components.</p>
+  </section>
+
+  <!-- ===== 01 IDENTITY ===== -->
+  <section style="background:#F3EDE3; border-top:1px solid #E7DFD3; border-bottom:1px solid #E7DFD3;">
+    <div style="max-width:1180px; margin:0 auto; padding:84px 36px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:#9C9084; margin-bottom:14px;">01 — Identity</div>
+      <h2 style="font-family:'Instrument Serif',serif; font-weight:400; font-size:46px; line-height:1.05; margin:0 0 8px;">The mark</h2>
+      <p style="font-size:17px; color:#6E635A; max-width:560px; margin:0 0 48px;">A serif wordmark for warmth and taste, anchored by the “R-seal” — a stamp of a film worth your evening. The vermilion bindu is the spark of finding something you love.</p>
+
+      <!-- primary lockup -->
+      <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:64px; display:flex; align-items:center; justify-content:center; gap:26px; margin-bottom:24px;">
+        <div style="width:88px; height:88px; border-radius:22%; background:var(--brand,#E14B33); display:flex; align-items:center; justify-content:center; box-shadow:0 10px 30px rgba(225,75,51,0.30);">
+          <span style="font-family:'Instrument Serif',serif; font-size:62px; line-height:1; color:#fff; margin-top:-4px;">R</span>
+        </div>
+        <span style="font-family:'Instrument Serif',serif; font-size:78px; line-height:1; letter-spacing:0.005em;">Rasika<span style="color:var(--brand,#E14B33);">.</span></span>
+      </div>
+
+      <!-- variations grid -->
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:24px;">
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:32px 20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; min-height:170px;">
+          <div style="width:60px; height:60px; border-radius:22%; background:var(--brand,#E14B33); display:flex; align-items:center; justify-content:center;">
+            <span style="font-family:'Instrument Serif',serif; font-size:42px; color:#fff; margin-top:-3px;">R</span>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; color:#9C9084;">App icon / Avatar</span>
+        </div>
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:32px 20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; min-height:170px;">
+          <span style="font-family:'Instrument Serif',serif; font-size:40px; line-height:1;">Rasika<span style="color:var(--brand,#E14B33);">.</span></span>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; color:#9C9084;">Wordmark</span>
+        </div>
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:32px 20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; min-height:170px;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+            <div style="width:46px; height:46px; border-radius:22%; background:#261E19; display:flex; align-items:center; justify-content:center;">
+              <span style="font-family:'Instrument Serif',serif; font-size:32px; color:#FAF7F1; margin-top:-2px;">R</span>
+            </div>
+            <span style="font-family:'Instrument Serif',serif; font-size:26px;">Rasika</span>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; color:#9C9084;">Stacked / mono</span>
+        </div>
+        <div style="background:#1C1714; border:1px solid #1C1714; border-radius:var(--radius,16px); padding:32px 20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; min-height:170px;">
+          <span style="font-family:'Instrument Serif',serif; font-size:40px; line-height:1; color:#F3ECE1;">Rasika<span style="color:var(--brand,#E14B33);">.</span></span>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; color:#7E746A;">Reversed / on dark</span>
+        </div>
+      </div>
+
+      <!-- clearspace note -->
+      <div style="display:flex; align-items:center; gap:14px; margin-top:28px; font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:0.04em; color:#9C9084;">
+        <span style="display:inline-block; padding:7px 14px; border:1px dashed #CDBFAD; border-radius:8px;">clearspace ≥ height of the “R-seal” on all sides</span>
+        <span>· minimum mark size 24px · never recolour the wordmark · never stretch</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 02 COLOUR ===== -->
+  <section>
+    <div style="max-width:1180px; margin:0 auto; padding:84px 36px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:#9C9084; margin-bottom:14px;">02 — Colour</div>
+      <h2 style="font-family:'Instrument Serif',serif; font-weight:400; font-size:46px; line-height:1.05; margin:0 0 8px;">Palette &amp; tokens</h2>
+      <p style="font-size:17px; color:#6E635A; max-width:560px; margin:0 0 48px;">Warm paper and ink do the heavy lifting; vermilion is the single brand voice; saffron is held back exclusively for top scores so gold always means “a masterpiece.”</p>
+
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#9C9084; margin-bottom:16px;">Brand</div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:42px;">
+        <sc-for list="{{ brandColors }}" as="c" hint-placeholder-count="4">
+          <div style="border:1px solid #E7DFD3; border-radius:var(--radius,16px); overflow:hidden;">
+            <div style="height:118px; background:{{ c.hex }};"></div>
+            <div style="padding:16px 18px;">
+              <div style="font-weight:700; font-size:15px;">{{ c.name }}</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#9C9084; margin-top:7px;">{{ c.token }}</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#6E635A; margin-top:3px;">{{ c.hex }}</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#B7AB99; margin-top:2px;">{{ c.oklch }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#9C9084; margin-bottom:16px;">Foundation</div>
+      <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:18px;">
+        <sc-for list="{{ coreColors }}" as="c" hint-placeholder-count="6">
+          <div style="border:1px solid #E7DFD3; border-radius:var(--radius,16px); overflow:hidden;">
+            <div style="height:84px; background:{{ c.hex }}; border-bottom:1px solid rgba(0,0,0,0.05);"></div>
+            <div style="padding:13px 14px;">
+              <div style="font-weight:700; font-size:13px;">{{ c.name }}</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; color:#9C9084; margin-top:6px;">{{ c.token }}</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; color:#6E635A; margin-top:2px;">{{ c.hex }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 03 THE RASIKA SCORE ===== -->
+  <section style="background:#1C1714; color:#F3ECE1;">
+    <div style="max-width:1180px; margin:0 auto; padding:88px 36px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:#7E746A; margin-bottom:14px;">03 — Signature</div>
+      <h2 style="font-family:'Instrument Serif',serif; font-weight:400; font-size:46px; line-height:1.05; margin:0 0 8px; color:#F8F2E8;">The Rasika Score</h2>
+      <p style="font-size:17px; color:#B6A99C; max-width:600px; margin:0 0 52px;">Every film carries one number, 0–100. The badge warms as the score climbs — from cool slate, through clay and gold, up to a glowing vermilion for the films we love most. Colour <em style="font-style:italic; color:#E7D9C6;">is</em> the rating.</p>
+
+      <!-- tiers -->
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:22px; margin-bottom:60px;">
+        <sc-for list="{{ scoreTiers }}" as="t" hint-placeholder-count="4">
+          <div style="background:#2A231E; border:1px solid #38302A; border-radius:var(--radius,16px); padding:26px 24px;">
+            <div style="width:62px; height:62px; border-radius:var(--score-radius,28%); background:{{ t.fill }}; color:{{ t.text }}; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:26px; letter-spacing:-0.02em;">{{ t.demo }}</div>
+            <div style="font-weight:700; font-size:17px; margin-top:20px; color:#F3ECE1;">{{ t.label }}</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#8E8276; margin-top:7px;">{{ t.range }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- interactive demo -->
+      <div style="background:#2A231E; border:1px solid #38302A; border-radius:var(--radius,16px); padding:36px 40px; display:flex; align-items:center; gap:40px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:24px;">
+          <div style="width:104px; height:104px; border-radius:var(--score-radius,28%); background:{{ liveColor }}; color:{{ liveText }}; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:40px; letter-spacing:-0.03em; transition:background .25s;">{{ liveScore }}</div>
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8E8276;">Live preview</div>
+            <div style="font-family:'Instrument Serif',serif; font-style:italic; font-size:30px; color:#F3ECE1; margin-top:6px;">{{ liveLabel }}</div>
+          </div>
+        </div>
+        <div style="flex:1; min-width:260px;">
+          <div style="display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:11px; color:#8E8276; margin-bottom:10px;"><span>0</span><span>drag to feel the scale</span><span>100</span></div>
+          <input type="range" min="0" max="100" step="1" value="{{ score }}" onInput="{{ setScore }}" style="width:100%; accentColor:var(--brand,#E14B33); height:6px;">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 04 TYPOGRAPHY ===== -->
+  <section>
+    <div style="max-width:1180px; margin:0 auto; padding:84px 36px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:#9C9084; margin-bottom:14px;">04 — Typography</div>
+      <h2 style="font-family:'Instrument Serif',serif; font-weight:400; font-size:46px; line-height:1.05; margin:0 0 48px;">Three voices</h2>
+
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-bottom:52px;">
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:34px 32px;">
+          <div style="font-family:'Instrument Serif',serif; font-size:92px; line-height:0.9;">Aa</div>
+          <div style="font-family:'Instrument Serif',serif; font-size:24px; margin-top:20px;">Instrument Serif</div>
+          <div style="font-size:14.5px; color:#6E635A; margin-top:8px; line-height:1.5;">Display, wordmark, editorial moments &amp; pull-quotes. Italic for warmth.</div>
+        </div>
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:34px 32px;">
+          <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:800; font-size:92px; line-height:0.9; letter-spacing:-0.03em;">Aa</div>
+          <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:24px; margin-top:20px;">Hanken Grotesk</div>
+          <div style="font-size:14.5px; color:#6E635A; margin-top:8px; line-height:1.5;">Interface, body copy, buttons, scores. Weights 400–800.</div>
+        </div>
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:34px 32px;">
+          <div style="font-family:'JetBrains Mono',monospace; font-weight:500; font-size:78px; line-height:0.9;">Aa</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-weight:500; font-size:22px; margin-top:24px;">JetBrains Mono</div>
+          <div style="font-size:14.5px; color:#6E635A; margin-top:8px; line-height:1.5;">Labels, metadata, kickers &amp; the technical layer.</div>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid #E7DFD3;">
+        <sc-for list="{{ typeScale }}" as="s" hint-placeholder-count="5">
+          <div style="display:flex; align-items:baseline; gap:32px; padding:22px 0; border-bottom:1px solid #E7DFD3;">
+            <span style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#9C9084; width:160px; flex:none; letter-spacing:0.04em;">{{ s.token }}</span>
+            <span style="{{ s.style }}; flex:1; color:#261E19;">{{ s.sample }}</span>
+            <span style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#9C9084; flex:none;">{{ s.spec }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 05 COMPONENTS ===== -->
+  <section style="background:#F3EDE3; border-top:1px solid #E7DFD3; border-bottom:1px solid #E7DFD3;">
+    <div style="max-width:1180px; margin:0 auto; padding:84px 36px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:#9C9084; margin-bottom:14px;">05 — Components</div>
+      <h2 style="font-family:'Instrument Serif',serif; font-weight:400; font-size:46px; line-height:1.05; margin:0 0 48px;">Building blocks</h2>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+
+        <!-- buttons -->
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:30px 30px 34px;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#9C9084; margin-bottom:20px;">Buttons</div>
+          <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
+            <button style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:15px; white-space:nowrap; color:#fff; background:var(--brand,#E14B33); border:none; border-radius:var(--radius,12px); padding:13px 24px; cursor:pointer; box-shadow:0 6px 16px rgba(225,75,51,0.26);" style-hover="filter:brightness(1.05); transform:translateY(-1px);">Rank this film</button>
+            <button style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:15px; white-space:nowrap; color:#261E19; background:transparent; border:1.5px solid #261E19; border-radius:var(--radius,12px); padding:12px 22px; cursor:pointer;" style-hover="background:#261E19; color:#fff;">＋ Save</button>
+            <button style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:15px; white-space:nowrap; color:var(--brand,#E14B33); background:transparent; border:none; border-radius:var(--radius,12px); padding:12px 14px; cursor:pointer;" style-hover="background:var(--brand-soft,#FBE7E2);">▸ Watch trailer</button>
+          </div>
+        </div>
+
+        <!-- search -->
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:30px 30px 34px;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#9C9084; margin-bottom:20px;">Search</div>
+          <div style="display:flex; align-items:center; gap:12px; border:1.5px solid #E0D7C9; border-radius:999px; padding:13px 18px; background:#FAF7F1;">
+            <span style="color:#B0A493; font-size:16px;">⌕</span>
+            <span style="flex:1; color:#A89C8C; font-size:15px;">Search films, people, moods…</span>
+            <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#A89C8C; border:1px solid #E0D7C9; border-radius:6px; padding:3px 7px;">⌘K</span>
+          </div>
+        </div>
+
+        <!-- chips -->
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:30px 30px 34px;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#9C9084; margin-bottom:20px;">Genre chips</div>
+          <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <span style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:14px; color:var(--brand,#E14B33); background:var(--brand-soft,#FBE7E2); border-radius:999px; padding:9px 16px;">Drama</span>
+            <sc-for list="{{ chips }}" as="g" hint-placeholder-count="5">
+              <span style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:14px; color:#5E544B; background:#F1EBE1; border-radius:999px; padding:9px 16px;">{{ g }}</span>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- tabs -->
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:30px 30px 34px;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#9C9084; margin-bottom:20px;">Tabs</div>
+          <div style="display:flex; gap:28px; border-bottom:1px solid #E7DFD3;">
+            <span style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:15px; color:#261E19; padding-bottom:14px; border-bottom:2px solid var(--brand,#E14B33);">Trending</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:15px; color:#9C9084; padding-bottom:14px;">Top 100</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:15px; color:#9C9084; padding-bottom:14px;">New</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:15px; color:#9C9084; padding-bottom:14px;">By mood</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 06 IN CONTEXT ===== -->
+  <section>
+    <div style="max-width:1180px; margin:0 auto; padding:84px 36px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:#9C9084; margin-bottom:14px;">06 — In context</div>
+      <h2 style="font-family:'Instrument Serif',serif; font-weight:400; font-size:46px; line-height:1.05; margin:0 0 48px;">Brought together</h2>
+
+      <div style="display:grid; grid-template-columns:340px 1fr; gap:40px; align-items:start;">
+
+        <!-- feature card -->
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); overflow:hidden;" style-hover="transform:translateY(-3px); box-shadow:0 18px 40px rgba(38,30,25,0.12);">
+          <div style="position:relative; aspect-ratio:3/4; background:repeating-linear-gradient(135deg,#efe7da,#efe7da 7px,#e7ddcd 7px,#e7ddcd 14px); display:flex; align-items:center; justify-content:center;">
+            <span style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; color:#B7AB98;">[ POSTER ]</span>
+            <div style="position:absolute; top:14px; right:14px; width:50px; height:50px; border-radius:var(--score-radius,28%); background:var(--brand,#E14B33); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:21px; box-shadow:0 4px 12px rgba(0,0,0,0.18);">94</div>
+          </div>
+          <div style="padding:22px 24px 26px;">
+            <div style="font-family:'Instrument Serif',serif; font-size:30px; line-height:1.05;">Pather Panchali</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#9C9084; margin-top:9px;">1955 · Bengali</div>
+            <div style="display:flex; gap:8px; margin-top:16px;">
+              <span style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:13px; color:#5E544B; background:#F1EBE1; border-radius:999px; padding:6px 13px;">Drama</span>
+              <span style="font-family:'Hanken Grotesk',sans-serif; font-weight:600; font-size:13px; color:#5E544B; background:#F1EBE1; border-radius:999px; padding:6px 13px;">Classic</span>
+            </div>
+            <div style="font-size:14px; color:#9C9084; margin-top:18px; padding-top:16px; border-top:1px solid #EFE8DD;">In <strong style="color:#5E544B;">12.4k</strong> lists · <em style="font-style:italic;">“a masterpiece”</em></div>
+          </div>
+        </div>
+
+        <!-- ranking list -->
+        <div style="background:#fff; border:1px solid #E7DFD3; border-radius:var(--radius,16px); padding:8px 8px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 22px 16px;">
+            <div style="font-family:'Instrument Serif',serif; font-size:24px;">Top of the week</div>
+            <span style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#9C9084;">Pan-Indian</span>
+          </div>
+          <sc-for list="{{ movies }}" as="m" hint-placeholder-count="5">
+            <div style="display:flex; align-items:center; gap:18px; padding:13px 22px; border-top:1px solid #F1EBE1;" style-hover="background:#FAF7F1;">
+              <span style="font-family:'Instrument Serif',serif; font-size:30px; color:#C9BDAB; width:34px; flex:none; text-align:center;">{{ m.rank }}</span>
+              <div style="width:46px; height:62px; flex:none; border-radius:7px; background:repeating-linear-gradient(135deg,#efe7da,#efe7da 5px,#e7ddcd 5px,#e7ddcd 10px);"></div>
+              <div style="flex:1; min-width:0;">
+                <div style="font-weight:700; font-size:17px; color:#261E19;">{{ m.title }}</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#9C9084; margin-top:4px;">{{ m.meta }}</div>
+              </div>
+              <span style="font-size:13px; color:#B0A493; flex:none;">{{ m.lists }}</span>
+              <div style="width:46px; height:46px; flex:none; border-radius:var(--score-radius,28%); background:{{ m.fill }}; color:{{ m.text }}; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px;">{{ m.score }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <section style="background:#1C1714; color:#F3ECE1;">
+    <div style="max-width:1180px; margin:0 auto; padding:70px 36px;">
+      <div style="display:flex; align-items:center; gap:14px; margin-bottom:30px;">
+        <div style="width:42px; height:42px; border-radius:22%; background:var(--brand,#E14B33); display:flex; align-items:center; justify-content:center;">
+          <span style="font-family:'Instrument Serif',serif; font-size:30px; color:#fff; margin-top:-2px;">R</span>
+        </div>
+        <div>
+          <div style="font-family:'Instrument Serif',serif; font-size:28px; line-height:1;">Rasika<span style="color:var(--brand,#E14B33);">.</span></div>
+          <div style="font-family:'Instrument Serif',serif; font-style:italic; font-size:15px; color:#B6A99C; margin-top:2px;">Discover stories you'll love.</div>
+        </div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; line-height:2; color:#8E8276; border-top:1px solid #38302A; padding-top:24px;">
+        --paper #FAF7F1 &nbsp;·&nbsp; --ink #261E19 &nbsp;·&nbsp; --brand #E14B33 &nbsp;·&nbsp; --brand-deep #BE3B27 &nbsp;·&nbsp; --saffron #E6A437 &nbsp;·&nbsp; --surface-dark #1C1714<br>
+        type: Instrument Serif / Hanken Grotesk / JetBrains Mono &nbsp;·&nbsp; radius 16px &nbsp;·&nbsp; score 0–100, colour-by-value
+      </div>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;brand&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#E14B33&quot;,&quot;options&quot;:[&quot;#E14B33&quot;,&quot;#0E9B8E&quot;,&quot;#C0392B&quot;,&quot;#7A3E9D&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;cornerStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Soft&quot;,&quot;options&quot;:[&quot;Soft&quot;,&quot;Sharp&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;scoreShape&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Squircle&quot;,&quot;options&quot;:[&quot;Squircle&quot;,&quot;Circle&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { score: 88 };
+
+  mix(hex, target, a) {
+    const p = h => [1,3,5].map(i => parseInt(h.slice(i,i+2),16));
+    const A = p(hex), B = p(target);
+    const r = A.map((v,i) => Math.round(v + (B[i]-v)*a));
+    return '#' + r.map(v => v.toString(16).padStart(2,'0')).join('');
+  }
+
+  scoreFill(v) {
+    if (v >= 90) return '#E14B33';
+    if (v >= 70) return '#E6A437';
+    if (v >= 50) return '#C07A4E';
+    return '#8C8A93';
+  }
+  scoreText(v) { return (v >= 70 && v < 90) ? '#261E19' : '#FFFFFF'; }
+  scoreLabel(v) {
+    if (v >= 90) return 'A masterpiece';
+    if (v >= 70) return 'Loved it';
+    if (v >= 50) return 'Worth a watch';
+    return 'Not for me';
+  }
+
+  renderVals() {
+    const brand = this.props.brand ?? '#E14B33';
+    const brandDeep = this.mix(brand, '#000000', 0.16);
+    const brandSoft = this.mix(brand, '#FAF7F1', 0.87);
+    const radius = (this.props.cornerStyle ?? 'Soft') === 'Sharp' ? '4px' : '16px';
+    const scoreRadius = (this.props.scoreShape ?? 'Squircle') === 'Circle' ? '50%' : '28%';
+    const v = this.state.score;
+
+    const movies = [
+      { rank:1, title:'Tumbbad',            meta:'2018 · Hindi · Horror',      score:'91', lists:'4.2k lists' },
+      { rank:2, title:'Super Deluxe',       meta:'2019 · Tamil · Anthology',   score:'88', lists:'3.1k lists' },
+      { rank:3, title:'Pariyerum Perumal',  meta:'2018 · Tamil · Drama',       score:'87', lists:'2.0k lists' },
+      { rank:4, title:'Jallikattu',         meta:'2019 · Malayalam · Thriller',score:'84', lists:'2.4k lists' },
+      { rank:5, title:'Court',              meta:'2014 · Marathi · Drama',     score:'82', lists:'1.6k lists' },
+    ].map(m => ({ ...m, fill:this.scoreFill(parseFloat(m.score)), text:this.scoreText(parseFloat(m.score)) }));
+
+    return {
+      brand, brandDeep, brandSoft, radius, scoreRadius,
+
+      score: v,
+      setScore: e => this.setState({ score: parseFloat(e.target.value) }),
+      liveScore: String(Math.round(v)),
+      liveColor: this.scoreFill(v),
+      liveText: this.scoreText(v),
+      liveLabel: this.scoreLabel(v),
+
+      brandColors: [
+        { name:'Vermilion',   token:'--brand',      hex:'#E14B33', oklch:'oklch(.63 .18 32)' },
+        { name:'Vermilion deep', token:'--brand-deep', hex:'#BE3B27', oklch:'oklch(.54 .17 31)' },
+        { name:'Saffron',     token:'--saffron',    hex:'#E6A437', oklch:'oklch(.78 .13 74)' },
+        { name:'Surface dark',token:'--surface-dark',hex:'#1C1714', oklch:'oklch(.21 .01 55)' },
+      ],
+      coreColors: [
+        { name:'Paper',     token:'--paper',     hex:'#FAF7F1' },
+        { name:'Card',      token:'--card',      hex:'#FFFFFF' },
+        { name:'Sunk',      token:'--sunk',      hex:'#F3EDE3' },
+        { name:'Line',      token:'--line',      hex:'#E7DFD3' },
+        { name:'Ink',       token:'--ink',       hex:'#261E19' },
+        { name:'Ink soft',  token:'--ink-soft',  hex:'#6E635A' },
+      ],
+      scoreTiers: [
+        { range:'90 – 100', label:'A masterpiece', demo:'94', fill:'#E14B33', text:'#FFFFFF' },
+        { range:'70 – 89',  label:'Loved it',      demo:'81', fill:'#E6A437', text:'#261E19' },
+        { range:'50 – 69',  label:'Worth a watch', demo:'62', fill:'#C07A4E', text:'#FFFFFF' },
+        { range:'0 – 49',   label:'Not for me',    demo:'35', fill:'#8C8A93', text:'#FFFFFF' },
+      ],
+      chips: ['Thriller','Comedy','Romance','Period','Arthouse'],
+      typeScale: [
+        { token:'display / 140', sample:'Discover stories', spec:"Instrument Serif · 400", style:"font-family:'Instrument Serif',serif; font-size:38px; line-height:1;" },
+        { token:'heading / 46',  sample:'The Rasika Score', spec:"Instrument Serif · 400", style:"font-family:'Instrument Serif',serif; font-size:28px;" },
+        { token:'title / 17',    sample:'Super Deluxe',     spec:"Hanken Grotesk · 700",   style:"font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:20px;" },
+        { token:'body / 17',     sample:'Films worth your evening, ranked by people who care.', spec:"Hanken Grotesk · 400", style:"font-family:'Hanken Grotesk',sans-serif; font-size:16px;" },
+        { token:'label / 12',    sample:'2018 · TAMIL · DRAMA', spec:"JetBrains Mono · 500", style:"font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:0.1em;" },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

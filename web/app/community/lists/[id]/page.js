@@ -6,6 +6,8 @@ import { createClient } from "../../../../lib/supabase-browser";
 import WahWahButton from "../../../components/WahWahButton";
 import Link from "next/link";
 
+const RATING_COLORS = { 5: "#E14B33", 4: "#E6A437", 3: "#C07A4E", 2: "#8C8A93", 1: "#8C8A93" };
+
 function timeAgo(d) {
   const s = Math.floor((Date.now() - new Date(d)) / 1000);
   if (s < 86400) return `${Math.floor(s/3600) || 1}h ago`;
@@ -78,14 +80,17 @@ export default function ListPage() {
     }
   }
 
-  const RATING_EMOJI = { 5:"❤️", 4:"👍", 3:"😐", 2:"👎", 1:"💔" };
-  const seenCount    = items.filter(m => ratings[m.id]).length;
+  const seenCount = items.filter(m => ratings[m.id]).length;
 
-  if (loading) return <div className="max-w-2xl mx-auto px-4 py-16 text-center text-stone-400"><div className="text-3xl animate-pulse mb-3">📋</div>Loading…</div>;
-  if (!list)   return (
-    <div className="max-w-2xl mx-auto px-4 py-20 text-center text-stone-400">
-      <p className="text-4xl mb-3">📋</p><p className="text-stone-600 font-medium">List not found</p>
-      <Link href="/community" className="text-orange-600 hover:underline mt-3 block">← Community</Link>
+  if (loading) return (
+    <div className="max-w-2xl mx-auto px-4 py-16 text-center">
+      <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-16 rounded-xl shimmer"/>)}</div>
+    </div>
+  );
+  if (!list) return (
+    <div className="max-w-2xl mx-auto px-4 py-20 text-center" style={{ color: "var(--ink-mute)" }}>
+      <p style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "var(--ink-soft)", marginBottom: 12 }}>List not found</p>
+      <Link href="/community" style={{ color: "var(--brand)", textDecoration: "none", fontSize: 13 }}>← Community</Link>
     </div>
   );
 
@@ -93,28 +98,28 @@ export default function ListPage() {
   const initials   = authorName.slice(0,2).toUpperCase();
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
-      <Link href="/community" className="text-stone-400 text-sm hover:text-stone-700 transition-colors mb-6 block">← Community</Link>
+    <div className="max-w-2xl mx-auto px-4 py-8 min-h-screen" style={{ background: "var(--paper)" }}>
+      <Link href="/community" style={{ color: "var(--ink-mute)", fontSize: 13, textDecoration: "none", display: "block", marginBottom: 24 }}>← Community</Link>
 
       {/* List header */}
-      <div className="bg-white border border-stone-200 rounded-2xl p-5 mb-5 shadow-sm">
+      <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, padding: 20, marginBottom: 20, boxShadow: "var(--shadow-card)" }}>
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               {list.is_ranked && <span className="text-[10px] font-semibold bg-amber-100 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full">Ranked</span>}
-              <span className="text-[10px] text-stone-400">{items.length} films</span>
+              <span style={{ fontSize: 10, color: "var(--ink-mute)" }}>{items.length} films</span>
             </div>
-            <h1 className="text-xl font-black text-stone-900 mb-1">{list.title}</h1>
-            {list.description && <p className="text-stone-500 text-sm leading-relaxed mb-3">{list.description}</p>}
+            <h1 style={{ fontSize: 20, fontWeight: 900, color: "var(--ink)", marginBottom: 4, fontFamily: "var(--font-ui)" }}>{list.title}</h1>
+            {list.description && <p style={{ color: "var(--ink-soft)", fontSize: 13, lineHeight: 1.5, marginBottom: 12 }}>{list.description}</p>}
 
             <div className="flex items-center gap-3">
               <Link href={`/people/${list.user_id}`} className="flex items-center gap-2 group">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-[9px] font-black">{initials}</div>
-                <span className="text-xs text-stone-600 group-hover:text-orange-600 transition-colors font-medium">{authorName}</span>
+                <div style={{ width: 24, height: 24, borderRadius: "50%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 9, fontWeight: 900 }}>{initials}</div>
+                <span style={{ fontSize: 11, color: "var(--ink-soft)", fontWeight: 500 }}>{authorName}</span>
               </Link>
-              <span className="text-[10px] text-stone-400">{timeAgo(list.created_at)}</span>
+              <span style={{ fontSize: 10, color: "var(--ink-mute)" }}>{timeAgo(list.created_at)}</span>
               {user && seenCount > 0 && (
-                <span className="text-[10px] text-orange-600 font-medium">{seenCount} seen by you</span>
+                <span style={{ fontSize: 10, color: "var(--brand)", fontWeight: 500 }}>{seenCount} seen by you</span>
               )}
             </div>
           </div>
@@ -133,20 +138,21 @@ export default function ListPage() {
             const score      = movie.global_score ? Math.round(movie.global_score) : null;
             return (
               <Link key={movie.id} href={`/movies/${movie.id}`}
-                className="flex items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3 hover:border-stone-300 hover:shadow-sm transition-all group">
-                <span className="text-stone-400 font-bold text-sm w-6 text-center shrink-0">#{i+1}</span>
-                <div className="w-10 h-14 rounded-lg overflow-hidden bg-stone-100 shrink-0">
-                  {movie.poster_url ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover"/> : <div className="w-full h-full flex items-center justify-center">🎬</div>}
+                style={{ display: "flex", alignItems: "center", gap: 12, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, padding: 12, textDecoration: "none", transition: "all 0.15s" }}
+                className="group hover:shadow-sm">
+                <span style={{ color: "var(--ink-mute)", fontWeight: 700, fontSize: 13, width: 24, textAlign: "center", flexShrink: 0, fontFamily: "var(--font-mono)" }}>#{i+1}</span>
+                <div style={{ width: 40, height: 56, borderRadius: 8, overflow: "hidden", background: "var(--sunk)", flexShrink: 0 }}>
+                  {movie.poster_url ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover"/> : null}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-stone-900 group-hover:text-orange-600 transition-colors truncate">{movie.title}</p>
-                  <p className="text-xs text-stone-400">{movie.year}{movie.genres?.length ? ` · ${movie.genres.slice(0,2).join(", ")}` : ""}</p>
-                  {movie.note && <p className="text-xs text-stone-500 italic mt-0.5 line-clamp-1">"{movie.note}"</p>}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: "var(--ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "var(--font-ui)" }}>{movie.title}</p>
+                  <p style={{ fontSize: 11, color: "var(--ink-mute)" }}>{movie.year}{movie.genres?.length ? ` · ${movie.genres.slice(0,2).join(", ")}` : ""}</p>
+                  {movie.note && <p style={{ fontSize: 11, color: "var(--ink-soft)", fontStyle: "italic", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>"{movie.note}"</p>}
                 </div>
-                <div className="shrink-0 flex items-center gap-2">
-                  {userRating && <span className="text-base">{RATING_EMOJI[userRating]}</span>}
-                  {score && <span className="text-xs font-bold text-stone-500">{score}</span>}
-                  {!score && movie.tmdb_rating > 0 && <span className="text-[10px] text-stone-400">{Math.round(movie.tmdb_rating * 10)}</span>}
+                <div style={{ flexShrink: 0, display: "flex", alignItems: "center", gap: 8 }}>
+                  {userRating && <div style={{ width: 8, height: 8, borderRadius: "28%", background: RATING_COLORS[userRating] ?? "var(--ink-mute)" }} />}
+                  {score && <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ink-mute)", fontFamily: "var(--font-mono)" }}>{score}</span>}
+                  {!score && movie.tmdb_rating > 0 && <span style={{ fontSize: 10, color: "var(--ink-mute)", fontFamily: "var(--font-mono)" }}>{Math.round(movie.tmdb_rating * 10)}</span>}
                 </div>
               </Link>
             );
@@ -157,17 +163,17 @@ export default function ListPage() {
           {items.map(movie => {
             const userRating = ratings[movie.id];
             return (
-              <Link key={movie.id} href={`/movies/${movie.id}`} className="group block">
-                <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-stone-200 shadow-sm mb-1.5">
+              <Link key={movie.id} href={`/movies/${movie.id}`} className="group block" style={{ textDecoration: "none" }}>
+                <div style={{ position: "relative", aspectRatio: "2/3", borderRadius: 12, overflow: "hidden", background: "var(--sunk)", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", marginBottom: 6 }}>
                   {movie.poster_url
                     ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"/>
-                    : <div className="w-full h-full flex items-center justify-center text-stone-400 text-3xl">🎬</div>
+                    : null
                   }
-                  {userRating && <div className="absolute top-1.5 right-1.5 text-sm drop-shadow">{RATING_EMOJI[userRating]}</div>}
+                  {userRating && <div style={{ position: "absolute", top: 6, right: 6, width: 8, height: 8, borderRadius: "28%", background: RATING_COLORS[userRating] ?? "var(--ink-mute)", boxShadow: "0 1px 3px rgba(0,0,0,0.3)" }} />}
                 </div>
-                <p className="text-[11px] font-semibold text-stone-800 line-clamp-1 group-hover:text-orange-600 transition-colors">{movie.title}</p>
-                <p className="text-[10px] text-stone-400">{movie.year}</p>
-                {movie.note && <p className="text-[10px] text-stone-400 italic line-clamp-1">"{movie.note}"</p>}
+                <p style={{ fontSize: 11, fontWeight: 600, color: "var(--ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "var(--font-ui)" }}>{movie.title}</p>
+                <p style={{ fontSize: 10, color: "var(--ink-mute)" }}>{movie.year}</p>
+                {movie.note && <p style={{ fontSize: 10, color: "var(--ink-mute)", fontStyle: "italic", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>"{movie.note}"</p>}
               </Link>
             );
           })}
@@ -176,11 +182,11 @@ export default function ListPage() {
 
       {/* Add to watchlist CTA */}
       {user && items.filter(m => !ratings[m.id]).length > 0 && (
-        <div className="mt-8 text-center bg-orange-50 border border-orange-100 rounded-2xl p-4">
-          <p className="text-sm text-stone-700 font-medium mb-0.5">
+        <div style={{ marginTop: 32, textAlign: "center", background: "rgba(225,75,51,0.04)", border: "1px solid rgba(225,75,51,0.12)", borderRadius: 16, padding: 16 }}>
+          <p style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 500, marginBottom: 2 }}>
             {items.filter(m => !ratings[m.id]).length} films you haven't rated
           </p>
-          <p className="text-xs text-stone-500">Click any film to rate it</p>
+          <p style={{ fontSize: 11, color: "var(--ink-mute)" }}>Click any film to rate it</p>
         </div>
       )}
     </div>

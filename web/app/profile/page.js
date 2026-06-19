@@ -10,7 +10,7 @@ import RatingModal from "../components/RatingModal";
 import { languageName } from "../../lib/languages";
 
 const RATING_LABELS = { 5: "Loved", 4: "Liked", 3: "Okay", 2: "Didn't like", 1: "Hated" };
-const RATING_EMOJI  = { 5: "😍", 4: "😊", 3: "😐", 2: "😕", 1: "😡" };
+const RATING_COLORS = { 5: "#E14B33", 4: "#E6A437", 3: "#C07A4E", 2: "#8C8A93", 1: "#8C8A93" };
 const TABS = ["Films", "Watchlist", "Rankings", "Taste", "Stats"];
 const COUNTRY_FLAGS = { IN:"🇮🇳",US:"🇺🇸",GB:"🇬🇧",CA:"🇨🇦",AU:"🇦🇺",AE:"🇦🇪",SG:"🇸🇬",NZ:"🇳🇿",ZA:"🇿🇦",MY:"🇲🇾",QA:"🇶🇦" };
 
@@ -81,8 +81,7 @@ export default function ProfilePage() {
   }, []);
 
   if (loading) return (
-    <div className="max-w-3xl mx-auto px-4 py-16 text-center text-stone-400">
-      <div className="text-4xl mb-4 animate-pulse">🎬</div>
+    <div className="max-w-3xl mx-auto px-4 py-16 text-center" style={{ color: "var(--ink-mute)", fontFamily: "var(--font-ui)" }}>
       Loading your profile…
     </div>
   );
@@ -162,28 +161,28 @@ export default function ProfilePage() {
   const filteredReactions = filter === 0 ? rated : rated.filter((r) => r.rating === filter);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
+    <div className="max-w-3xl mx-auto px-4 py-8 min-h-screen" style={{ background: "var(--paper)" }}>
 
       {/* Quick actions */}
       <div className="flex gap-2 mb-6 flex-wrap">
         {new Date().getMonth() === 11 && (
-          <Link href="/wrapped" className="flex items-center gap-2 bg-gradient-to-r from-orange-400 to-rose-400 text-white font-bold text-sm px-5 py-3 rounded-full hover:shadow-lg transition-all">
-            <span>✨</span> Your 2026 Wrapped
+          <Link href="/wrapped" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 14, padding: "10px 20px", borderRadius: 999, textDecoration: "none", fontFamily: "var(--font-ui)", boxShadow: "var(--shadow-brand)" }}>
+            Your 2026 Wrapped
           </Link>
         )}
-        <Link href="/taste-profile" className="flex items-center gap-2 bg-white border-2 border-orange-400 text-orange-600 font-bold text-sm px-5 py-3 rounded-full hover:bg-orange-50 transition-all">
+        <Link href="/taste-profile" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: "2px solid var(--brand)", color: "var(--brand)", fontWeight: 700, fontSize: 14, padding: "10px 20px", borderRadius: 999, textDecoration: "none", fontFamily: "var(--font-ui)" }}>
           Taste Profile
         </Link>
         {profile?.username && (
-          <Link href={`/u/${profile.username}`} className="flex items-center gap-2 bg-white border-2 border-stone-200 text-stone-700 font-bold text-sm px-5 py-3 rounded-full hover:bg-stone-50 transition-all">
-            <span>🔗</span> Share Profile
+          <Link href={`/u/${profile.username}`} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: "2px solid var(--line)", color: "var(--ink-soft)", fontWeight: 700, fontSize: 14, padding: "10px 20px", borderRadius: 999, textDecoration: "none", fontFamily: "var(--font-ui)" }}>
+            Share Profile
           </Link>
         )}
       </div>
 
       {/* Profile header */}
       <div className="flex items-start gap-4 mb-8">
-        <div className="w-16 h-16 rounded-full shrink-0 overflow-hidden bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center">
+        <div className="w-16 h-16 rounded-full shrink-0 overflow-hidden flex items-center justify-center" style={{ background: "var(--brand)" }}>
           {profile?.profile_picture_url
             ? <img src={profile.profile_picture_url} alt={displayName} className="w-full h-full object-cover" />
             : <span className="text-white text-xl font-black">{initials}</span>
@@ -203,8 +202,8 @@ export default function ProfilePage() {
               </svg>
             </button>
             {streak > 0 && (
-              <span className="flex items-center gap-1 bg-orange-50 border border-orange-200 text-orange-600 text-xs font-bold px-2.5 py-1 rounded-full">
-                🔥 {streak} week streak
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "rgba(225,75,51,0.08)", border: "1px solid rgba(225,75,51,0.2)", color: "var(--brand)", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 999, fontFamily: "var(--font-mono)" }}>
+                {streak}w streak
               </span>
             )}
           </div>
@@ -256,7 +255,7 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-        <Link href="/compare" className="shrink-0 bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-full hover:bg-orange-500 transition-colors">
+        <Link href="/compare" style={{ flexShrink: 0, background: "var(--brand)", color: "#fff", fontSize: 12, fontWeight: 700, padding: "8px 16px", borderRadius: 999, textDecoration: "none", fontFamily: "var(--font-ui)", boxShadow: "var(--shadow-brand)" }}>
           + Compare
         </Link>
       </div>
@@ -267,13 +266,18 @@ export default function ProfilePage() {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === t ? "bg-stone-900 text-white" : "text-stone-500 hover:text-stone-800 hover:bg-stone-100"
-            }`}
+            style={{
+              flexShrink: 0, padding: "8px 16px", borderRadius: 8,
+              fontSize: 14, fontWeight: 500,
+              background: tab === t ? "var(--brand)" : "transparent",
+              color: tab === t ? "#fff" : "var(--ink-mute)",
+              border: "none", cursor: "pointer", fontFamily: "var(--font-ui)",
+              transition: "all 0.15s",
+            }}
           >
             {t}
             {t === "Watchlist" && watchlist.length > 0 && (
-              <span className="ml-1.5 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-bold">{watchlist.length}</span>
+              <span style={{ marginLeft: 6, fontSize: 10, background: "rgba(225,75,51,0.1)", color: "var(--brand)", padding: "2px 6px", borderRadius: 999, fontWeight: 700 }}>{watchlist.length}</span>
             )}
           </button>
         ))}
@@ -283,24 +287,27 @@ export default function ProfilePage() {
       {tab === "Films" && (
         <div>
           <div className="flex gap-2 mb-5 overflow-x-auto scroll-hide -mx-4 px-4 pb-1">
-            <button onClick={() => setFilter(0)} className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${filter === 0 ? "bg-orange-600 text-white border-orange-600" : "bg-white border-stone-200 text-stone-500 hover:border-stone-300"}`}>
+            <button
+              onClick={() => setFilter(0)}
+              style={{ flexShrink: 0, padding: "6px 12px", borderRadius: 999, fontSize: 12, fontWeight: 500, border: "1.5px solid", borderColor: filter === 0 ? "var(--brand)" : "var(--line)", background: filter === 0 ? "var(--brand)" : "transparent", color: filter === 0 ? "#fff" : "var(--ink-mute)", cursor: "pointer", fontFamily: "var(--font-ui)" }}
+            >
               All ({rated.length})
             </button>
             {[5, 4, 3, 2].map((v) => {
               const count = rated.filter((r) => r.rating === v).length;
               if (!count) return null;
               return (
-                <button key={v} onClick={() => setFilter(filter === v ? 0 : v)} className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${filter === v ? "bg-orange-600 text-white border-orange-600" : "bg-white border-stone-200 text-stone-500 hover:border-stone-300"}`}>
-                  {RATING_EMOJI[v]} {RATING_LABELS[v]} ({count})
+                <button key={v} onClick={() => setFilter(filter === v ? 0 : v)} style={{ flexShrink: 0, padding: "6px 12px", borderRadius: 999, fontSize: 12, fontWeight: 500, border: "1.5px solid", borderColor: filter === v ? "var(--brand)" : "var(--line)", background: filter === v ? "var(--brand)" : "transparent", color: filter === v ? "#fff" : "var(--ink-mute)", cursor: "pointer", fontFamily: "var(--font-ui)" }}>
+                  {RATING_LABELS[v]} ({count})
                 </button>
               );
             })}
           </div>
 
           {filteredReactions.length === 0 ? (
-            <div className="text-center py-20 text-stone-400">
-              <p className="text-4xl mb-3">🎬</p><p>No films rated yet</p>
-              <Link href="/onboarding" className="text-orange-600 text-sm hover:underline mt-2 block">Start rating →</Link>
+            <div className="text-center py-20" style={{ color: "var(--ink-mute)", fontFamily: "var(--font-ui)" }}>
+              <p style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "var(--ink-soft)", marginBottom: 8 }}>No films rated yet</p>
+              <Link href="/onboarding" style={{ color: "var(--brand)", fontSize: 14, textDecoration: "none" }}>Start rating →</Link>
             </div>
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
@@ -312,11 +319,13 @@ export default function ProfilePage() {
                     <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-stone-200 shadow-sm">
                       {movie.poster_url
                         ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-                        : <div className="w-full h-full flex items-center justify-center text-3xl">🎬</div>
+                        : <div className="w-full h-full" style={{ background: "var(--sunk)" }} />
                       }
-                      <div className="absolute top-1.5 right-1.5 text-sm leading-none drop-shadow">{RATING_EMOJI[r.rating]}</div>
+                      <div style={{ position: "absolute", top: 6, right: 6, width: 20, height: 20, borderRadius: "28%", background: RATING_COLORS[r.rating], display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, fontWeight: 700, color: r.rating === 4 ? "#261E19" : "#fff" }}>{r.rating * 20}</span>
+                      </div>
                     </div>
-                    <p className="mt-1.5 text-[10px] text-stone-500 truncate group-hover:text-orange-600 transition-colors">{movie.title}</p>
+                    <p className="mt-1.5 text-[10px] truncate transition-colors" style={{ color: "var(--ink-mute)", fontFamily: "var(--font-ui)" }}>{movie.title}</p>
                   </Link>
                 );
               })}
@@ -329,11 +338,10 @@ export default function ProfilePage() {
       {tab === "Watchlist" && (
         <div>
           {watchlist.length === 0 ? (
-            <div className="text-center py-20 text-stone-400">
-              <p className="text-4xl mb-3">🔖</p>
-              <p className="font-medium text-stone-600 mb-1">Your watchlist is empty</p>
-              <p className="text-sm mb-4">Bookmark films you want to watch later</p>
-              <Link href="/" className="text-orange-600 text-sm hover:underline">Browse films →</Link>
+            <div className="text-center py-20" style={{ fontFamily: "var(--font-ui)" }}>
+              <p style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "var(--ink-soft)", marginBottom: 6 }}>Your watchlist is empty</p>
+              <p style={{ fontSize: 14, color: "var(--ink-mute)", marginBottom: 16 }}>Bookmark films you want to watch later</p>
+              <Link href="/" style={{ color: "var(--brand)", fontSize: 14, textDecoration: "none" }}>Browse films →</Link>
             </div>
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
@@ -346,7 +354,7 @@ export default function ProfilePage() {
                       <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-stone-200 shadow-sm mb-1.5">
                         {movie.poster_url
                           ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-                          : <div className="w-full h-full flex items-center justify-center text-3xl">🎬</div>
+                          : <div className="w-full h-full" style={{ background: "var(--sunk)" }} />
                         }
                         <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                           <div className="bg-white/90 rounded-lg p-1 shadow-sm">
@@ -354,7 +362,7 @@ export default function ProfilePage() {
                           </div>
                         </div>
                       </div>
-                      <p className="text-[10px] text-stone-500 truncate group-hover:text-orange-600 transition-colors">{movie.title}</p>
+                      <p style={{ fontSize: 10, color: "var(--ink-mute)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "var(--font-ui)" }}>{movie.title}</p>
                     </Link>
                   </div>
                 );
@@ -368,9 +376,9 @@ export default function ProfilePage() {
       {tab === "Rankings" && (
         <div>
           {rated.filter((r) => r.score != null).length === 0 ? (
-            <div className="text-center py-20 text-stone-400">
-              <p className="text-4xl mb-3">🏆</p><p className="mb-3">No rankings yet</p>
-              <Link href="/onboarding" className="text-orange-600 text-sm hover:underline">Start rating →</Link>
+            <div className="text-center py-20" style={{ fontFamily: "var(--font-ui)" }}>
+              <p style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "var(--ink-soft)", marginBottom: 8 }}>No rankings yet</p>
+              <Link href="/onboarding" style={{ color: "var(--brand)", fontSize: 14, textDecoration: "none" }}>Start rating →</Link>
             </div>
           ) : (
             <div className="space-y-2">
@@ -378,29 +386,29 @@ export default function ProfilePage() {
                 const movie = r.movies;
                 if (!movie) return null;
                 const score      = Math.round(r.score);
-                const scoreColor = score >= 80 ? "text-rose-600" : score >= 60 ? "text-orange-600" : "text-stone-500";
-                const barColor   = score >= 80 ? "bg-rose-500"   : score >= 60 ? "bg-orange-500"   : "bg-stone-300";
+                const scoreColor = score >= 90 ? "#E14B33" : score >= 70 ? "#E6A437" : score >= 50 ? "#C07A4E" : "#8C8A93";
+                const barColor  = scoreColor;
                 return (
-                  <div key={movie.id} className="flex items-center gap-2 bg-white border border-stone-200 rounded-2xl p-3 hover:border-stone-300 hover:shadow-sm transition-all group">
+                  <div key={movie.id} className="flex items-center gap-2 rounded-2xl p-3 transition-all group" style={{ background: "var(--card)", border: "1px solid var(--line)" }}>
                     <Link href={`/movies/${movie.id}`} className="flex items-center gap-3 flex-1 min-w-0">
                       <span className="text-stone-400 text-sm font-bold w-6 text-center shrink-0">#{i + 1}</span>
                       <div className="w-10 h-14 rounded-lg overflow-hidden bg-stone-100 shrink-0">
-                        {movie.poster_url ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center">🎬</div>}
+                        {movie.poster_url ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" /> : <div className="w-full h-full" style={{ background: "var(--sunk)" }} />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-stone-900 group-hover:text-orange-600 transition-colors truncate">{movie.title}</p>
+                        <p className="text-sm font-semibold truncate transition-colors" style={{ color: "var(--ink)", fontFamily: "var(--font-ui)" }}>{movie.title}</p>
                         <p className="text-xs text-stone-400">{movie.year}{movie.genres?.length > 0 && ` · ${movie.genres.slice(0, 2).join(", ")}`}</p>
                       </div>
                       <div className="shrink-0 flex flex-col items-end gap-1.5">
-                        <p className={`text-lg font-black ${scoreColor}`}>{score}</p>
-                        <div className="w-14 h-1.5 bg-stone-100 rounded-full overflow-hidden">
-                          <div className={`h-full rounded-full ${barColor}`} style={{ width: `${score}%` }} />
+                        <p style={{ fontSize: 18, fontWeight: 800, color: scoreColor, fontFamily: "var(--font-ui)" }}>{score}</p>
+                        <div style={{ width: 56, height: 6, background: "var(--line)", borderRadius: 999, overflow: "hidden" }}>
+                          <div style={{ height: "100%", borderRadius: 999, background: barColor, width: `${score}%` }} />
                         </div>
                       </div>
                     </Link>
                     <button
                       onClick={() => setEditingMovie({ ...movie, currentRating: r.rating })}
-                      className="text-stone-300 hover:text-orange-500 transition-colors shrink-0 pl-1"
+                      style={{ color: "var(--line)", flexShrink: 0, paddingLeft: 4, background: "none", border: "none", cursor: "pointer" }}
                       title="Edit rating"
                     >
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -412,7 +420,7 @@ export default function ProfilePage() {
                 );
               })}
               <div className="text-center pt-4">
-                <Link href="/compare" className="inline-block bg-orange-600 text-white font-bold text-sm px-6 py-2.5 rounded-full hover:bg-orange-500 transition-colors">
+                <Link href="/compare" style={{ display: "inline-block", background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 14, padding: "10px 24px", borderRadius: 999, textDecoration: "none", fontFamily: "var(--font-ui)", boxShadow: "var(--shadow-brand)" }}>
                   Compare films to refine rankings →
                 </Link>
               </div>
@@ -452,25 +460,24 @@ export default function ProfilePage() {
             <p className="text-stone-500 text-sm">Evolves as you rate and compare more films</p>
           </div>
           {profile?.dna?.length > 0 ? (
-            <div className="space-y-3 mb-8">
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
               {profile.dna.map((arc, i) => (
-                <div key={i} className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="font-semibold text-stone-900 flex items-center gap-2"><span className="text-xl">{arc.icon}</span>{arc.label}</span>
-                    <span className="text-orange-600 font-bold">{arc.pct}%</span>
+                <div key={i} style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20, padding: 20, boxShadow: "var(--shadow-card)" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                    <span style={{ fontWeight: 600, color: "var(--ink)", fontFamily: "var(--font-ui)", fontSize: 14 }}>{arc.label}</span>
+                    <span style={{ color: "var(--brand)", fontWeight: 700, fontFamily: "var(--font-ui)" }}>{arc.pct}%</span>
                   </div>
-                  <div className="h-2 bg-stone-100 rounded-full">
-                    <div className="h-2 bg-gradient-to-r from-orange-400 to-rose-400 rounded-full transition-all duration-700" style={{ width: `${arc.pct}%` }} />
+                  <div style={{ height: 8, background: "var(--sunk)", borderRadius: 999 }}>
+                    <div style={{ height: 8, background: "var(--brand)", borderRadius: 999, width: `${arc.pct}%`, transition: "width 0.7s" }} />
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 text-stone-400 bg-white border border-stone-200 rounded-2xl">
-              <p className="text-4xl mb-3">🎬</p>
-              <p className="font-medium mb-2 text-stone-600">No taste profile yet</p>
-              <p className="text-sm mb-4">Complete onboarding to generate your taste profile</p>
-              <Link href="/onboarding" className="bg-orange-600 text-white font-bold text-sm px-6 py-2.5 rounded-full hover:bg-orange-500 transition-colors">
+            <div style={{ textAlign: "center", padding: "64px 20px", color: "var(--ink-mute)", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20 }}>
+              <p style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "var(--ink-soft)", marginBottom: 8 }}>No taste profile yet</p>
+              <p style={{ fontSize: 14, marginBottom: 16 }}>Complete onboarding to generate your taste profile</p>
+              <Link href="/onboarding" style={{ display: "inline-block", background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 14, padding: "10px 24px", borderRadius: "var(--radius-pill)", textDecoration: "none", fontFamily: "var(--font-ui)" }}>
                 Start onboarding →
               </Link>
             </div>
@@ -479,11 +486,11 @@ export default function ProfilePage() {
             <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm mb-3">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-xs text-stone-400 uppercase tracking-widest font-medium">Language Preferences</p>
-                <Link href="/onboarding" className="text-xs text-orange-600 hover:underline">Edit</Link>
+                <Link href="/onboarding" style={{ fontSize: 12, color: "var(--brand)", textDecoration: "none", fontFamily: "var(--font-ui)" }}>Edit</Link>
               </div>
               <div className="flex flex-wrap gap-2">
                 {profile.preferred_languages.map((code, idx) => (
-                  <div key={code} className="flex items-center gap-2 bg-stone-50 border border-stone-200 rounded-full px-3 py-1.5">
+                  <div key={code} style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--sunk)", border: "1px solid var(--line)", borderRadius: 999, padding: "6px 12px" }}>
                     <span className="text-[10px] font-bold text-stone-400 w-4 text-center">#{idx + 1}</span>
                     <span className="text-sm font-medium text-stone-700">{languageName(code)}</span>
                   </div>
@@ -522,17 +529,17 @@ export default function ProfilePage() {
 
           {/* Streak */}
           {(streak > 0 || profile?.streak_longest > 0) && (
-            <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm">
-              <p className="text-xs text-stone-400 uppercase tracking-widest mb-4 font-medium">Watch Streak</p>
+            <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--radius)", padding: 20 }}>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--ink-mute)", marginBottom: 16 }}>Watch Streak</p>
               <div className="flex gap-4">
                 <div className="flex-1 text-center">
-                  <p className="text-3xl font-black text-orange-600">🔥 {streak}</p>
-                  <p className="text-xs text-stone-400 mt-1">Current weeks</p>
+                  <p style={{ fontSize: 28, fontWeight: 800, color: "var(--brand)", fontFamily: "var(--font-ui)" }}>{streak}</p>
+                  <p style={{ fontSize: 11, color: "var(--ink-mute)", marginTop: 4, fontFamily: "var(--font-mono)" }}>Current weeks</p>
                 </div>
-                <div className="w-px bg-stone-100" />
+                <div style={{ width: 1, background: "var(--line)" }} />
                 <div className="flex-1 text-center">
-                  <p className="text-3xl font-black text-stone-700">⚡ {profile?.streak_longest ?? 0}</p>
-                  <p className="text-xs text-stone-400 mt-1">Longest ever</p>
+                  <p style={{ fontSize: 28, fontWeight: 800, color: "var(--ink-soft)", fontFamily: "var(--font-ui)" }}>{profile?.streak_longest ?? 0}</p>
+                  <p style={{ fontSize: 11, color: "var(--ink-mute)", marginTop: 4, fontFamily: "var(--font-mono)" }}>Longest ever</p>
                 </div>
               </div>
             </div>
@@ -541,30 +548,29 @@ export default function ProfilePage() {
           {/* Summary cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: "Films Rated",  value: rated.length,       icon: "🎬" },
-              { label: "Loved",        value: loved,              icon: "❤️" },
-              { label: "Comparisons",  value: comparisons.length, icon: "⚖️" },
-              { label: "Avg Rating",   value: avgRating,          icon: "⭐" },
+              { label: "Films Rated",  value: rated.length       },
+              { label: "Loved",        value: loved               },
+              { label: "Comparisons",  value: comparisons.length  },
+              { label: "Avg Rating",   value: avgRating           },
             ].map((s) => (
-              <div key={s.label} className="bg-white border border-stone-200 rounded-2xl p-4 text-center shadow-sm">
-                <div className="text-2xl mb-1">{s.icon}</div>
-                <div className="text-2xl font-black text-stone-900">{s.value}</div>
-                <div className="text-xs text-stone-400 mt-0.5">{s.label}</div>
+              <div key={s.label} style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: "var(--radius)", padding: 16, textAlign: "center" }}>
+                <div style={{ fontSize: 24, fontWeight: 800, color: "var(--ink)", fontFamily: "var(--font-ui)", marginBottom: 2 }}>{s.value}</div>
+                <div style={{ fontSize: 11, color: "var(--ink-mute)", fontFamily: "var(--font-mono)", letterSpacing: "0.06em" }}>{s.label}</div>
               </div>
             ))}
           </div>
 
           {/* Watch goal */}
           {profile?.watch_goal > 0 && (
-            <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm">
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-xs text-stone-400 uppercase tracking-widest font-medium">🎯 {new Date().getFullYear()} Goal</p>
-                <span className="text-sm font-bold text-orange-600">{rated.length} / {profile.watch_goal}</span>
+            <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20, padding: 20, boxShadow: "var(--shadow-card)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                <p style={{ fontSize: 11, color: "var(--ink-mute)", textTransform: "uppercase", letterSpacing: "0.14em", fontWeight: 500, fontFamily: "var(--font-mono)" }}>{new Date().getFullYear()} Goal</p>
+                <span style={{ fontSize: 14, fontWeight: 700, color: "var(--brand)", fontFamily: "var(--font-ui)" }}>{rated.length} / {profile.watch_goal}</span>
               </div>
-              <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
-                <div className="h-2 bg-gradient-to-r from-orange-400 to-rose-400 rounded-full transition-all duration-700" style={{ width: `${Math.min(100, (rated.length / profile.watch_goal) * 100)}%` }} />
+              <div style={{ height: 8, background: "var(--sunk)", borderRadius: 999, overflow: "hidden" }}>
+                <div style={{ height: 8, background: "var(--brand)", borderRadius: 999, width: `${Math.min(100, (rated.length / profile.watch_goal) * 100)}%`, transition: "width 0.7s" }} />
               </div>
-              <p className="text-xs text-stone-400 mt-2">{rated.length >= profile.watch_goal ? "🎉 Goal complete!" : `${profile.watch_goal - rated.length} films to go`}</p>
+              <p style={{ fontSize: 12, color: "var(--ink-mute)", marginTop: 8, fontFamily: "var(--font-ui)" }}>{rated.length >= profile.watch_goal ? "Goal complete!" : `${profile.watch_goal - rated.length} films to go`}</p>
             </div>
           )}
 
@@ -577,12 +583,12 @@ export default function ProfilePage() {
                   const count = rated.filter((r) => r.rating === v).length;
                   const pct   = rated.length ? (count / rated.length) * 100 : 0;
                   return (
-                    <div key={v} className="flex items-center gap-3">
-                      <span className="text-sm w-4">{RATING_EMOJI[v]}</span>
-                      <div className="flex-1 h-2 bg-stone-100 rounded-full">
-                        <div className="h-2 bg-orange-400 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+                    <div key={v} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--ink-mute)", width: 56, flexShrink: 0 }}>{RATING_LABELS[v]}</span>
+                      <div style={{ flex: 1, height: 6, background: "var(--line)", borderRadius: 999, overflow: "hidden" }}>
+                        <div style={{ height: "100%", background: RATING_COLORS[v], borderRadius: 999, width: `${pct}%`, transition: "width 0.5s" }} />
                       </div>
-                      <span className="text-xs text-stone-400 w-6 text-right">{count}</span>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--ink-mute)", width: 20, textAlign: "right" }}>{count}</span>
                     </div>
                   );
                 })}
@@ -591,10 +597,10 @@ export default function ProfilePage() {
           )}
 
           {rated.length < 10 && (
-            <div className="bg-orange-50 border border-orange-100 rounded-2xl p-6 text-center">
-              <p className="font-bold text-stone-900 mb-1">Rate more to unlock deeper insights</p>
-              <p className="text-stone-500 text-sm mb-4">You've rated {rated.length} film{rated.length !== 1 ? "s" : ""}. Rate 10+ for full stats.</p>
-              <Link href="/" className="bg-orange-600 text-white font-bold text-sm px-6 py-2.5 rounded-full hover:bg-orange-500 transition-colors">
+            <div style={{ background: "rgba(225,75,51,0.05)", border: "1px solid rgba(225,75,51,0.15)", borderRadius: "var(--radius)", padding: 24, textAlign: "center" }}>
+              <p style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "var(--ink)", marginBottom: 8 }}>Rate more to unlock deeper insights</p>
+              <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--ink-soft)", marginBottom: 16 }}>You've rated {rated.length} film{rated.length !== 1 ? "s" : ""}. Rate 10+ for full stats.</p>
+              <Link href="/" style={{ display: "inline-block", background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 14, padding: "10px 24px", borderRadius: 999, textDecoration: "none", fontFamily: "var(--font-ui)" }}>
                 Discover films →
               </Link>
             </div>
@@ -656,7 +662,7 @@ export default function ProfilePage() {
               {/* Avatar picker */}
               <div className="flex justify-center mb-5">
                 <label className="relative cursor-pointer group">
-                  <div className="w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center" style={{ background: "var(--brand)" }}>
                     {avatarPreview || profile?.profile_picture_url
                       ? <img src={avatarPreview || profile.profile_picture_url} alt="" className="w-full h-full object-cover" />
                       : <span className="text-white text-2xl font-black">{initials}</span>
@@ -693,20 +699,22 @@ export default function ProfilePage() {
                     onChange={(e) => setEditName(e.target.value)}
                     placeholder={user?.email?.split("@")[0]}
                     maxLength={40}
-                    className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all"
+                    style={{ width: "100%", border: "1.5px solid var(--line)", borderRadius: 12, padding: "10px 16px", fontSize: 14, color: "var(--ink)", outline: "none", boxSizing: "border-box", background: "var(--sunk)", fontFamily: "var(--font-ui)" }}
+                    onFocus={e => e.target.style.borderColor = "var(--brand)"}
+                    onBlur={e => e.target.style.borderColor = "var(--line)"}
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-stone-500 uppercase tracking-widest mb-1.5">Username</label>
-                  <div className="flex items-center border border-stone-200 rounded-xl px-4 py-2.5 focus-within:border-orange-400 focus-within:ring-2 focus-within:ring-orange-100 transition-all">
-                    <span className="text-stone-400 text-sm mr-1">@</span>
+                  <div style={{ display: "flex", alignItems: "center", border: "1.5px solid var(--line)", borderRadius: 12, padding: "10px 16px", background: "var(--sunk)" }}>
+                    <span style={{ color: "var(--ink-mute)", fontSize: 14, marginRight: 4 }}>@</span>
                     <input
                       type="text"
                       value={editUsername}
                       onChange={(e) => setEditUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))}
                       placeholder="yourhandle"
                       maxLength={30}
-                      className="flex-1 text-sm text-stone-900 placeholder-stone-400 focus:outline-none bg-transparent"
+                      style={{ flex: 1, fontSize: 14, color: "var(--ink)", outline: "none", background: "transparent", border: "none", fontFamily: "var(--font-ui)" }}
                     />
                   </div>
                   <p className="text-xs text-stone-400 mt-1">Letters, numbers, underscores only</p>
@@ -717,7 +725,7 @@ export default function ProfilePage() {
               <button
                 onClick={saveProfile}
                 disabled={profileSaving}
-                className="mt-6 w-full bg-stone-900 text-white font-bold py-3 rounded-xl hover:bg-stone-800 transition-colors text-sm disabled:opacity-40"
+                style={{ marginTop: 24, width: "100%", background: "var(--brand)", color: "#fff", fontWeight: 700, padding: "12px", borderRadius: "var(--radius-pill)", border: "none", cursor: "pointer", fontFamily: "var(--font-ui)", fontSize: 14, boxShadow: "var(--shadow-brand)" }}
               >
                 {profileSaving ? "Saving…" : "Save"}
               </button>

@@ -7,7 +7,6 @@ import RatingModal from "./RatingModal";
 import ScoreCircle from "./ScoreCircle";
 import { displayScore } from "../../lib/score";
 
-
 function formatReleaseDate(dateStr) {
   if (!dateStr) return null;
   const d = new Date(dateStr);
@@ -16,17 +15,22 @@ function formatReleaseDate(dateStr) {
 
 export default function MovieCard({ movie, userScore, isWatchlisted = false, comingSoon = false }) {
   const [showRating, setShowRating] = useState(false);
-  // Optimistic score shown immediately after the user rates from this card; null
-  // otherwise so the live `userScore` prop (personalized / own score) drives display.
   const [justRated,  setJustRated]  = useState(null);
-
 
   return (
     <>
       <div className="group relative block">
         <Link href={`/movies/${movie.id}`} className="block">
           {/* Poster */}
-          <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-stone-200 mb-2 shadow-sm">
+          <div
+            className="relative aspect-[2/3] overflow-hidden mb-2"
+            style={{
+              borderRadius: "var(--radius)",
+              background: "var(--sunk)",
+              boxShadow: "var(--shadow-card)",
+              transition: "box-shadow 0.25s ease, transform 0.25s ease",
+            }}
+          >
             {movie.poster_url ? (
               <img
                 src={movie.poster_url}
@@ -35,53 +39,52 @@ export default function MovieCard({ movie, userScore, isWatchlisted = false, com
                 loading="lazy"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-stone-400 text-3xl">🎬</div>
+              <div className="w-full h-full flex items-center justify-center" style={{ color: "var(--ink-mute)", fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.1em" }}>
+                NO POSTER
+              </div>
             )}
-
-
 
             {/* Action buttons — top right on hover */}
             <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col gap-1">
-              {/* Trailer button — for coming soon */}
               {comingSoon && movie.trailer_url && (
                 <button
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(movie.trailer_url, "_blank", "noopener,noreferrer"); }}
-                  className="bg-white/95 rounded-md p-1 shadow-sm hover:bg-stone-50 transition-colors"
+                  className="p-1 transition-colors" style={{ background: "rgba(255,255,255,0.95)", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
+                  style={{ borderRadius: 6 }}
                   title="Watch trailer"
                 >
-                  <span className="text-xs leading-none">▶</span>
+                  <span className="text-xs leading-none" style={{ color: "var(--ink)" }}>▶</span>
                 </button>
               )}
-              {/* Rate button — hidden for unreleased films */}
               {!comingSoon && (
                 <button
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowRating(true); }}
-                  className="bg-white/95 rounded-md p-1 shadow-sm hover:bg-stone-50 transition-colors"
+                  className="p-1 transition-colors" style={{ background: "rgba(255,255,255,0.95)", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
+                  style={{ borderRadius: 6 }}
                   title="Rate this film"
                 >
-                  <span className="text-xs leading-none font-medium text-stone-600">＋</span>
+                  <span className="text-xs leading-none font-semibold" style={{ color: "var(--ink-soft)" }}>+</span>
                 </button>
               )}
-              {/* Watchlist button */}
-              <div className="bg-white/95 rounded-md p-0.5 shadow-sm">
+              <div className="p-0.5" style={{ background: "rgba(255,255,255,0.95)", boxShadow: "0 1px 3px rgba(0,0,0,0.08)", borderRadius: 6 }}>
                 <WatchlistButton movieId={movie.id} movieTitle={movie.title} initialSaved={isWatchlisted} />
               </div>
             </div>
           </div>
 
-          {/* Text + Score */}
+          {/* Title + Score */}
           <div className="flex items-start justify-between gap-1 mt-1">
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-semibold text-stone-800 leading-tight line-clamp-1 group-hover:text-orange-600 transition-colors">
-                {movie.title}
+              <p
+                className="text-[11px] font-semibold leading-tight line-clamp-1 transition-colors"
+                style={{ color: "var(--ink)", fontFamily: "var(--font-ui)" }}
+              >
+                <span className="group-hover:text-[var(--brand)] transition-colors">{movie.title}</span>
               </p>
               <div className="flex items-center gap-1 mt-0.5">
-                <p className="text-[10px] text-stone-400">
+                <p className="text-[10px]" style={{ color: "var(--ink-mute)", fontFamily: "var(--font-mono)" }}>
                   {comingSoon ? formatReleaseDate(movie.release_date) : movie.year}
                 </p>
-                {comingSoon && movie.trailer_url && (
-                  <span className="inline-block text-[10px] text-orange-500 font-medium">🎬</span>
-                )}
               </div>
             </div>
             {!comingSoon && <ScoreCircle score={justRated ?? (userScore || displayScore(movie))} size="sm" />}
@@ -89,7 +92,6 @@ export default function MovieCard({ movie, userScore, isWatchlisted = false, com
         </Link>
       </div>
 
-      {/* Rating modal */}
       {showRating && (
         <RatingModal
           movieId={movie.id}
@@ -97,7 +99,6 @@ export default function MovieCard({ movie, userScore, isWatchlisted = false, com
           posterUrl={movie.poster_url}
           onClose={() => setShowRating(false)}
           onRated={(rating) => {
-            // Provisional score based on rating until exact score is computed
             const scores = { 5: 90, 4: 70, 3: 50, 2: 30, 1: 10 };
             setJustRated(scores[rating] ?? 50);
           }}

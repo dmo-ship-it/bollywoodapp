@@ -24,9 +24,14 @@ export async function middleware(request) {
   // Refresh session
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Redirect logged-in users away from /login
+  // Redirect logged-in users away from /login → app
   if (user && request.nextUrl.pathname === "/login") {
     return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  // Redirect logged-out users away from / → landing page
+  if (!user && request.nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return supabaseResponse;

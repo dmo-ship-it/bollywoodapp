@@ -23,11 +23,10 @@ const TYPE_LABELS = { review: "Review", discussion: "Discussion" };
 
 function Avatar({ name, size = "sm" }) {
   const ini = (name || "?").slice(0, 2).toUpperCase();
-  const cls = size === "sm"
-    ? "w-5 h-5 text-[8px]"
-    : "w-7 h-7 text-xs";
+  const sz  = size === "sm" ? 20 : 28;
+  const fs  = size === "sm" ? 8  : 10;
   return (
-    <div className={`${cls} rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white font-black shrink-0`}>
+    <div style={{ width: sz, height: sz, borderRadius: "50%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 900, fontSize: fs, flexShrink: 0 }}>
       {ini}
     </div>
   );
@@ -251,15 +250,14 @@ export default function PostPage() {
 
   // ── Render ───────────────────────────────────────────────────────────────
   if (loading) return (
-    <div className="max-w-2xl mx-auto px-4 py-16 text-center text-stone-400">
-      <div className="text-3xl animate-pulse mb-3">💬</div>Loading…
+    <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-20 rounded-2xl shimmer"/>)}</div>
     </div>
   );
   if (!post) return (
-    <div className="max-w-2xl mx-auto px-4 py-20 text-center text-stone-400">
-      <p className="text-4xl mb-3">💬</p>
-      <p className="text-stone-600 font-medium">Post not found</p>
-      <Link href="/community" className="text-orange-600 hover:underline mt-3 block">← Community</Link>
+    <div className="max-w-2xl mx-auto px-4 py-20 text-center" style={{ color: "var(--ink-mute)" }}>
+      <p style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "var(--ink-soft)", marginBottom: 12 }}>Post not found</p>
+      <Link href="/community" style={{ color: "var(--brand)", textDecoration: "none", fontSize: 13 }}>← Community</Link>
     </div>
   );
 
@@ -277,11 +275,11 @@ export default function PostPage() {
   const totalComments = comments.length;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
-      <Link href="/community" className="text-stone-400 text-sm hover:text-stone-700 transition-colors mb-6 block">← Community</Link>
+    <div className="max-w-2xl mx-auto px-4 py-8 min-h-screen" style={{ background: "var(--paper)" }}>
+      <Link href="/community" style={{ color: "var(--ink-mute)", fontSize: 13, textDecoration: "none", display: "block", marginBottom: 24 }}>← Community</Link>
 
       {/* ── Post card ── */}
-      <div className="bg-white border border-stone-200 rounded-2xl p-5 mb-4 shadow-sm">
+      <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, padding: 20, marginBottom: 16, boxShadow: "var(--shadow-card)" }}>
         <div className="flex gap-3">
 
           {/* Vote column */}
@@ -302,7 +300,8 @@ export default function PostPage() {
               </span>
               {movie && (
                 <Link href={`/movies/${movie.id}`}
-                  className="flex items-center gap-1.5 text-[10px] bg-stone-100 border border-stone-200 text-stone-600 px-2 py-0.5 rounded-full hover:text-orange-600 transition-colors">
+                  className="flex items-center gap-1.5 text-[10px] px-2 py-0.5 rounded-full transition-colors"
+                  style={{ background: "var(--sunk)", border: "1px solid var(--line)", color: "var(--ink-soft)" }}>
                   {movie.poster_url && <img src={movie.poster_url} className="w-3 h-4 rounded object-cover" alt=""/>}
                   {movie.title} · {movie.year}
                 </Link>
@@ -310,9 +309,9 @@ export default function PostPage() {
               {user?.id === post.user_id && !editing && (
                 <div className="ml-auto flex items-center gap-2">
                   <button onClick={() => { setEditTitle(post.title); setEditContent(post.content); setEditing(true); }}
-                    className="text-[11px] text-stone-400 hover:text-orange-600 font-medium transition-colors">Edit</button>
+                    style={{ fontSize: 11, color: "var(--ink-mute)", fontWeight: 500, background: "none", border: "none", cursor: "pointer", padding: 0 }}>Edit</button>
                   <button onClick={() => setConfirmDelete(true)}
-                    className="text-[11px] text-stone-400 hover:text-red-500 font-medium transition-colors">Delete</button>
+                    style={{ fontSize: 11, color: "var(--ink-mute)", fontWeight: 500, background: "none", border: "none", cursor: "pointer", padding: 0 }} className="hover:text-red-500 transition-colors">Delete</button>
                 </div>
               )}
             </div>
@@ -321,12 +320,14 @@ export default function PostPage() {
             {editing ? (
               <div className="space-y-3 mb-3">
                 <input value={editTitle} onChange={e => setEditTitle(e.target.value)}
-                  className="w-full text-lg font-black text-stone-900 border-b border-stone-300 focus:outline-none focus:border-orange-400 pb-1 bg-transparent"/>
+                  className="w-full text-lg font-black text-stone-900 border-b border-stone-300 focus:outline-none pb-1 bg-transparent"
+                  style={{ borderBottom: "1px solid var(--line)" }}/>
                 <textarea value={editContent} onChange={e => setEditContent(e.target.value)}
-                  rows={5} className="w-full text-sm text-stone-700 border border-stone-200 rounded-xl p-3 focus:outline-none focus:border-orange-400 resize-none"/>
+                  rows={5} className="w-full text-sm text-stone-700 rounded-xl p-3 focus:outline-none resize-none"
+                  style={{ border: "1px solid var(--line)" }}/>
                 <div className="flex gap-2">
                   <button onClick={saveEdit} disabled={!editTitle.trim() || savingEdit}
-                    className="bg-orange-600 text-white font-bold text-xs px-4 py-2 rounded-full hover:bg-orange-500 disabled:opacity-40 transition-colors">
+                    style={{ background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 12, padding: "8px 16px", borderRadius: 999, border: "none", cursor: "pointer", opacity: (!editTitle.trim() || savingEdit) ? 0.4 : 1 }}>
                     {savingEdit ? "Saving…" : "Save"}
                   </button>
                   <button onClick={() => setEditing(false)}
@@ -341,10 +342,11 @@ export default function PostPage() {
 
                 {movie && post.post_type === "review" && (
                   <Link href={`/movies/${movie.id}`}
-                    className="flex items-center gap-3 bg-stone-50 border border-stone-200 rounded-xl p-3 mb-3 hover:border-orange-200 transition-colors group">
+                    className="flex items-center gap-3 rounded-xl p-3 mb-3 transition-colors group"
+                    style={{ background: "var(--sunk)", border: "1px solid var(--line)", textDecoration: "none" }}>
                     {movie.poster_url && <img src={movie.poster_url} className="w-10 h-14 rounded-lg object-cover" alt=""/>}
                     <div>
-                      <p className="font-semibold text-stone-900 text-sm group-hover:text-orange-600 transition-colors">{movie.title}</p>
+                      <p style={{ fontWeight: 600, color: "var(--ink)", fontSize: 13 }}>{movie.title}</p>
                       <p className="text-xs text-stone-400">{movie.year} · {movie.genres?.slice(0,2).join(", ")}</p>
                     </div>
                   </Link>
@@ -357,7 +359,7 @@ export default function PostPage() {
             {/* Author row */}
             {!editing && (
               <div className="flex items-center gap-2 text-[10px] text-stone-400">
-                <Link href={`/people/${post.user_id}`} className="flex items-center gap-1.5 hover:text-orange-600 transition-colors">
+                <Link href={`/people/${post.user_id}`} className="flex items-center gap-1.5 transition-colors" style={{ color: "inherit", textDecoration: "none" }}>
                   <Avatar name={authorName}/>
                   <span className="font-semibold text-stone-600">{authorName}</span>
                 </Link>
@@ -372,7 +374,7 @@ export default function PostPage() {
       {/* ── Delete confirm ── */}
       {confirmDelete && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+          <div style={{ background: "var(--card)", borderRadius: 16, padding: 24, maxWidth: 400, width: "100%", boxShadow: "var(--shadow-card)" }}>
             <h3 className="font-bold text-stone-900 mb-2">Delete post?</h3>
             <p className="text-sm text-stone-500 mb-5">This can't be undone. All comments will also be removed.</p>
             <div className="flex gap-3">
@@ -387,7 +389,7 @@ export default function PostPage() {
 
       {/* ── Add comment ── */}
       {user ? (
-        <form onSubmit={submitComment} className="bg-white border border-stone-200 rounded-2xl p-4 mb-5 shadow-sm">
+        <form onSubmit={submitComment} style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, padding: 16, marginBottom: 20, boxShadow: "var(--shadow-card)" }}>
           <div className="flex gap-2 items-start">
             <Avatar name={user.email?.split("@")[0] || "?"} size="sm"/>
             <div className="flex-1">
@@ -397,7 +399,7 @@ export default function PostPage() {
               {newComment.trim() && (
                 <div className="flex justify-end mt-2">
                   <button type="submit" disabled={submitting}
-                    className="bg-orange-600 text-white font-bold text-xs px-4 py-1.5 rounded-full hover:bg-orange-500 disabled:opacity-40 transition-colors">
+                    style={{ background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 12, padding: "6px 16px", borderRadius: 999, border: "none", cursor: "pointer", opacity: submitting ? 0.4 : 1 }}>
                     {submitting ? "Posting…" : "Comment"}
                   </button>
                 </div>
@@ -406,9 +408,9 @@ export default function PostPage() {
           </div>
         </form>
       ) : (
-        <div className="bg-orange-50 border border-orange-100 rounded-2xl p-4 text-center mb-5">
-          <p className="text-sm text-stone-600 mb-2">Sign in to join the discussion</p>
-          <Link href="/login" className="text-orange-600 text-sm font-semibold hover:underline">Sign in →</Link>
+        <div style={{ background: "rgba(225,75,51,0.04)", border: "1px solid rgba(225,75,51,0.12)", borderRadius: 16, padding: 16, textAlign: "center", marginBottom: 20 }}>
+          <p style={{ fontSize: 13, color: "var(--ink-soft)", marginBottom: 8 }}>Sign in to join the discussion</p>
+          <Link href="/login" style={{ color: "var(--brand)", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>Sign in →</Link>
         </div>
       )}
 
@@ -419,7 +421,7 @@ export default function PostPage() {
         </p>
 
         {topLevel.length === 0 && (
-          <p className="text-stone-400 text-sm text-center py-8 bg-white border border-stone-100 rounded-2xl">
+          <p style={{ fontSize: 13, textAlign: "center", padding: "32px 16px", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, color: "var(--ink-mute)" }}>
             No comments yet — be the first!
           </p>
         )}
@@ -463,7 +465,7 @@ function CommentThread({
   const score = (comment.upvotes ?? 0) - (comment.downvotes ?? 0);
 
   return (
-    <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
+    <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, overflow: "hidden" }}>
       <CommentRow
         comment={comment} user={user} score={score} myVote={myVote}
         replyingTo={replyingTo} editingComment={editingComment} editCommentText={editCommentText} submitting={submitting}
@@ -474,7 +476,7 @@ function CommentThread({
 
       {/* Inline reply form */}
       {replyingTo === comment.id && user && (
-        <div className="px-4 pb-3 pt-1 border-t border-stone-100 bg-stone-50">
+        <div className="px-4 pb-3 pt-1" style={{ borderTop: "1px solid var(--line)", background: "var(--sunk)" }}>
           <div className="flex gap-2 items-start">
             <Avatar name={user.email?.split("@")[0] || "?"} size="sm"/>
             <div className="flex-1">
@@ -491,7 +493,7 @@ function CommentThread({
                   className="text-xs text-stone-400 hover:text-stone-700 transition-colors">Cancel</button>
                 <button onClick={() => onSubmitReply(comment.id)}
                   disabled={!replyText.trim() || submitting}
-                  className="bg-orange-600 text-white font-bold text-xs px-3 py-1.5 rounded-full hover:bg-orange-500 disabled:opacity-40 transition-colors">
+                  style={{ background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 12, padding: "6px 12px", borderRadius: 999, border: "none", cursor: "pointer", opacity: (!replyText.trim() || submitting) ? 0.4 : 1 }}>
                   {submitting ? "Posting…" : "Reply"}
                 </button>
               </div>
@@ -502,11 +504,11 @@ function CommentThread({
 
       {/* Nested replies */}
       {replies.length > 0 && (
-        <div className="border-t border-stone-100">
+        <div style={{ borderTop: "1px solid var(--line)" }}>
           {replies.map(r => {
             const rScore = (r.upvotes ?? 0) - (r.downvotes ?? 0);
             return (
-              <div key={r.id} className="pl-10 border-l-2 border-orange-100 ml-4">
+              <div key={r.id} className="pl-10 ml-4" style={{ borderLeft: "2px solid var(--line)" }}>
                 <CommentRow
                   comment={r} user={user} score={rScore} myVote={replyVotes[r.id] ?? null}
                   replyingTo={replyingTo} editingComment={editingComment} editCommentText={editCommentText} submitting={submitting}
@@ -534,7 +536,7 @@ function CommentThread({
                             className="text-xs text-stone-400 hover:text-stone-700 transition-colors">Cancel</button>
                           <button onClick={() => onSubmitReply(r.parent_comment_id)}
                             disabled={!replyText.trim() || submitting}
-                            className="bg-orange-600 text-white font-bold text-xs px-3 py-1.5 rounded-full hover:bg-orange-500 disabled:opacity-40 transition-colors">
+                            style={{ background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 12, padding: "6px 12px", borderRadius: 999, border: "none", cursor: "pointer", opacity: (!replyText.trim() || submitting) ? 0.4 : 1 }}>
                             {submitting ? "Posting…" : "Reply"}
                           </button>
                         </div>
@@ -567,7 +569,7 @@ function CommentRow({
       <div className="flex items-center gap-2 mb-1.5">
         <Avatar name={name} size="sm"/>
         <Link href={`/people/${comment.user_id}`}
-          className="text-xs font-semibold text-stone-700 hover:text-orange-600 transition-colors">{name}</Link>
+          style={{ fontSize: 11, fontWeight: 600, color: "var(--ink-soft)", textDecoration: "none" }}>{name}</Link>
         <span className="text-[10px] text-stone-400">{timeAgo(comment.created_at)}</span>
       </div>
 
@@ -575,10 +577,11 @@ function CommentRow({
       {editingComment === comment.id ? (
         <div className="space-y-2 ml-7">
           <textarea value={editCommentText} onChange={e => onEditTextChange(e.target.value)}
-            rows={3} className="w-full text-sm text-stone-900 border border-stone-200 rounded-lg p-2 focus:outline-none focus:border-orange-400 resize-none"/>
+            rows={3} className="w-full text-sm text-stone-900 rounded-lg p-2 focus:outline-none resize-none"
+            style={{ border: "1px solid var(--line)" }}/>
           <div className="flex gap-2">
             <button onClick={() => onSaveEdit(comment.id)} disabled={!editCommentText.trim()}
-              className="bg-orange-600 text-white font-bold text-xs px-3 py-1.5 rounded-full hover:bg-orange-500 disabled:opacity-40 transition-colors">Save</button>
+              style={{ background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 12, padding: "6px 12px", borderRadius: 999, border: "none", cursor: "pointer", opacity: !editCommentText.trim() ? 0.4 : 1 }}>Save</button>
             <button onClick={onCancelEdit}
               className="text-xs text-stone-500 hover:text-stone-800 font-medium">Cancel</button>
           </div>
@@ -593,7 +596,7 @@ function CommentRow({
           <VoteButton score={score} myVote={myVote} onVote={t => onVote(comment.id, t)} layout="horizontal"/>
           {user && (
             <button onClick={() => onReply(comment.id)}
-              className="text-[10px] text-stone-400 hover:text-orange-600 font-semibold transition-colors flex items-center gap-1">
+              style={{ fontSize: 10, color: "var(--ink-mute)", fontWeight: 600, background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
               </svg>
@@ -603,9 +606,10 @@ function CommentRow({
           {isOwn && (
             <>
               <button onClick={() => onEdit(comment.id, comment.content)}
-                className="text-[10px] text-stone-400 hover:text-orange-600 font-medium transition-colors">Edit</button>
+                style={{ fontSize: 10, color: "var(--ink-mute)", fontWeight: 500, background: "none", border: "none", cursor: "pointer" }}>Edit</button>
               <button onClick={() => onDelete(comment.id)}
-                className="text-[10px] text-stone-400 hover:text-red-500 font-medium transition-colors">Delete</button>
+                className="hover:text-red-500 transition-colors"
+                style={{ fontSize: 10, color: "var(--ink-mute)", fontWeight: 500, background: "none", border: "none", cursor: "pointer" }}>Delete</button>
             </>
           )}
         </div>

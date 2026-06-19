@@ -6,11 +6,11 @@ import { awardPoints } from "../../lib/points";
 import Link from "next/link";
 
 const COMPARISON_TYPES = [
-  { id: "overall",   label: "Overall",            emoji: "🎬" },
-  { id: "emotional", label: "More emotional",     emoji: "😭" },
-  { id: "rewatch",   label: "Would rewatch",      emoji: "🔁" },
-  { id: "music",     label: "Better music",       emoji: "🎶" },
-  { id: "theater",   label: "Theater experience", emoji: "🎭" },
+  { id: "overall",   label: "Overall" },
+  { id: "emotional", label: "More emotional" },
+  { id: "rewatch",   label: "Would rewatch" },
+  { id: "music",     label: "Better music" },
+  { id: "theater",   label: "Theater experience" },
 ];
 
 function applyElo(winnerScore, loserScore) {
@@ -83,7 +83,7 @@ export default function ComparePage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-stone-50 flex flex-col items-center justify-center px-4 py-8">
+    <div className="min-h-[calc(100vh-56px)] flex flex-col items-center justify-center px-4 py-8" style={{ background: "var(--paper)" }}>
 
       <div className="text-center mb-6">
         <h1 className="text-2xl font-black text-stone-900 mb-1">Which did you enjoy more?</h1>
@@ -96,13 +96,16 @@ export default function ComparePage() {
           <button
             key={ct.id}
             onClick={() => setCompType(ct)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
-              compType.id === ct.id
-                ? "bg-orange-600 text-white border-orange-600"
-                : "bg-white text-stone-500 border-stone-200 hover:border-stone-300"
-            }`}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              padding: "6px 14px", borderRadius: "var(--radius-pill)", fontSize: 12, fontWeight: 500,
+              fontFamily: "var(--font-ui)", border: "1.5px solid", cursor: "pointer", transition: "all 0.15s",
+              background: compType.id === ct.id ? "var(--brand)" : "var(--card)",
+              color: compType.id === ct.id ? "#fff" : "var(--ink-soft)",
+              borderColor: compType.id === ct.id ? "var(--brand)" : "var(--line)",
+            }}
           >
-            {ct.emoji} {ct.label}
+            {ct.label}
           </button>
         ))}
       </div>
@@ -125,20 +128,25 @@ export default function ComparePage() {
                   key={film.id}
                   onClick={() => handleChoice(film.id)}
                   disabled={!!chosen}
-                  className={`flex-1 group flex flex-col items-center gap-3 rounded-2xl p-3 border transition-all duration-300 ${
-                    isWinner ? "border-orange-500 bg-orange-50 scale-105 shadow-md"
-                    : isLoser ? "border-stone-200 bg-stone-50 opacity-40 scale-95"
-                    : "border-stone-200 bg-white hover:border-orange-300 hover:scale-[1.02] active:scale-[0.98] shadow-sm"
-                  }`}
+                  style={{
+                    flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 12,
+                    borderRadius: 20, padding: 12, border: "1.5px solid", cursor: "pointer",
+                    transition: "all 0.3s",
+                    borderColor: isWinner ? "var(--brand)" : "var(--line)",
+                    background: isWinner ? "rgba(225,75,51,0.04)" : isLoser ? "var(--sunk)" : "var(--card)",
+                    opacity: isLoser ? 0.4 : 1,
+                    transform: isWinner ? "scale(1.05)" : isLoser ? "scale(0.95)" : "scale(1)",
+                    boxShadow: isWinner ? "var(--shadow-card)" : "none",
+                  }}
                 >
                   <div className="w-full aspect-[2/3] rounded-xl overflow-hidden bg-stone-100 relative">
                     {film.poster_url
                       ? <img src={film.poster_url} alt={film.title} className="w-full h-full object-cover" />
-                      : <div className="w-full h-full flex items-center justify-center text-4xl">🎬</div>
+                      : <div className="w-full h-full" style={{ background: "var(--sunk)" }} />
                     }
                     {isWinner && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-orange-500/20">
-                        <span className="text-5xl animate-bounce">✓</span>
+                      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(225,75,51,0.15)" }}>
+                        <span style={{ fontSize: 48, color: "var(--brand)", fontWeight: 900, animation: "bounce 0.5s" }}>✓</span>
                       </div>
                     )}
                   </div>
@@ -159,16 +167,16 @@ export default function ComparePage() {
         </div>
       ) : null}
 
-      {eloFired && <p className="text-xs text-orange-600 mt-3 font-medium">Rankings updated ↑</p>}
+      {eloFired && <p style={{ fontSize: 12, color: "var(--brand)", marginTop: 12, fontWeight: 500, fontFamily: "var(--font-ui)" }}>Rankings updated ↑</p>}
 
       <div className="flex items-center gap-6 mt-8">
         <button onClick={() => { setStreak(0); loadPair(); }} className="text-stone-400 text-sm hover:text-stone-700 transition-colors">
           Skip
         </button>
         {streak > 0 && (
-          <div className="flex items-center gap-1.5 bg-white border border-stone-200 px-4 py-2 rounded-full shadow-sm">
-            <span className="text-orange-500">🔥</span>
-            <span className="text-sm font-bold text-stone-700">{streak} streak</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, background: "var(--card)", border: "1px solid var(--line)", padding: "8px 16px", borderRadius: "var(--radius-pill)", boxShadow: "var(--shadow-card)" }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: "var(--brand)", fontFamily: "var(--font-mono)" }}>{streak}</span>
+            <span style={{ fontSize: 13, fontWeight: 500, color: "var(--ink-soft)", fontFamily: "var(--font-ui)" }}>streak</span>
           </div>
         )}
         <Link href="/profile" className="text-stone-400 text-sm hover:text-stone-700 transition-colors">
@@ -177,10 +185,10 @@ export default function ComparePage() {
       </div>
 
       {!user && total >= 3 && (
-        <div className="mt-10 bg-white border border-stone-200 rounded-2xl p-5 text-center max-w-sm shadow-sm">
-          <p className="font-bold text-sm text-stone-900 mb-1">Save your rankings</p>
-          <p className="text-stone-500 text-xs mb-4">Sign up to build a permanent ranked list</p>
-          <Link href="/login" className="inline-block bg-orange-600 text-white font-bold text-sm px-6 py-2.5 rounded-full hover:bg-orange-500 transition-colors">
+        <div style={{ marginTop: 40, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20, padding: 20, textAlign: "center", maxWidth: 360, boxShadow: "var(--shadow-card)" }}>
+          <p style={{ fontWeight: 700, fontSize: 14, color: "var(--ink)", marginBottom: 4, fontFamily: "var(--font-ui)" }}>Save your rankings</p>
+          <p style={{ color: "var(--ink-mute)", fontSize: 12, marginBottom: 16 }}>Sign up to build a permanent ranked list</p>
+          <Link href="/login" style={{ display: "inline-block", background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 14, padding: "10px 24px", borderRadius: "var(--radius-pill)", textDecoration: "none", fontFamily: "var(--font-ui)" }}>
             Join free →
           </Link>
         </div>

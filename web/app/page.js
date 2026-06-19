@@ -214,7 +214,7 @@ export default function HomePage() {
   const filterCount = countActiveFilters(filters);
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen" style={{ background: "var(--paper)" }}>
 
       {!isGridMode && hero && <HeroMovie movie={hero} />}
 
@@ -232,7 +232,10 @@ export default function HomePage() {
               placeholder="Search any Indian film…"
               value={search}
               onChange={(e) => { setSearch(e.target.value); setSeeAll(null); }}
-              className="w-full bg-white border border-stone-200 rounded-xl pl-10 pr-10 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all text-sm shadow-sm"
+              className="w-full rounded-xl pl-10 pr-10 py-3 text-sm transition-all"
+              style={{ background: "var(--card)", border: "1.5px solid var(--line)", color: "var(--ink)", outline: "none", boxShadow: "var(--shadow-card)" }}
+              onFocus={e => e.target.style.borderColor = "var(--brand)"}
+              onBlur={e => e.target.style.borderColor = "var(--line)"}
             />
             {search && (
               <button onClick={() => setSearch("")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 transition-colors">
@@ -244,14 +247,16 @@ export default function HomePage() {
           {/* Filter button */}
           <button
             onClick={() => setFilterOpen(true)}
-            className={`relative shrink-0 w-11 h-11 rounded-xl border flex items-center justify-center transition-all shadow-sm ${
-              filterCount > 0
-                ? "bg-orange-600 border-orange-600 text-white"
-                : "bg-white border-stone-200 text-stone-500 hover:border-stone-300"
-            }`}
+            className="relative shrink-0 w-11 h-11 rounded-xl flex items-center justify-center transition-all"
+            style={{
+              background: filterCount > 0 ? "var(--brand)" : "var(--card)",
+              border: `1.5px solid ${filterCount > 0 ? "var(--brand)" : "var(--line)"}`,
+              color: filterCount > 0 ? "#fff" : "var(--ink-soft)",
+              boxShadow: "var(--shadow-card)",
+            }}
           >
             {filterCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-stone-900 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border border-white leading-none">
+              <span style={{ position: "absolute", top: -6, right: -6, background: "var(--ink)", color: "#fff", fontSize: 10, fontWeight: 700, width: 16, height: 16, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", border: "2px solid var(--paper)", fontFamily: "var(--font-mono)" }}>
                 {filterCount}
               </span>
             )}
@@ -274,9 +279,9 @@ export default function HomePage() {
         {hasActiveFilters && (
           <div className="flex flex-wrap gap-2 mb-4 -mt-2">
             {filters.language && (
-              <span className="inline-flex items-center gap-1.5 bg-orange-50 border border-orange-200 text-orange-700 text-xs font-medium px-3 py-1 rounded-full">
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(225,75,51,0.08)", border: "1px solid rgba(225,75,51,0.25)", color: "var(--brand)", fontSize: 12, fontWeight: 500, padding: "4px 10px", borderRadius: 999, fontFamily: "var(--font-ui)" }}>
                 {languageName(filters.language)}
-                <button onClick={() => setFilters((f) => ({ ...f, language: null }))} className="hover:text-orange-900">
+                <button onClick={() => setFilters((f) => ({ ...f, language: null }))} style={{ color: "var(--brand)", background: "none", border: "none", cursor: "pointer", display: "flex", padding: 0 }}>
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
                 </button>
               </span>
@@ -378,7 +383,7 @@ export default function HomePage() {
                   ? "Recommended for You"
                   : `${movies.length} film${movies.length !== 1 ? "s" : ""}`}
               </p>
-              <button onClick={clearAll} className="text-xs text-orange-600 hover:text-orange-500 transition-colors font-medium">
+              <button onClick={clearAll} style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--brand)", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
                 ← Back to Discover
               </button>
             </div>
@@ -389,9 +394,8 @@ export default function HomePage() {
               </div>
             ) : movies.length === 0 ? (
               <div className="text-center py-28">
-                <p className="text-4xl mb-3">🎬</p>
-                <p className="text-stone-500 font-medium">No films found</p>
-                <p className="text-stone-400 text-sm mt-1">Try adjusting your filters or search term</p>
+                <p style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "var(--ink-soft)", marginBottom: 6 }}>No films found</p>
+                <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--ink-mute)" }}>Try adjusting your filters or search term</p>
               </div>
             ) : (
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">

@@ -31,17 +31,17 @@ export default function UserProfileHeader({ userId, profile, ratedCount, lovedCo
   const location    = [profile.city, profile.country ? FLAGS[profile.country] : null].filter(Boolean).join(" · ");
 
   return (
-    <div className="bg-white border border-stone-200 rounded-2xl p-5 mb-6 shadow-sm">
+    <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20, padding: 20, marginBottom: 24, boxShadow: "var(--shadow-card)" }}>
       <div className="flex items-start gap-4">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-xl font-black shrink-0">
+        <div style={{ width: 64, height: 64, borderRadius: "50%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 20, fontWeight: 900, flexShrink: 0 }}>
           {initials}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-2">
-            <h1 className="text-xl font-black text-stone-900 leading-tight">{displayName}</h1>
+            <h1 style={{ fontSize: 20, fontWeight: 900, color: "var(--ink)", lineHeight: 1.2, fontFamily: "var(--font-ui)" }}>{displayName}</h1>
             {(profile.streak_current ?? 0) > 0 && (
-              <span className="text-xs bg-orange-50 border border-orange-200 text-orange-600 font-bold px-2 py-0.5 rounded-full">
-                🔥 {profile.streak_current}wk streak
+              <span style={{ fontSize: 11, background: "rgba(225,75,51,0.07)", border: "1px solid rgba(225,75,51,0.2)", color: "var(--brand)", fontWeight: 700, padding: "2px 8px", borderRadius: 999, fontFamily: "var(--font-ui)" }}>
+                {profile.streak_current}wk streak
               </span>
             )}
           </div>

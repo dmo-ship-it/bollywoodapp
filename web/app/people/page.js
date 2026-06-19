@@ -85,10 +85,10 @@ export default function PeoplePage() {
     : people;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10 bg-stone-50 min-h-screen">
+    <div className="max-w-2xl mx-auto px-4 py-10 min-h-screen" style={{ background: "var(--paper)" }}>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-black text-stone-900 mb-1">🎭 Taste Twins</h1>
+        <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 28, fontWeight: 700, color: "var(--ink)", marginBottom: 4 }}>Taste Twins</h1>
         <p className="text-stone-500 text-sm">
           {user ? "People ranked by how closely their taste matches yours" : "Discover others with similar taste — sign in to see your match %"}
         </p>
@@ -104,7 +104,7 @@ export default function PeoplePage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name or @username…"
-          className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-stone-200 bg-white text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent shadow-sm"
+          style={{ width: "100%", paddingLeft: 36, paddingRight: 16, paddingTop: 10, paddingBottom: 10, borderRadius: 12, border: "1.5px solid var(--line)", background: "var(--card)", fontSize: 14, color: "var(--ink)", outline: "none", boxSizing: "border-box", fontFamily: "var(--font-ui)" }}
         />
         {search && (
           <button
@@ -117,10 +117,10 @@ export default function PeoplePage() {
       </div>
 
       {!user && (
-        <div className="bg-white border border-stone-200 rounded-2xl p-5 mb-6 text-center shadow-sm">
-          <p className="font-bold text-sm text-stone-900 mb-1">See how you compare</p>
-          <p className="text-stone-500 text-xs mb-4">Sign in to get your % match with every member</p>
-          <Link href="/login" className="inline-block bg-orange-600 text-white font-bold text-sm px-6 py-2.5 rounded-full hover:bg-orange-500 transition-colors">
+        <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20, padding: 20, marginBottom: 24, textAlign: "center", boxShadow: "var(--shadow-card)" }}>
+          <p style={{ fontWeight: 700, fontSize: 14, color: "var(--ink)", marginBottom: 4, fontFamily: "var(--font-ui)" }}>See how you compare</p>
+          <p style={{ color: "var(--ink-mute)", fontSize: 12, marginBottom: 16 }}>Sign in to get your % match with every member</p>
+          <Link href="/login" style={{ display: "inline-block", background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 14, padding: "10px 24px", borderRadius: "var(--radius-pill)", textDecoration: "none", fontFamily: "var(--font-ui)" }}>
             Sign in →
           </Link>
         </div>
@@ -131,17 +131,16 @@ export default function PeoplePage() {
           {[1,2,3,4].map((i) => <div key={i} className="h-20 rounded-2xl shimmer" />)}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-20 text-stone-400">
-          <p className="text-4xl mb-3">🎭</p>
+        <div style={{ textAlign: "center", padding: "80px 0", color: "var(--ink-mute)" }}>
           {search ? (
             <>
-              <p className="mb-1 font-medium text-stone-600">No one found for "{search}"</p>
-              <button onClick={() => setSearch("")} className="text-sm text-orange-600 hover:underline mt-1">Clear search</button>
+              <p style={{ marginBottom: 4, fontWeight: 500, color: "var(--ink-soft)", fontFamily: "var(--font-ui)" }}>No one found for "{search}"</p>
+              <button onClick={() => setSearch("")} style={{ fontSize: 13, color: "var(--brand)", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-ui)" }}>Clear search</button>
             </>
           ) : (
             <>
-              <p className="mb-1 font-medium text-stone-600">No other members yet</p>
-              <p className="text-sm">Invite friends to compare taste!</p>
+              <p style={{ marginBottom: 4, fontWeight: 500, color: "var(--ink-soft)", fontFamily: "var(--font-ui)" }}>No other members yet</p>
+              <p style={{ fontSize: 13 }}>Invite friends to compare taste!</p>
             </>
           )}
         </div>
@@ -150,28 +149,29 @@ export default function PeoplePage() {
           {filtered.map((person, i) => {
             const sim      = person.similarity;
             const initials = person.displayName.slice(0, 2).toUpperCase();
-            const simColor = !sim ? "" : sim.pct >= 80 ? "text-emerald-600" : sim.pct >= 65 ? "text-orange-600" : "text-stone-500";
-            const cardBg   = !sim ? "border-stone-200 bg-white" : sim.pct >= 80 ? "border-emerald-200 bg-emerald-50" : sim.pct >= 65 ? "border-orange-200 bg-orange-50" : "border-stone-200 bg-white";
+            const simColor = !sim ? "var(--ink-mute)" : sim.pct >= 80 ? "#22c55e" : sim.pct >= 65 ? "var(--brand)" : "var(--ink-mute)";
+            const cardBorder = !sim ? "var(--line)" : sim.pct >= 80 ? "rgba(34,197,94,0.3)" : sim.pct >= 65 ? "rgba(225,75,51,0.25)" : "var(--line)";
+            const cardBg = !sim ? "var(--card)" : sim.pct >= 80 ? "rgba(34,197,94,0.04)" : sim.pct >= 65 ? "rgba(225,75,51,0.04)" : "var(--card)";
 
             return (
               <div
                 key={person.user_id}
-                className={`flex items-center gap-3 rounded-2xl p-4 border transition-all ${cardBg}`}
+                style={{ display: "flex", alignItems: "center", gap: 12, borderRadius: 16, padding: 16, border: `1px solid ${cardBorder}`, background: cardBg, transition: "box-shadow 0.15s" }}
               >
                 {/* Rank */}
-                <span className="text-stone-400 text-sm font-bold w-5 shrink-0 text-center">{i + 1}</span>
+                <span style={{ color: "var(--ink-mute)", fontSize: 13, fontWeight: 700, width: 20, flexShrink: 0, textAlign: "center" }}>{i + 1}</span>
 
                 {/* Clickable profile area */}
                 <Link
                   href={`/people/${person.user_id}`}
-                  className="flex items-center gap-3 flex-1 min-w-0 group"
+                  style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, minWidth: 0, textDecoration: "none" }}
                 >
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-sm font-black shrink-0">
+                  <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14, fontWeight: 900, flexShrink: 0 }}>
                     {initials}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-stone-900 group-hover:text-orange-600 transition-colors truncate">{person.displayName}</p>
-                    <p className="text-xs text-stone-400 mt-0.5 truncate">
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontWeight: 600, fontSize: 14, color: "var(--ink)", marginBottom: 2, fontFamily: "var(--font-ui)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{person.displayName}</p>
+                    <p style={{ fontSize: 12, color: "var(--ink-mute)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {person.handle && <span>{person.handle} · </span>}
                       {person.ratedCount} films
                       {sim ? ` · ${sim.shared} in common` : ""}
@@ -179,22 +179,22 @@ export default function PeoplePage() {
                     </p>
                   </div>
                   {person.topFilm?.poster_url && (
-                    <div className="w-8 h-11 rounded-md overflow-hidden bg-stone-100 shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
-                      <img src={person.topFilm.poster_url} alt="" className="w-full h-full object-cover" />
+                    <div style={{ width: 32, height: 44, borderRadius: 6, overflow: "hidden", background: "var(--sunk)", flexShrink: 0, opacity: 0.7 }}>
+                      <img src={person.topFilm.poster_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     </div>
                   )}
                 </Link>
 
                 {/* Similarity score */}
-                <div className="shrink-0 text-right w-14">
+                <div style={{ flexShrink: 0, textAlign: "right", width: 56 }}>
                   {sim ? (
                     <>
-                      <p className={`text-xl font-black ${simColor}`}>{sim.pct}%</p>
-                      <p className="text-[10px] text-stone-400">alike</p>
+                      <p style={{ fontSize: 20, fontWeight: 900, color: simColor, fontFamily: "var(--font-ui)" }}>{sim.pct}%</p>
+                      <p style={{ fontSize: 10, color: "var(--ink-mute)" }}>alike</p>
                     </>
                   ) : user ? (
-                    <p className="text-xs text-stone-400 leading-tight">Not enough overlap</p>
-                  ) : <p className="text-xs text-stone-400">—</p>}
+                    <p style={{ fontSize: 11, color: "var(--ink-mute)", lineHeight: 1.3 }}>Not enough overlap</p>
+                  ) : <p style={{ fontSize: 11, color: "var(--ink-mute)" }}>—</p>}
                 </div>
 
                 {/* Follow button */}

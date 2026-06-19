@@ -24,19 +24,19 @@ const POST_STYLES = {
   poll:       "bg-violet-100 text-violet-700 border-violet-200",
 };
 const POST_LABELS = {
-  review:     "⭐ Review",
-  discussion: "💬 Discussion",
-  list:       "📋 List",
-  poll:       "📊 Poll",
+  review:     "Review",
+  discussion: "Discussion",
+  list:       "List",
+  poll:       "Poll",
 };
 
 const FAN_COMMUNITIES = [
-  { name: "👑 Bollywood Legends",   description: "Celebrate the kings and queens of Hindi cinema",              badges: ["srk_fan","salman_fan","amitabh_fan","ddlj_forever"] },
-  { name: "🎬 South Indian Cinema", description: "The fierce, passionate fandoms of Tamil, Telugu & Malayalam",  badges: ["thalaivar","thalapathy","kamal_fan"] },
-  { name: "🎞️ Iconic Films",        description: "Devoted to timeless classics that define Indian cinema",       badges: ["sholay_legend","3idiots_dev"] },
-  { name: "🎥 Director Devotion",   description: "Follow visionary directors across Indian cinema",              badges: ["mani_ratnam","kashyap_fan"] },
-  { name: "🇮🇳 Regional Pride",      description: "Celebrate cinema from different regions of India",            badges: ["tamil_pride","malayalam_fan","telugu_fan"] },
-  { name: "🎨 Taste-Based",         description: "Define yourself by your unique film taste",                   badges: ["90s_nostalgic","masala_lover","arthaus"] },
+  { name: "Bollywood Legends",   description: "Celebrate the kings and queens of Hindi cinema",              badges: ["srk_fan","salman_fan","amitabh_fan","ddlj_forever"] },
+  { name: "South Indian Cinema", description: "The fierce, passionate fandoms of Tamil, Telugu & Malayalam",  badges: ["thalaivar","thalapathy","kamal_fan"] },
+  { name: "Iconic Films",        description: "Devoted to timeless classics that define Indian cinema",       badges: ["sholay_legend","3idiots_dev"] },
+  { name: "Director Devotion",   description: "Follow visionary directors across Indian cinema",              badges: ["mani_ratnam","kashyap_fan"] },
+  { name: "Regional Pride",      description: "Celebrate cinema from different regions of India",            badges: ["tamil_pride","malayalam_fan","telugu_fan"] },
+  { name: "Taste-Based",         description: "Define yourself by your unique film taste",                   badges: ["90s_nostalgic","masala_lover","arthaus"] },
 ];
 
 export default function CommunityPage() {
@@ -220,7 +220,7 @@ export default function CommunityPage() {
   });
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 bg-stone-50 min-h-screen" onClick={() => setMenuOpen(null)}>
+    <div className="max-w-2xl mx-auto px-4 py-8 min-h-screen" style={{ background: "var(--paper)" }} onClick={() => setMenuOpen(null)}>
 
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -228,13 +228,13 @@ export default function CommunityPage() {
           <h1 className="text-2xl font-black text-stone-900 mb-0.5">Community</h1>
           <p className="text-stone-500 text-sm">Discussions, lists, polls & more</p>
         </div>
-        <Link href="/community/new" className="bg-orange-600 text-white font-bold text-sm px-4 py-2 rounded-full hover:bg-orange-500 transition-colors">
+        <Link href="/community/new" style={{ background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 13, padding: "8px 16px", borderRadius: "var(--radius-pill)", textDecoration: "none", fontFamily: "var(--font-ui)", boxShadow: "var(--shadow-brand)" }}>
           + Create
         </Link>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-stone-100 rounded-xl p-1 mb-4 overflow-x-auto scroll-hide">
+      <div style={{ display: "flex", gap: 4, background: "var(--sunk)", borderRadius: 12, padding: 4, marginBottom: 16, overflowX: "auto" }} className="scroll-hide">
         {[
           { id: "feed",         label: "Feed"         },
           { id: "discussions",  label: "Discussions"  },
@@ -242,7 +242,13 @@ export default function CommunityPage() {
           { id: "communities",  label: "Communities"  },
         ].map(t => (
           <button key={t.id} onClick={() => { setTab(t.id); setSearch(""); setShowFilter(false); }}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${tab === t.id ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}>
+            style={{
+              padding: "6px 16px", borderRadius: 8, fontSize: 13, fontWeight: 500,
+              whiteSpace: "nowrap", fontFamily: "var(--font-ui)", border: "none", cursor: "pointer", transition: "all 0.15s",
+              background: tab === t.id ? "var(--card)" : "transparent",
+              color: tab === t.id ? "var(--ink)" : "var(--ink-mute)",
+              boxShadow: tab === t.id ? "var(--shadow-card)" : "none",
+            }}>
             {t.label}
           </button>
         ))}
@@ -256,34 +262,41 @@ export default function CommunityPage() {
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
               <input type="text" placeholder="Search discussions, lists, polls…" value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-stone-200 rounded-xl text-stone-900 placeholder-stone-400 focus:outline-none focus:border-orange-400 transition-colors"/>
+                style={{ width: "100%", paddingLeft: 36, paddingRight: 12, paddingTop: 8, paddingBottom: 8, fontSize: 13, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, color: "var(--ink)", outline: "none", fontFamily: "var(--font-ui)" }}/>
             </div>
             <div className="relative">
               <button onClick={() => setShowFilter(f => !f)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-sm font-medium transition-all ${showFilter || sort !== "new" || typeFilter !== "all" ? "bg-orange-50 border-orange-300 text-orange-700" : "bg-white border-stone-200 text-stone-500 hover:text-stone-800 hover:border-stone-300"}`}>
+                style={{
+                  display: "flex", alignItems: "center", gap: 6, padding: "8px 12px",
+                  borderRadius: 12, border: "1px solid", fontSize: 13, fontWeight: 500,
+                  fontFamily: "var(--font-ui)", cursor: "pointer", transition: "all 0.15s",
+                  background: (showFilter || sort !== "new" || typeFilter !== "all") ? "rgba(225,75,51,0.06)" : "var(--card)",
+                  borderColor: (showFilter || sort !== "new" || typeFilter !== "all") ? "rgba(225,75,51,0.25)" : "var(--line)",
+                  color: (showFilter || sort !== "new" || typeFilter !== "all") ? "var(--brand)" : "var(--ink-mute)",
+                }}>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M9 18h6"/></svg>
                 <span>Filter</span>
-                {(sort !== "new" || typeFilter !== "all") && <span className="w-1.5 h-1.5 rounded-full bg-orange-500"/>}
+                {(sort !== "new" || typeFilter !== "all") && <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--brand)", display: "inline-block" }}/>}
               </button>
               {showFilter && (
-                <div className="absolute right-0 top-full mt-1 w-52 bg-white border border-stone-200 rounded-2xl shadow-lg z-10 p-3 space-y-3">
+                <div style={{ position: "absolute", right: 0, top: "100%", marginTop: 4, width: 200, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, boxShadow: "var(--shadow-card)", zIndex: 10, padding: 12, display: "flex", flexDirection: "column", gap: 12 }}>
                   <div>
-                    <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide mb-1.5">Sort by</p>
-                    <div className="flex flex-col gap-1">
+                    <p style={{ fontSize: 10, fontWeight: 600, color: "var(--ink-mute)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 6, fontFamily: "var(--font-mono)" }}>Sort by</p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                       {[{ id:"new",label:"Newest first"},{id:"hot",label:"Most upvoted"}].map(s => (
                         <button key={s.id} onClick={() => setSort(s.id)}
-                          className={`text-left px-3 py-1.5 rounded-lg text-sm transition-all ${sort === s.id ? "bg-orange-50 text-orange-700 font-medium" : "text-stone-600 hover:bg-stone-50"}`}>
+                          style={{ textAlign: "left", padding: "6px 10px", borderRadius: 8, fontSize: 13, transition: "all 0.12s", fontFamily: "var(--font-ui)", border: "none", cursor: "pointer", background: sort === s.id ? "rgba(225,75,51,0.06)" : "transparent", color: sort === s.id ? "var(--brand)" : "var(--ink-soft)", fontWeight: sort === s.id ? 600 : 400 }}>
                           {s.label}
                         </button>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide mb-1.5">Type</p>
-                    <div className="flex flex-col gap-1">
-                      {[{id:"all",label:"All"},{id:"discussion",label:"💬 Discussions"},{id:"review",label:"⭐ Reviews"},{id:"list",label:"📋 Lists"},{id:"poll",label:"📊 Polls"}].map(t => (
+                    <p style={{ fontSize: 10, fontWeight: 600, color: "var(--ink-mute)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 6, fontFamily: "var(--font-mono)" }}>Type</p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                      {[{id:"all",label:"All"},{id:"discussion",label:"Discussions"},{id:"review",label:"Reviews"},{id:"list",label:"Lists"},{id:"poll",label:"Polls"}].map(t => (
                         <button key={t.id} onClick={() => setTypeFilter(t.id)}
-                          className={`text-left px-3 py-1.5 rounded-lg text-sm transition-all ${typeFilter === t.id ? "bg-orange-50 text-orange-700 font-medium" : "text-stone-600 hover:bg-stone-50"}`}>
+                          style={{ textAlign: "left", padding: "6px 10px", borderRadius: 8, fontSize: 13, transition: "all 0.12s", fontFamily: "var(--font-ui)", border: "none", cursor: "pointer", background: typeFilter === t.id ? "rgba(225,75,51,0.06)" : "transparent", color: typeFilter === t.id ? "var(--brand)" : "var(--ink-soft)", fontWeight: typeFilter === t.id ? 600 : 400 }}>
                           {t.label}
                         </button>
                       ))}
@@ -317,15 +330,22 @@ export default function CommunityPage() {
                   if (!badge) return null;
                   return (
                     <Link key={badgeId} href={`/fans/${badgeId}`}
-                      className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${hasEarned ? "bg-gradient-to-r from-orange-50 to-rose-50 border-orange-200 hover:shadow-md" : "bg-white border-stone-200 hover:border-orange-300"}`}>
-                      <div className="text-3xl shrink-0">{badge.icon}</div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className={`font-bold ${hasEarned ? "text-stone-900" : "text-stone-700"}`}>{badge.label}</h3>
-                        <p className="text-xs text-stone-500">{badge.desc}</p>
+                      style={{
+                        display: "flex", alignItems: "center", gap: 16, padding: 16, borderRadius: 14,
+                        border: "1px solid", transition: "box-shadow 0.15s", textDecoration: "none",
+                        background: hasEarned ? "rgba(225,75,51,0.04)" : "var(--card)",
+                        borderColor: hasEarned ? "rgba(225,75,51,0.2)" : "var(--line)",
+                      }}>
+                      <div style={{ width: 40, height: 40, borderRadius: "28%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14, fontWeight: 900, fontFamily: "var(--font-mono)", flexShrink: 0 }}>
+                        {badge.label.slice(0, 2).toUpperCase()}
                       </div>
-                      <div className="text-right shrink-0">
-                        {hasEarned && <span className="text-xs text-orange-600 font-bold block mb-1">✓ You</span>}
-                        <p className="text-sm text-stone-600 font-semibold">{members} fan{members !== 1 ? "s" : ""}</p>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <h3 style={{ fontWeight: 700, color: "var(--ink)", fontSize: 14, fontFamily: "var(--font-ui)" }}>{badge.label}</h3>
+                        <p style={{ fontSize: 12, color: "var(--ink-mute)" }}>{badge.desc}</p>
+                      </div>
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
+                        {hasEarned && <span style={{ fontSize: 11, color: "var(--brand)", fontWeight: 700, display: "block", marginBottom: 4, fontFamily: "var(--font-mono)" }}>✓ You</span>}
+                        <p style={{ fontSize: 13, color: "var(--ink-soft)", fontWeight: 600, fontFamily: "var(--font-ui)" }}>{members} fan{members !== 1 ? "s" : ""}</p>
                       </div>
                     </Link>
                   );
@@ -338,11 +358,10 @@ export default function CommunityPage() {
         /* Discussions tab — posts + lists + polls merged */
         <div className="space-y-3">
           {filtered.length === 0 ? (
-            <div className="text-center py-20 bg-white border border-stone-200 rounded-2xl text-stone-400">
-              <p className="text-4xl mb-3">💬</p>
-              <p className="font-medium text-stone-600 mb-1">{items.length === 0 ? "Nothing here yet" : "No results found"}</p>
-              <p className="text-sm mb-4">{items.length === 0 ? "Be the first to post, start a poll, or make a list" : "Try a different search or filter"}</p>
-              {items.length === 0 && <Link href="/community/new" className="text-orange-600 text-sm hover:underline">Create something →</Link>}
+            <div style={{ textAlign: "center", padding: "80px 20px", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20, color: "var(--ink-mute)" }}>
+              <p style={{ fontFamily: "var(--font-serif)", fontSize: 16, color: "var(--ink-soft)", marginBottom: 8 }}>{items.length === 0 ? "Nothing here yet" : "No results found"}</p>
+              <p style={{ fontSize: 13, color: "var(--ink-mute)", marginBottom: 16 }}>{items.length === 0 ? "Be the first to post, start a poll, or make a list" : "Try a different search or filter"}</p>
+              {items.length === 0 && <Link href="/community/new" style={{ color: "var(--brand)", fontSize: 13, fontWeight: 500, textDecoration: "none" }}>Create something →</Link>}
             </div>
           ) : filtered.map(item => {
             const name     = item.profile?.display_name || item.profile?.email?.split("@")[0] || "Someone";
@@ -351,7 +370,7 @@ export default function CommunityPage() {
             const isOwn    = user?.id === item.user_id;
 
             return (
-              <div key={itemKey} className="bg-white border border-stone-200 rounded-2xl p-4 hover:border-stone-300 transition-all">
+              <div key={itemKey} style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20, padding: 16, transition: "box-shadow 0.15s" }}>
                 <div className="flex items-start gap-3">
                   {/* Vote column */}
                   <VoteButton
@@ -372,7 +391,7 @@ export default function CommunityPage() {
                       )}
                       {item.movie && (
                         <Link href={`/movies/${item.movie.id}`}
-                          className="flex items-center gap-1.5 text-[10px] text-stone-500 bg-stone-100 border border-stone-200 px-2 py-0.5 rounded-full hover:text-orange-600 transition-colors">
+                          style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, color: "var(--ink-mute)", background: "var(--sunk)", border: "1px solid var(--line)", padding: "2px 8px", borderRadius: 999, textDecoration: "none" }}>
                           {item.movie.poster_url && <img src={item.movie.poster_url} className="w-3 h-4 rounded object-cover" alt=""/>}
                           {item.movie.title}
                         </Link>
@@ -384,7 +403,7 @@ export default function CommunityPage() {
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
                           </button>
                           {menuOpen === itemKey && (
-                            <div className="absolute right-0 top-full mt-1 w-32 bg-white border border-stone-200 rounded-xl shadow-lg z-10 py-1" onClick={e => e.stopPropagation()}>
+                            <div style={{ position: "absolute", right: 0, top: "100%", marginTop: 4, width: 128, background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, boxShadow: "var(--shadow-card)", zIndex: 10, paddingTop: 4, paddingBottom: 4 }} onClick={e => e.stopPropagation()}>
                               {item._type === "post" && (
                                 <Link href={item.href}
                                   onClick={() => setMenuOpen(null)}
@@ -404,7 +423,7 @@ export default function CommunityPage() {
 
                     {/* Title */}
                     <Link href={item.href}>
-                      <h3 className="font-semibold text-stone-900 hover:text-orange-600 transition-colors text-sm leading-snug mb-1">{item.title}</h3>
+                      <h3 style={{ fontWeight: 600, color: "var(--ink)", fontSize: 13, lineHeight: 1.4, marginBottom: 4, fontFamily: "var(--font-ui)" }}>{item.title}</h3>
                     </Link>
 
                     {/* Excerpt */}
@@ -431,7 +450,7 @@ export default function CommunityPage() {
                       <div className="mb-2">
                         <Link href={item.href}
                           className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full transition-colors ${item.hasResponded ? "bg-stone-100 text-stone-600 hover:bg-stone-200" : "bg-violet-600 text-white hover:bg-violet-500"}`}>
-                          {item.hasResponded ? "📊 See results" : `🗳️ Vote · pick ${item.max_picks > 1 ? `up to ${item.max_picks}` : "1"}`}
+                          {item.hasResponded ? "See results" : `Vote · pick ${item.max_picks > 1 ? `up to ${item.max_picks}` : "1"}`}
                         </Link>
                         {item.response_count > 0 && (
                           <span className="text-[10px] text-stone-400 ml-2">{item.response_count} response{item.response_count !== 1 ? "s" : ""}</span>
@@ -441,8 +460,8 @@ export default function CommunityPage() {
 
                     {/* Footer meta */}
                     <div className="flex items-center gap-3 text-[10px] text-stone-400">
-                      <Link href={`/people/${item.user_id}`} className="flex items-center gap-1.5 hover:text-orange-600 transition-colors">
-                        <div className="w-4 h-4 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white text-[8px] font-black">{initials}</div>
+                      <Link href={`/people/${item.user_id}`} style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--ink-mute)", textDecoration: "none", fontSize: 10 }}>
+                        <div style={{ width: 16, height: 16, borderRadius: "50%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 8, fontWeight: 900 }}>{initials}</div>
                         {name}
                       </Link>
                       <span>{timeAgo(item.created_at)}</span>

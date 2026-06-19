@@ -49,7 +49,7 @@ const TriviaForm = ({ question = null, onSave, onCancel, loading }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white border border-stone-200 rounded-2xl p-6 space-y-6">
+    <form onSubmit={handleSubmit} style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16, padding: 24 }} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Date */}
         <div>
@@ -148,11 +148,11 @@ const TriviaForm = ({ question = null, onSave, onCancel, loading }) => {
       </div>
 
       {/* Actions */}
-      <div className="flex gap-3 pt-4 border-t border-stone-200">
+      <div className="flex gap-3 pt-4" style={{ borderTop: "1px solid var(--line)" }}>
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-2 bg-orange-600 text-white font-bold rounded-lg hover:bg-orange-500 transition-colors disabled:opacity-50"
+          style={{ padding: "8px 24px", background: "var(--brand)", color: "#fff", fontWeight: 700, borderRadius: 8, border: "none", cursor: "pointer", opacity: loading ? 0.5 : 1, fontFamily: "var(--font-ui)" }}
         >
           {loading ? "Saving..." : question ? "Update Question" : "Create Question"}
         </button>
@@ -173,7 +173,7 @@ const QuestionRow = ({ question, onEdit, onDelete, onViewResponses }) => {
   const questionPreview = question.question.substring(0, 60) + (question.question.length > 60 ? "..." : "");
 
   return (
-    <div className="bg-white border border-stone-200 rounded-xl p-4 hover:border-orange-300 transition-colors">
+    <div style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 12, padding: 16, transition: "border-color 0.15s" }}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
@@ -197,19 +197,19 @@ const QuestionRow = ({ question, onEdit, onDelete, onViewResponses }) => {
             onClick={() => onViewResponses(question.id)}
             className="px-3 py-1 text-xs bg-blue-50 text-blue-600 font-bold rounded hover:bg-blue-100 transition-colors"
           >
-            📊
+            Stats
           </button>
           <button
             onClick={() => onEdit(question)}
             className="px-3 py-1 text-xs bg-stone-100 text-stone-700 font-bold rounded hover:bg-stone-200 transition-colors"
           >
-            ✏️
+            Edit
           </button>
           <button
             onClick={() => onDelete(question.id)}
             className="px-3 py-1 text-xs bg-red-50 text-red-600 font-bold rounded hover:bg-red-100 transition-colors"
           >
-            🗑️
+            Del
           </button>
         </div>
       </div>
@@ -336,7 +336,7 @@ export default function TriviaAdminPage() {
     <div className="p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-black text-stone-900 mb-2">🎬 Trivia Management</h1>
+        <h1 className="text-3xl font-black text-stone-900 mb-2">Trivia Management</h1>
         <p className="text-stone-600">Create and manage daily trivia questions</p>
       </div>
 
@@ -348,14 +348,14 @@ export default function TriviaAdminPage() {
       )}
       {success && (
         <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 text-green-700">
-          ✅ {success}
+          {success}
         </div>
       )}
 
       {/* Delete Confirmation */}
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
+          <div style={{ background: "var(--card)", borderRadius: 16, padding: 24, maxWidth: 400, width: "100%" }}>
             <p className="font-bold text-stone-900 mb-4">Delete question?</p>
             <p className="text-stone-600 text-sm mb-6">This action cannot be undone.</p>
             <div className="flex gap-3">
@@ -379,10 +379,10 @@ export default function TriviaAdminPage() {
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-stone-100 rounded-xl p-1 mb-6 w-fit">
+      <div style={{ display: "flex", gap: 4, background: "var(--sunk)", borderRadius: 12, padding: 4, marginBottom: 24, width: "fit-content" }}>
         {[
-          { id: "list", label: "📋 Questions" },
-          { id: "create", label: "➕ New Question" },
+          { id: "list", label: "Questions" },
+          { id: "create", label: "New Question" },
         ].map(t => (
           <button
             key={t.id}
@@ -390,11 +390,13 @@ export default function TriviaAdminPage() {
               setTab(t.id);
               setEditingQuestion(null);
             }}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === t.id
-                ? "bg-white text-stone-900 shadow-sm"
-                : "text-stone-500 hover:text-stone-700"
-            }`}
+            style={{
+              padding: "6px 16px", borderRadius: 8, fontSize: 13, fontWeight: 500,
+              fontFamily: "var(--font-ui)", border: "none", cursor: "pointer", transition: "all 0.15s",
+              background: tab === t.id ? "var(--card)" : "transparent",
+              color: tab === t.id ? "var(--ink)" : "var(--ink-mute)",
+              boxShadow: tab === t.id ? "var(--shadow-card)" : "none",
+            }}
           >
             {t.label}
           </button>
@@ -429,13 +431,12 @@ export default function TriviaAdminPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 bg-white border border-stone-200 rounded-2xl">
-              <p className="text-4xl mb-3">🎬</p>
-              <p className="text-stone-600 font-bold">No trivia questions yet</p>
-              <p className="text-sm text-stone-500 mb-4">Create your first question to get started</p>
+            <div style={{ textAlign: "center", padding: "48px 24px", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 16 }}>
+              <p style={{ fontFamily: "var(--font-serif)", fontSize: 16, color: "var(--ink-soft)", marginBottom: 4 }}>No trivia questions yet</p>
+              <p style={{ fontSize: 13, color: "var(--ink-mute)", marginBottom: 16 }}>Create your first question to get started</p>
               <button
                 onClick={() => setTab("create")}
-                className="px-4 py-2 bg-orange-600 text-white font-bold rounded-lg hover:bg-orange-500"
+                style={{ padding: "8px 16px", background: "var(--brand)", color: "#fff", fontWeight: 700, borderRadius: 8, border: "none", cursor: "pointer", fontFamily: "var(--font-ui)" }}
               >
                 Create Question
               </button>

@@ -282,7 +282,7 @@ export default function RankingsPage() {
   ];
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
+    <div className="max-w-2xl mx-auto px-4 py-8 min-h-screen" style={{ background: "var(--paper)" }}>
 
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
@@ -298,7 +298,7 @@ export default function RankingsPage() {
         {movies.length > 0 && isMy && (
           <button
             onClick={() => setShowShareCard(true)}
-            className="flex items-center gap-1.5 text-xs text-stone-500 border border-stone-200 bg-white rounded-lg px-3 py-1.5 hover:bg-stone-50 transition-colors shrink-0"
+            style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--ink-mute)", border: "1px solid var(--line)", background: "var(--card)", borderRadius: 10, padding: "6px 12px", cursor: "pointer", flexShrink: 0, fontFamily: "var(--font-ui)" }}
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -310,16 +310,19 @@ export default function RankingsPage() {
 
       {/* Mode tabs + Filter icon */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="flex gap-1 bg-stone-100 rounded-xl p-1 flex-1 overflow-x-auto scroll-hide">
+        <div style={{ display: "flex", gap: 4, background: "var(--sunk)", borderRadius: 12, padding: 4, flex: 1, overflowX: "auto" }} className="scroll-hide">
           {tabs.map((t) => (
             <button
               key={t.id}
               onClick={() => setMode(t.id)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                mode === t.id
-                  ? "bg-white text-stone-900 shadow-sm"
-                  : "text-stone-500 hover:text-stone-700"
-              }`}
+              style={{
+                padding: "8px 16px", borderRadius: 8, fontSize: 14, fontWeight: 500,
+                fontFamily: "var(--font-ui)", border: "none", cursor: "pointer",
+                transition: "all 0.15s", whiteSpace: "nowrap",
+                background: mode === t.id ? "var(--card)" : "transparent",
+                color: mode === t.id ? "var(--ink)" : "var(--ink-mute)",
+                boxShadow: mode === t.id ? "var(--shadow-card)" : "none",
+              }}
             >
               {t.label}
             </button>
@@ -329,11 +332,15 @@ export default function RankingsPage() {
         {/* Filter button */}
         <button
           onClick={() => setFilterOpen(true)}
-          className={`relative shrink-0 w-10 h-10 rounded-xl border flex items-center justify-center transition-all ${
-            filterCount > 0
-              ? "bg-orange-600 border-orange-600 text-white shadow-sm"
-              : "bg-white border-stone-200 text-stone-500 hover:border-stone-300 shadow-sm"
-          }`}
+          style={{
+            position: "relative", flexShrink: 0, width: 40, height: 40, borderRadius: 12,
+            border: "1px solid", display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", transition: "all 0.15s",
+            background: filterCount > 0 ? "var(--brand)" : "var(--card)",
+            borderColor: filterCount > 0 ? "var(--brand)" : "var(--line)",
+            color: filterCount > 0 ? "#fff" : "var(--ink-mute)",
+            boxShadow: "var(--shadow-card)",
+          }}
         >
           {filterCount > 0 && (
             <span className="absolute -top-1.5 -right-1.5 bg-stone-900 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border border-white leading-none">
@@ -358,7 +365,7 @@ export default function RankingsPage() {
       {filterCount > 0 && (
         <div className="flex flex-wrap gap-2 mb-4">
           {filters.language && (
-            <span className="inline-flex items-center gap-1.5 bg-orange-50 border border-orange-200 text-orange-700 text-xs font-medium px-3 py-1 rounded-full">
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(225,75,51,0.06)", border: "1px solid rgba(225,75,51,0.18)", color: "var(--brand)", fontSize: 12, fontWeight: 500, padding: "4px 12px", borderRadius: 999, fontFamily: "var(--font-ui)" }}>
               {languageName(filters.language)}
               <button onClick={() => setFilters((f) => ({ ...f, language: null }))}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -412,11 +419,8 @@ export default function RankingsPage() {
           {Array.from({ length: 10 }).map((_, i) => <div key={i} className="h-16 rounded-2xl shimmer" />)}
         </div>
       ) : movies.length === 0 ? (
-        <div className="text-center py-20 text-stone-400 bg-white border border-stone-200 rounded-2xl">
-          <p className="text-4xl mb-3">
-            {isMy ? "🏆" : isFriends ? "👥" : isTwins ? "🧬" : "🌐"}
-          </p>
-          <p className="font-medium text-stone-600 mb-1">
+        <div style={{ textAlign: "center", padding: "80px 20px", background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20 }}>
+          <p style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "var(--ink-soft)", marginBottom: 8 }}>
             {isMy
               ? (filterCount > 0 ? "No matches for these filters" : "No personal rankings yet")
               : isFriends
@@ -425,7 +429,7 @@ export default function RankingsPage() {
               ? (filterCount > 0 ? "No matches for these filters" : "No taste twins found yet")
               : (filterCount > 0 ? "No matches for these filters" : "No global rankings yet")}
           </p>
-          <p className="text-sm mb-4">
+          <p style={{ fontSize: 14, color: "var(--ink-mute)", marginBottom: 20 }}>
             {isMy
               ? (filterCount > 0 ? "Try clearing some filters" : "Rate films to build your list")
               : isFriends
@@ -435,13 +439,13 @@ export default function RankingsPage() {
               : "Be the first to rate films"}
           </p>
           {isMy && !filterCount && (
-            <Link href="/onboarding" className="text-orange-600 text-sm hover:underline">Start rating →</Link>
+            <Link href="/onboarding" style={{ color: "var(--brand)", fontSize: 14, fontWeight: 500, textDecoration: "none" }}>Start rating →</Link>
           )}
           {isFriends && !filterCount && (
-            <Link href="/taste-profile" className="text-orange-600 text-sm hover:underline">Find people to follow →</Link>
+            <Link href="/taste-profile" style={{ color: "var(--brand)", fontSize: 14, fontWeight: 500, textDecoration: "none" }}>Find people to follow →</Link>
           )}
           {isTwins && !filterCount && (
-            <Link href="/onboarding" className="text-orange-600 text-sm hover:underline">Rate more films →</Link>
+            <Link href="/onboarding" style={{ color: "var(--brand)", fontSize: 14, fontWeight: 500, textDecoration: "none" }}>Rate more films →</Link>
           )}
         </div>
       ) : (
@@ -457,19 +461,20 @@ export default function RankingsPage() {
 
             const roundScore = score ? Math.round(score) : null;
             const rank       = i + 1;
-            const scoreColor = !roundScore ? "text-stone-400"
-              : roundScore >= 80 ? "text-rose-600"
-              : roundScore >= 60 ? "text-orange-600"
-              : "text-stone-500";
-            const barColor = !roundScore ? "bg-stone-200"
-              : roundScore >= 80 ? "bg-rose-500"
-              : roundScore >= 60 ? "bg-orange-500"
-              : "bg-stone-300";
+            const scoreColor = !roundScore ? "var(--ink-mute)"
+              : roundScore >= 80 ? "#E14B33"
+              : roundScore >= 60 ? "#E6A437"
+              : "var(--ink-mute)";
+            const barBg = !roundScore ? "var(--sunk)"
+              : roundScore >= 80 ? "#E14B33"
+              : roundScore >= 60 ? "#E6A437"
+              : "var(--ink-mute)";
 
             return (
               <div
                 key={movie.id}
-                className="flex items-center gap-2 bg-white border border-stone-200 rounded-2xl p-3 hover:border-stone-300 hover:shadow-sm transition-all group"
+                className="flex items-center gap-2 group"
+                style={{ background: "var(--card)", border: "1px solid var(--line)", borderRadius: 20, padding: 12, transition: "box-shadow 0.15s" }}
               >
                 {/* Navigable area */}
                 <Link href={`/movies/${movie.id}`} className="flex items-center gap-3 flex-1 min-w-0">
@@ -479,16 +484,16 @@ export default function RankingsPage() {
                   </div>
 
                   {/* Poster */}
-                  <div className="w-10 h-14 rounded-lg overflow-hidden bg-stone-100 shrink-0">
+                  <div className="w-10 h-14 rounded-lg overflow-hidden shrink-0" style={{ background: "var(--sunk)" }}>
                     {movie.poster_url
                       ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" />
-                      : <div className="w-full h-full flex items-center justify-center text-stone-300">🎬</div>
+                      : <div className="w-full h-full" style={{ background: "var(--sunk)" }} />
                     }
                   </div>
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-stone-900 group-hover:text-orange-600 transition-colors truncate">
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "var(--ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "var(--font-ui)" }}>
                       {movie.title}
                     </p>
                     <p className="text-xs text-stone-400 mt-0.5">
@@ -502,9 +507,9 @@ export default function RankingsPage() {
                   {/* Score */}
                   {roundScore != null && (
                     <div className="shrink-0 flex flex-col items-end gap-1.5">
-                      <p className={`text-lg font-black ${scoreColor}`}>{roundScore}</p>
-                      <div className="w-14 h-1.5 bg-stone-100 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full ${barColor}`} style={{ width: `${roundScore}%` }} />
+                      <p style={{ fontSize: 18, fontWeight: 900, color: scoreColor, fontFamily: "var(--font-ui)" }}>{roundScore}</p>
+                      <div style={{ width: 56, height: 6, background: "var(--sunk)", borderRadius: 999, overflow: "hidden" }}>
+                        <div style={{ height: "100%", borderRadius: 999, background: barBg, width: `${roundScore}%` }} />
                       </div>
                     </div>
                   )}
@@ -514,7 +519,7 @@ export default function RankingsPage() {
                 {isMy && (
                   <button
                     onClick={() => setEditingMovie(movie)}
-                    className="text-stone-300 hover:text-orange-500 transition-colors shrink-0 pl-1"
+                    style={{ color: "var(--ink-mute)", flexShrink: 0, paddingLeft: 4, background: "none", border: "none", cursor: "pointer", transition: "color 0.15s" }}
                     title="Edit rating"
                   >
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -530,16 +535,16 @@ export default function RankingsPage() {
           {/* CTAs at bottom */}
           {isMy && movies.length > 0 && (
             <div className="pt-4 text-center">
-              <Link href="/compare" className="inline-block bg-orange-600 text-white font-bold text-sm px-6 py-2.5 rounded-full hover:bg-orange-500 transition-colors">
+              <Link href="/compare" style={{ display: "inline-block", background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 14, padding: "10px 24px", borderRadius: "var(--radius-pill)", textDecoration: "none", fontFamily: "var(--font-ui)", boxShadow: "var(--shadow-brand)" }}>
                 Compare films to refine rankings →
               </Link>
             </div>
           )}
           {isGlobal && !user && (
-            <div className="pt-4 bg-orange-50 border border-orange-100 rounded-2xl p-5 text-center">
-              <p className="font-semibold text-stone-900 text-sm mb-1">See your personal ranking</p>
-              <p className="text-stone-500 text-xs mb-3">Sign in to rank films based on your own taste</p>
-              <Link href="/login" className="inline-block bg-orange-600 text-white font-bold text-sm px-5 py-2 rounded-full hover:bg-orange-500 transition-colors">
+            <div style={{ marginTop: 16, background: "rgba(225,75,51,0.04)", border: "1px solid rgba(225,75,51,0.12)", borderRadius: 20, padding: 20, textAlign: "center" }}>
+              <p style={{ fontWeight: 700, fontSize: 14, color: "var(--ink)", marginBottom: 4, fontFamily: "var(--font-ui)" }}>See your personal ranking</p>
+              <p style={{ color: "var(--ink-mute)", fontSize: 12, marginBottom: 16 }}>Sign in to rank films based on your own taste</p>
+              <Link href="/login" style={{ display: "inline-block", background: "var(--brand)", color: "#fff", fontWeight: 700, fontSize: 14, padding: "10px 20px", borderRadius: "var(--radius-pill)", textDecoration: "none", fontFamily: "var(--font-ui)", boxShadow: "var(--shadow-brand)" }}>
                 Sign in →
               </Link>
             </div>

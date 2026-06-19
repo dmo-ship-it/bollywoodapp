@@ -9,11 +9,11 @@ import CompareModal from "./CompareModal";
 import BadgeToast from "./BadgeToast";
 
 export const RATINGS = [
-  { emoji: "😍", label: "Loved it",    value: 5, score: 90 },
-  { emoji: "😊", label: "Liked it",    value: 4, score: 70 },
-  { emoji: "😐", label: "Okay",        value: 3, score: 50 },
-  { emoji: "😕", label: "Didn't like", value: 2, score: 30 },
-  { emoji: "😡", label: "Hated it",    value: 1, score: 10 },
+  { label: "Loved it",    value: 5, score: 90 },
+  { label: "Liked it",    value: 4, score: 70 },
+  { label: "Okay",        value: 3, score: 50 },
+  { label: "Didn't like", value: 2, score: 30 },
+  { label: "Hated it",    value: 1, score: 10 },
 ];
 
 const MUSIC_OPTIONS = [
@@ -86,7 +86,6 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
       checkAndAwardBadges(supabase, user.id),
     ]);
 
-    // Show toast for any newly earned badges
     if (earnedIds?.length > 0) {
       const earned = BADGES.filter((b) => earnedIds.includes(b.id));
       if (earned.length > 0) setNewBadges(earned);
@@ -115,47 +114,73 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/30 z-40" onClick={onClose} />
+      <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 40 }} onClick={onClose} />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-5">
-        <div className="bg-white rounded-2xl shadow-xl w-full max-w-xs p-5 relative">
+      <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+        <div style={{
+          background: "var(--card)", borderRadius: "var(--radius)",
+          boxShadow: "var(--shadow-card-elevated)",
+          width: "100%", maxWidth: 320, padding: 20, position: "relative",
+        }}>
 
           {/* Close */}
-          <button onClick={onClose} className="absolute top-3.5 right-4 text-stone-300 hover:text-stone-600 text-lg leading-none">×</button>
+          <button
+            onClick={onClose}
+            style={{ position: "absolute", top: 14, right: 16, color: "var(--ink-mute)", background: "none", border: "none", cursor: "pointer", fontSize: 20, lineHeight: 1 }}
+          >×</button>
 
           {/* Movie */}
-          <div className="flex items-center gap-2.5 mb-5 pr-5">
-            {posterUrl && <img src={posterUrl} alt={movieTitle} className="w-8 h-11 rounded object-cover object-top shrink-0" />}
-            <p className="font-semibold text-stone-800 text-sm leading-snug">{movieTitle}</p>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, paddingRight: 20 }}>
+            {posterUrl && <img src={posterUrl} alt={movieTitle} style={{ width: 32, height: 44, borderRadius: 6, objectFit: "cover", objectPosition: "top", flexShrink: 0 }} />}
+            <p style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 14, color: "var(--ink)", lineHeight: 1.3 }}>{movieTitle}</p>
           </div>
 
           {/* ── Rate step ── */}
           {step === "rate" && (
             <>
-              <p className="text-[11px] text-stone-400 uppercase tracking-widest mb-5">How was it?</p>
-              <div className="flex justify-between gap-1 mb-2">
-                {RATINGS.map((r) => (
-                  <button
-                    key={r.value}
-                    onClick={() => handlePick(r.value)}
-                    className={`flex flex-col items-center gap-1.5 flex-1 py-2 rounded-xl transition-all ${
-                      currentRating === r.value
-                        ? "bg-stone-100 scale-105"
-                        : "hover:bg-stone-50"
-                    }`}
-                  >
-                    <span className="text-3xl leading-none">{r.emoji}</span>
-                    <span className="text-[9px] text-stone-400 leading-tight text-center">{r.label}</span>
-                  </button>
-                ))}
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--ink-mute)", marginBottom: 14 }}>
+                How was it?
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 8 }}>
+                {RATINGS.map((r) => {
+                  const isActive = currentRating === r.value;
+                  return (
+                    <button
+                      key={r.value}
+                      onClick={() => handlePick(r.value)}
+                      style={{
+                        width: "100%", padding: "10px 14px",
+                        borderRadius: "var(--radius-pill)",
+                        border: isActive ? "none" : "1.5px solid var(--line)",
+                        background: isActive ? "var(--brand)" : "transparent",
+                        color: isActive ? "#fff" : "var(--ink-soft)",
+                        fontFamily: "var(--font-ui)", fontWeight: isActive ? 700 : 500, fontSize: 14,
+                        cursor: "pointer", textAlign: "left",
+                        transition: "all 0.15s",
+                        display: "flex", alignItems: "center", justifyContent: "space-between",
+                      }}
+                      onMouseEnter={e => { if (!isActive) { e.currentTarget.style.borderColor = "var(--brand)"; e.currentTarget.style.color = "var(--ink)"; }}}
+                      onMouseLeave={e => { if (!isActive) { e.currentTarget.style.borderColor = "var(--line)"; e.currentTarget.style.color = "var(--ink-soft)"; }}}
+                    >
+                      <span>{r.label}</span>
+                      <span style={{
+                        fontFamily: "var(--font-mono)", fontSize: 11,
+                        color: isActive ? "rgba(255,255,255,0.7)" : "var(--ink-mute)",
+                        letterSpacing: "0.04em",
+                      }}>{r.score}</span>
+                    </button>
+                  );
+                })}
               </div>
               {currentRating && (
-                <div className="mt-4 text-center">
+                <div style={{ marginTop: 12, textAlign: "center" }}>
                   <button
                     onClick={handleDelete}
                     disabled={saving}
-                    className="text-xs text-stone-400 hover:text-red-500 transition-colors disabled:opacity-40"
+                    style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--ink-mute)", background: "none", border: "none", cursor: "pointer", opacity: saving ? 0.4 : 1, transition: "color 0.2s" }}
+                    onMouseEnter={e => e.currentTarget.style.color = "#ef4444"}
+                    onMouseLeave={e => e.currentTarget.style.color = "var(--ink-mute)"}
                   >
                     Remove rating
                   </button>
@@ -168,48 +193,82 @@ export default function RatingModal({ movieId, movieTitle, posterUrl, onClose, o
           {step === "extras" && (
             <>
               {/* Selected rating indicator */}
-              <div className="flex items-center gap-2 mb-5">
-                <span className="text-xl leading-none">{ratingObj?.emoji}</span>
-                <span className="text-sm text-stone-700 font-medium">{ratingObj?.label}</span>
-                <button onClick={() => setStep("rate")} className="ml-auto text-xs text-stone-400 hover:text-stone-600">change</button>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+                <span style={{
+                  fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 700,
+                  color: "#fff", background: "var(--brand)",
+                  padding: "4px 12px", borderRadius: "var(--radius-pill)",
+                }}>{ratingObj?.label}</span>
+                <button
+                  onClick={() => setStep("rate")}
+                  style={{ marginLeft: "auto", fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--ink-mute)", background: "none", border: "none", cursor: "pointer" }}
+                >
+                  change
+                </button>
               </div>
 
               {/* Notes */}
-              <div className="mb-4">
-                <label className="block text-[11px] text-stone-400 uppercase tracking-widest mb-1.5">Notes</label>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--ink-mute)", marginBottom: 6 }}>
+                  Notes
+                </label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="What stood out?"
                   rows={2}
-                  className="w-full bg-stone-50 border-0 rounded-xl px-3 py-2.5 text-sm text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-1 focus:ring-stone-300 resize-none"
+                  style={{
+                    width: "100%", background: "var(--sunk)", border: "1.5px solid var(--line)",
+                    borderRadius: 10, padding: "10px 12px",
+                    fontFamily: "var(--font-ui)", fontSize: 13, color: "var(--ink)",
+                    resize: "none", outline: "none", boxSizing: "border-box",
+                  }}
+                  onFocus={e => e.target.style.borderColor = "var(--brand)"}
+                  onBlur={e => e.target.style.borderColor = "var(--line)"}
                 />
               </div>
 
               {/* Soundtrack */}
-              <div className="mb-5">
-                <label className="block text-[11px] text-stone-400 uppercase tracking-widest mb-1.5">Soundtrack</label>
-                <div className="flex gap-1.5">
-                  {MUSIC_OPTIONS.map((m) => (
-                    <button
-                      key={m.value}
-                      onClick={() => setMusicRating(musicRating === m.value ? null : m.value)}
-                      className={`flex-1 py-2 rounded-xl text-[10px] font-medium transition-all ${
-                        musicRating === m.value
-                          ? "bg-stone-200 text-stone-700"
-                          : "bg-stone-50 text-stone-400 hover:bg-stone-100"
-                      }`}
-                    >
-                      {m.label}
-                    </button>
-                  ))}
+              <div style={{ marginBottom: 20 }}>
+                <label style={{ display: "block", fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--ink-mute)", marginBottom: 6 }}>
+                  Soundtrack
+                </label>
+                <div style={{ display: "flex", gap: 6 }}>
+                  {MUSIC_OPTIONS.map((m) => {
+                    const isActive = musicRating === m.value;
+                    return (
+                      <button
+                        key={m.value}
+                        onClick={() => setMusicRating(musicRating === m.value ? null : m.value)}
+                        style={{
+                          flex: 1, padding: "8px 4px",
+                          borderRadius: 10, border: "1.5px solid",
+                          borderColor: isActive ? "var(--brand)" : "var(--line)",
+                          background: isActive ? "rgba(225,75,51,0.08)" : "transparent",
+                          color: isActive ? "var(--brand)" : "var(--ink-mute)",
+                          fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: isActive ? 700 : 500,
+                          cursor: "pointer", transition: "all 0.15s",
+                        }}
+                      >
+                        {m.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
               <button
                 onClick={handleDone}
                 disabled={saving}
-                className="w-full bg-stone-900 text-white text-sm font-semibold py-3 rounded-xl hover:bg-stone-700 transition-colors disabled:opacity-40"
+                style={{
+                  width: "100%", background: "var(--brand)", color: "#fff",
+                  border: "none", borderRadius: "var(--radius-pill)",
+                  padding: "12px 20px",
+                  fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 14,
+                  cursor: "pointer", opacity: saving ? 0.6 : 1,
+                  boxShadow: "var(--shadow-brand)",
+                  transition: "all 0.2s",
+                }}
               >
                 {saving ? "Saving…" : "Done"}
               </button>

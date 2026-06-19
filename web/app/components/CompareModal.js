@@ -19,99 +19,104 @@ function insertionScore(sortedMovies, pos, rating) {
 function ResultCard({ movieTitle, posterUrl, movieId, myScore, myRank, avgScore, onClose }) {
   const [sharing, setSharing] = useState(false);
 
+  const scoreFill = (v) => v >= 90 ? "#E14B33" : v >= 70 ? "#E6A437" : v >= 50 ? "#C07A4E" : "#8C8A93";
+  const scoreText = (v) => (v >= 70 && v < 90) ? "#261E19" : "#fff";
+
   async function handleShare() {
     setSharing(true);
-    const text = `I rated ${movieTitle} ${myScore}/100 on Bolly 🎬`;
+    const text = `I rated ${movieTitle} ${myScore}/100 on Rasika`;
     const url  = `${window.location.origin}/movies/${movieId}`;
 
     try {
       if (navigator.share) {
         await navigator.share({ title: movieTitle, text, url });
       } else {
-        // Fallback — copy to clipboard
         await navigator.clipboard.writeText(`${text}\n${url}`);
         alert("Copied to clipboard!");
       }
     } catch (e) {
-      // User dismissed share sheet — that's fine
+      // User dismissed share sheet
     }
     setSharing(false);
   }
 
   return (
-    <div className="relative overflow-hidden rounded-2xl md:rounded-3xl">
-
-      {/* Poster background */}
-      <div className="relative w-full aspect-[3/4]">
+    <div style={{ borderRadius: "var(--radius)", overflow: "hidden" }}>
+      <div style={{ position: "relative", width: "100%", aspectRatio: "3/4" }}>
         {posterUrl ? (
-          <img src={posterUrl} alt={movieTitle} className="w-full h-full object-cover object-top" />
+          <img src={posterUrl} alt={movieTitle} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
         ) : (
-          <div className="w-full h-full bg-stone-800 flex items-center justify-center text-6xl">🎬</div>
+          <div style={{ width: "100%", height: "100%", background: "var(--sunk)" }} />
         )}
 
-        {/* Gradient overlay — bottom heavy */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/10" />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.15) 100%)" }} />
 
-        {/* Content on top of poster */}
-        <div className="absolute inset-0 flex flex-col justify-between p-5">
-
-          {/* Logo top-left */}
-          <div className="flex items-center gap-1">
-            <span className="text-white font-black text-lg tracking-tighter">bolly</span>
-            <span className="text-orange-400 text-lg leading-none">•</span>
+        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 20 }}>
+          {/* Logo */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 24, height: 24, borderRadius: "22%", background: "var(--brand)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontFamily: "var(--font-serif)", fontSize: 16, color: "#fff", lineHeight: 1 }}>R</span>
+            </div>
+            <span style={{ fontFamily: "var(--font-serif)", fontSize: 16, color: "#fff" }}>Rasika<span style={{ color: "var(--brand)" }}>.</span></span>
           </div>
 
-          {/* Bottom content */}
           <div>
-            {/* Movie title */}
-            <h2 className="text-white font-black text-2xl leading-tight mb-4">{movieTitle}</h2>
+            <h2 style={{ fontFamily: "var(--font-serif)", color: "#fff", fontSize: 22, lineHeight: 1.2, marginBottom: 16 }}>{movieTitle}</h2>
 
-            {/* Score circles */}
-            <div className="flex items-start gap-5 mb-6">
-              {/* My Score */}
-              <div className="flex flex-col items-center gap-1.5">
-                <div className="w-12 h-12 rounded-full bg-white/15 border-2 border-orange-400 flex items-center justify-center backdrop-blur-sm">
-                  <span className="text-orange-400 font-black text-sm">{myScore}</span>
+            {/* Score badges */}
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 16, marginBottom: 20 }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                <div style={{ width: 48, height: 48, borderRadius: "28%", background: scoreFill(myScore), display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontFamily: "var(--font-ui)", fontWeight: 800, fontSize: 16, color: scoreText(myScore) }}>{myScore}</span>
                 </div>
-                <span className="text-white/70 text-[10px] text-center">My Score</span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "rgba(255,255,255,0.7)", letterSpacing: "0.06em" }}>My Score</span>
               </div>
-
-              {/* My Rank */}
               {myRank !== null && (
-                <div className="flex flex-col items-center gap-1.5">
-                  <div className="w-12 h-12 rounded-full bg-white/15 border-2 border-orange-400 flex items-center justify-center backdrop-blur-sm">
-                    <span className="text-orange-400 font-black text-sm">#{myRank}</span>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                  <div style={{ width: 48, height: 48, borderRadius: "28%", background: "rgba(255,255,255,0.15)", border: "2px solid var(--brand)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <span style={{ fontFamily: "var(--font-ui)", fontWeight: 800, fontSize: 14, color: "#fff" }}>#{myRank}</span>
                   </div>
-                  <span className="text-white/70 text-[10px] text-center">My Rank</span>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "rgba(255,255,255,0.7)", letterSpacing: "0.06em" }}>My Rank</span>
                 </div>
               )}
-
-              {/* Average Score */}
               {avgScore && (
-                <div className="flex flex-col items-center gap-1.5">
-                  <div className="w-12 h-12 rounded-full bg-white/15 border-2 border-white/40 flex items-center justify-center backdrop-blur-sm">
-                    <span className="text-white font-black text-sm">{avgScore}</span>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                  <div style={{ width: 48, height: 48, borderRadius: "28%", background: "rgba(255,255,255,0.15)", border: "1.5px solid rgba(255,255,255,0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <span style={{ fontFamily: "var(--font-ui)", fontWeight: 800, fontSize: 16, color: "#fff" }}>{avgScore}</span>
                   </div>
-                  <span className="text-white/70 text-[10px] text-center">Average</span>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "rgba(255,255,255,0.7)", letterSpacing: "0.06em" }}>Average</span>
                 </div>
               )}
             </div>
 
             {/* Actions */}
-            <div className="flex gap-2">
+            <div style={{ display: "flex", gap: 8 }}>
               <button
                 onClick={handleShare}
                 disabled={sharing}
-                className="flex-1 flex items-center justify-center gap-2 bg-white text-stone-900 font-bold text-sm py-3 rounded-xl hover:bg-stone-100 transition-colors disabled:opacity-50"
+                style={{
+                  flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  background: "#fff", color: "var(--ink)",
+                  border: "none", borderRadius: "var(--radius-pill)",
+                  padding: "12px 16px",
+                  fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 14,
+                  cursor: "pointer", opacity: sharing ? 0.5 : 1,
+                }}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                 </svg>
                 Share
               </button>
               <button
                 onClick={onClose}
-                className="flex-1 bg-white/20 text-white font-bold text-sm py-3 rounded-xl hover:bg-white/30 transition-colors backdrop-blur-sm"
+                style={{
+                  flex: 1, background: "rgba(255,255,255,0.2)", color: "#fff",
+                  border: "none", borderRadius: "var(--radius-pill)",
+                  padding: "12px 16px",
+                  fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 14,
+                  cursor: "pointer",
+                }}
               >
                 Done
               </button>
@@ -160,7 +165,6 @@ export default function CompareModal({ movieId, movieTitle, posterUrl, rating, u
 
       setSorted(movies);
 
-      // Community average
       const scores = avgRes.data ?? [];
       if (scores.length > 0) {
         setAvgScore(Math.round(scores.reduce((s, r) => s + r.score, 0) / scores.length));
@@ -224,77 +228,94 @@ export default function CompareModal({ movieId, movieTitle, posterUrl, rating, u
   const target     = sorted[mid];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
+    <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "flex-end", justifyContent: "center" }} className="md:items-center">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={phase !== "done" ? handleSkip : undefined} />
+      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }} onClick={phase !== "done" ? handleSkip : undefined} />
 
       {/* Panel */}
-      <div className="relative w-full md:max-w-sm">
+      <div style={{ position: "relative", width: "100%", maxWidth: 400 }}>
 
         {/* Loading */}
         {phase === "loading" && (
-          <div className="bg-white rounded-t-3xl md:rounded-3xl p-8 text-center text-stone-400">
-            <div className="text-3xl mb-3 animate-pulse">🎬</div>
-            <p className="text-sm">Finding comparisons…</p>
+          <div style={{ background: "var(--card)", borderRadius: "var(--radius) var(--radius) 0 0", padding: "32px", textAlign: "center", color: "var(--ink-mute)" }} className="md:rounded-[var(--radius)]">
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 14 }}>Finding comparisons…</p>
           </div>
         )}
 
         {/* Comparing */}
         {phase === "comparing" && target && (
-          <div className="bg-white rounded-t-3xl md:rounded-3xl shadow-2xl overflow-hidden">
-            <div className="flex justify-center pt-3 pb-1 md:hidden">
-              <div className="w-10 h-1 bg-stone-200 rounded-full" />
+          <div style={{ background: "var(--card)", borderRadius: "var(--radius) var(--radius) 0 0", boxShadow: "var(--shadow-card-elevated)", overflow: "hidden" }} className="md:rounded-[var(--radius)]">
+            <div className="md:hidden" style={{ display: "flex", justifyContent: "center", paddingTop: 12, paddingBottom: 4 }}>
+              <div style={{ width: 40, height: 4, background: "var(--line)", borderRadius: 999 }} />
             </div>
-            <div className="p-5">
-              <div className="text-center mb-4">
-                <p className="text-xs text-stone-400 uppercase tracking-widest font-medium mb-1">
+            <div style={{ padding: 20 }}>
+              <div style={{ textAlign: "center", marginBottom: 20 }}>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--ink-mute)", marginBottom: 6 }}>
                   Ranking your {BUCKET_LABELS[rating]} films
                 </p>
-                <h2 className="text-base font-black text-stone-900">Which did you prefer?</h2>
+                <h2 style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "var(--ink)" }}>Which did you prefer?</h2>
                 {totalComps > 1 && (
-                  <div className="flex justify-center gap-1.5 mt-2">
+                  <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 10 }}>
                     {Array.from({ length: totalComps }).map((_, i) => (
-                      <div key={i} className={`w-1.5 h-1.5 rounded-full ${i < compsDone ? "bg-orange-600" : i === compsDone ? "bg-stone-400" : "bg-stone-200"}`} />
+                      <div key={i} style={{
+                        width: 6, height: 6, borderRadius: "50%",
+                        background: i < compsDone ? "var(--brand)" : i === compsDone ? "var(--ink-mute)" : "var(--line)",
+                      }} />
                     ))}
                   </div>
                 )}
               </div>
 
-              <div className="flex gap-3 items-center">
+              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
                 <button
                   onClick={() => handleChoice(true)}
-                  className="flex-1 group flex flex-col items-center gap-2 bg-white border-2 border-stone-200 hover:border-orange-400 hover:bg-orange-50 rounded-2xl p-3 transition-all active:scale-[0.98]"
+                  style={{
+                    flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
+                    background: "var(--paper)", border: "2px solid var(--line)",
+                    borderRadius: "var(--radius)", padding: 12, cursor: "pointer",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--brand)"; e.currentTarget.style.background = "rgba(225,75,51,0.04)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--line)"; e.currentTarget.style.background = "var(--paper)"; }}
                 >
-                  <div className="w-full aspect-[2/3] rounded-xl overflow-hidden bg-stone-100">
-                    {posterUrl
-                      ? <img src={posterUrl} alt={movieTitle} className="w-full h-full object-cover" />
-                      : <div className="w-full h-full flex items-center justify-center text-3xl">🎬</div>
-                    }
+                  <div style={{ width: "100%", aspectRatio: "2/3", borderRadius: 10, overflow: "hidden", background: "var(--sunk)" }}>
+                    {posterUrl && <img src={posterUrl} alt={movieTitle} style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
                   </div>
-                  <p className="text-xs font-semibold text-stone-800 group-hover:text-orange-600 text-center line-clamp-2 transition-colors">{movieTitle}</p>
-                  <span className="text-[10px] text-orange-500 font-medium bg-orange-50 border border-orange-100 px-2 py-0.5 rounded-full">Just rated</span>
+                  <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600, color: "var(--ink)", textAlign: "center", lineClamp: 2 }}>{movieTitle}</p>
+                  <span style={{
+                    fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.08em",
+                    color: "var(--brand)", background: "rgba(225,75,51,0.08)",
+                    border: "1px solid rgba(225,75,51,0.2)", padding: "2px 8px", borderRadius: 999,
+                  }}>Just rated</span>
                 </button>
 
-                <div className="shrink-0">
-                  <span className="text-stone-300 font-black text-base">VS</span>
+                <div style={{ flexShrink: 0 }}>
+                  <span style={{ fontFamily: "var(--font-ui)", fontWeight: 800, fontSize: 14, color: "var(--ink-mute)" }}>VS</span>
                 </div>
 
                 <button
                   onClick={() => handleChoice(false)}
-                  className="flex-1 group flex flex-col items-center gap-2 bg-white border-2 border-stone-200 hover:border-orange-400 hover:bg-orange-50 rounded-2xl p-3 transition-all active:scale-[0.98]"
+                  style={{
+                    flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
+                    background: "var(--paper)", border: "2px solid var(--line)",
+                    borderRadius: "var(--radius)", padding: 12, cursor: "pointer",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--brand)"; e.currentTarget.style.background = "rgba(225,75,51,0.04)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--line)"; e.currentTarget.style.background = "var(--paper)"; }}
                 >
-                  <div className="w-full aspect-[2/3] rounded-xl overflow-hidden bg-stone-100">
-                    {target.poster_url
-                      ? <img src={target.poster_url} alt={target.title} className="w-full h-full object-cover" />
-                      : <div className="w-full h-full flex items-center justify-center text-3xl">🎬</div>
-                    }
+                  <div style={{ width: "100%", aspectRatio: "2/3", borderRadius: 10, overflow: "hidden", background: "var(--sunk)" }}>
+                    {target.poster_url && <img src={target.poster_url} alt={target.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
                   </div>
-                  <p className="text-xs font-semibold text-stone-800 group-hover:text-orange-600 text-center line-clamp-2 transition-colors">{target.title}</p>
-                  <span className="text-[10px] text-stone-400">{target.year}</span>
+                  <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600, color: "var(--ink)", textAlign: "center" }}>{target.title}</p>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--ink-mute)", letterSpacing: "0.06em" }}>{target.year}</span>
                 </button>
               </div>
 
-              <button onClick={handleSkip} className="w-full mt-4 text-stone-400 text-xs hover:text-stone-600 transition-colors py-2">
+              <button
+                onClick={handleSkip}
+                style={{ width: "100%", marginTop: 16, fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--ink-mute)", background: "none", border: "none", cursor: "pointer", padding: "8px 0" }}
+              >
                 Too close to call — skip
               </button>
             </div>
