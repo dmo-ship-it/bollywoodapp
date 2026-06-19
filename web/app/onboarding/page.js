@@ -154,19 +154,13 @@ export default function OnboardingPage() {
   const [showCountryDrop, setShowCountryDrop] = useState(false);
   // Step 2: Languages
   const [languageRanking, setLanguageRanking] = useState([]);
-  // Step 3: Batch 1 selection
-  const [batch1Movies,    setBatch1Movies]    = useState([]);
-  const [batch1Loading,   setBatch1Loading]   = useState(false);
-  const [batch1Selected,  setBatch1Selected]  = useState(new Set());
-  // Step 4: Rate batch 1
-  const [batch1Rated,     setBatch1Rated]     = useState([]);
-  // Step 5: Batch 2 selection (adaptive)
-  const [batch2Movies,    setBatch2Movies]    = useState([]);
-  const [batch2Loading,   setBatch2Loading]   = useState(false);
-  const [batch2Selected,  setBatch2Selected]  = useState(new Set());
-  // Step 6: Rate batch 2
-  const [batch2Rated,     setBatch2Rated]     = useState([]);
-  // Step 7: Compare
+  // Step 3: Selection grid
+  const [gridMovies,      setGridMovies]      = useState([]);
+  const [gridLoading,     setGridLoading]     = useState(false);
+  const [selected,        setSelected]        = useState(new Set());
+  // Step 4: Rating
+  const [ratedFilms,      setRatedFilms]      = useState([]);
+  // Step 5: Compare
   const [pairs,           setPairs]           = useState([]);
   const [pairIdx,         setPairIdx]         = useState(0);
   const [compResults,     setCompResults]     = useState([]);
@@ -199,7 +193,7 @@ export default function OnboardingPage() {
     init();
   }, []);
 
-  async function fetchStratified(buckets, langCodes, orderCol, extraLimit = 0) {
+  async function fetchStratified(buckets, langCodes) {
     const results = await Promise.all(
       buckets.map(({ min, max, limit }) => {
         let q = supabase
@@ -207,9 +201,9 @@ export default function OnboardingPage() {
           .select("id, title, year, poster_url, genres")
           .gte("year", min)
           .lte("year", max)
-          .gte("tmdb_rating", 6.0)
-          .order(orderCol, { ascending: false })
-          .limit(limit + extraLimit);
+          .gte("tmdb_rating", 6.5)
+          .order("tmdb_rating", { ascending: false })
+          .limit(limit);
         if (langCodes.length > 0) q = q.in("language", langCodes);
         return q;
       })
@@ -222,93 +216,34 @@ export default function OnboardingPage() {
 
   async function handleLanguageContinue() {
     setStep(3);
-    setBatch1Loading(true);
-    let movies = await fetchStratified(ALL_DECADE_BUCKETS, languageRanking, "tmdb_popularity");
-    if (movies.length < 15) {
-      movies = await fetchStratified(ALL_DECADE_BUCKETS, [], "tmdb_popularity");
+    setGridLoading(true);
+    let movies = await fetchStratified(ALL_DECADE_BUCKETS, languageRanking);
+    if (movies.length < 20) {
+      movies = await fetchStratified(ALL_DECADE_BUCKETS, []);
     }
     movies.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
-    setBatch1Movies(movies);
-    setBatch1Loading(false);
+    setGridMovies(movies);
+    setGridLoading(false);
   }
 
-  function handleBatch1Continue() {
-    const selected = batch1Movies.filter(m => batch1Selected.has(m.id));
-    setBatch1Rated(selected.map(m => ({ movie: m, rating: null })));
+  function handleGridContinue() {
+    const selectedMovies = gridMovies.filter(m => selected.has(m.id));
+    setRatedFilms(selectedMovies.map(m => ({ movie: m, rating: null })));
     setStep(4);
   }
 
-  function setRating(batchNum, movieId, rating) {
-    if (batchNum === 1) {
-      setBatch1Rated(prev => prev.map(s => s.movie.id === movieId ? { ...s, rating } : s));
-    } else {
-      setBatch2Rated(prev => prev.map(s => s.movie.id === movieId ? { ...s, rating } : s));
-    }
+  function setRating(movieId, rating) {
+    setRatedFilms(prev => prev.map(s => s.movie.id === movieId ? { ...s, rating } : s));
   }
 
-  async function handleBatch1RatingContinue() {
-    // Load batch 2 based on batch 1 ratings
-    setStep(5);
-    setBatch2Loading(true);
-
-    const ratedBatch1 = batch1Rated.filter(s => s.rating != null);
-    const batch1Ids = new Set(batch1Rated.map(s => s.movie.id));
-
-    // Derive era and genre constraints from batch 1 ratings
-    const years = ratedBatch1.map(s => s.movie.year).filter(Boolean);
-    let adaptedBuckets;
-    if (years.length > 0) {
-      const minYear = Math.min(...years) - 5;
-      const maxYear = Math.max(...years) + 5;
-      adaptedBuckets = ALL_DECADE_BUCKETS.filter(b => b.max >= minYear && b.min <= maxYear);
-    } else {
-      adaptedBuckets = ALL_DECADE_BUCKETS;
-    }
-
-    // Top genres from rated films
-    const genreCounts = {};
-    ratedBatch1.forEach(s => (s.movie.genres ?? []).forEach(g => { genreCounts[g] = (genreCounts[g] ?? 0) + 1; }));
-    const topGenres = Object.entries(genreCounts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3)
-      .map(([g]) => g);
-
-    let batch2 = await fetchStratified(adaptedBuckets, languageRanking, "tmdb_rating");
-    if (batch2.filter(m => !batch1Ids.has(m.id)).length < 20) {
-      batch2 = await fetchStratified(adaptedBuckets, [], "tmdb_rating");
-    }
-
-    // Filter out batch 1 films and sort by genre + year
-    let filtered = batch2.filter(m => !batch1Ids.has(m.id));
-    if (topGenres.length > 0) {
-      filtered.sort((a, b) => {
-        const aMatch = (a.genres ?? []).some(g => topGenres.includes(g)) ? 1 : 0;
-        const bMatch = (b.genres ?? []).some(g => topGenres.includes(g)) ? 1 : 0;
-        if (bMatch !== aMatch) return bMatch - aMatch;
-        return (b.year ?? 0) - (a.year ?? 0);
-      });
-    } else {
-      filtered.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
-    }
-
-    setBatch2Movies(filtered);
-    setBatch2Loading(false);
-  }
-
-  function handleBatch2Continue() {
-    const selected = batch2Movies.filter(m => batch2Selected.has(m.id));
-    setBatch2Rated(selected.map(m => ({ movie: m, rating: null })));
-    setStep(6);
-  }
-
-  function handleBatch2RatingContinue() {
-    const allRated = [...batch1Rated, ...batch2Rated];
-    const p = generatePairs(allRated);
+  function handleRatingContinue() {
+    const rated = ratedFilms.filter(s => s.rating != null);
+    const p = generatePairs(rated);
     if (p.length > 0) {
       setPairs(p);
-      setStep(7);
+      setStep(5);
     } else {
-      handleFinish(allRated, []);
+      handleFinish(rated, []);
     }
   }
 
@@ -321,11 +256,11 @@ export default function OnboardingPage() {
       setCompResults(updatedCompResults);
       setPairIdx(i => i + 1);
     } else {
-      handleFinish([...batch1Rated, ...batch2Rated], updatedCompResults);
+      handleFinish(ratedFilms, updatedCompResults);
     }
   }
 
-  async function handleFinish(sel = [...batch1Rated, ...batch2Rated], cr = compResults) {
+  async function handleFinish(sel = ratedFilms, cr = compResults) {
     setSaving(true);
     const currentUser = user || (await supabase.auth.getUser()).data.user;
     if (currentUser) {
@@ -383,7 +318,7 @@ export default function OnboardingPage() {
     return (
       <div className="max-w-lg mx-auto px-4 py-10">
         <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 1 of 6</p>
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 1 of 4</p>
           <h1 className="text-2xl font-black text-stone-900 mb-1">Create your profile</h1>
           <p className="text-stone-500 text-sm">How you'll appear to others on Bolly</p>
         </div>
@@ -451,7 +386,7 @@ export default function OnboardingPage() {
     return (
       <div className="max-w-lg mx-auto px-4 py-10">
         <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 2 of 6</p>
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 2 of 4</p>
           <h1 className="text-2xl font-black text-stone-900 mb-1">Where are you based?</h1>
           <p className="text-stone-500 text-sm">Helps us surface locally relevant films and showtimes.</p>
         </div>
@@ -546,7 +481,7 @@ export default function OnboardingPage() {
     return (
       <div className="max-w-lg mx-auto px-4 py-10">
         <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 3 of 6</p>
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 3 of 4</p>
           <h1 className="text-2xl font-black text-stone-900 mb-1">Which languages do you watch most?</h1>
           <p className="text-stone-500 text-sm">Select in order — most-watched first. We'll show those films at the top of your feed.</p>
         </div>
@@ -621,17 +556,17 @@ export default function OnboardingPage() {
     );
   }
 
-  // ── Step 3: Batch 1 Selection ──
+  // ── Step 3: Selection Grid ──
   if (step === 3) {
     return (
       <div className="max-w-lg mx-auto px-4 pt-10 pb-36">
         <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 4 of 6</p>
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 4 of 4</p>
           <h1 className="text-2xl font-black text-stone-900 mb-1">Which of these have you seen?</h1>
-          <p className="text-stone-500 text-sm">Tap any film you've watched — even if it was years ago</p>
+          <p className="text-stone-500 text-sm">Tap any film you've watched — we'll show you the greatest movies of each era</p>
         </div>
 
-        {batch1Loading ? (
+        {gridLoading ? (
           <div className="grid grid-cols-3 gap-2">
             {Array.from({ length: 18 }).map((_, i) => (
               <div key={i} className="aspect-[2/3] rounded-xl bg-stone-100 animate-pulse" />
@@ -639,15 +574,15 @@ export default function OnboardingPage() {
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-2">
-            {batch1Movies.map(movie => {
-              const seen = batch1Selected.has(movie.id);
+            {gridMovies.map(movie => {
+              const seen = selected.has(movie.id);
               return (
                 <button
                   key={movie.id}
                   onClick={() => {
-                    const next = new Set(batch1Selected);
+                    const next = new Set(selected);
                     if (next.has(movie.id)) next.delete(movie.id); else next.add(movie.id);
-                    setBatch1Selected(next);
+                    setSelected(next);
                   }}
                   className={`relative aspect-[2/3] rounded-xl overflow-hidden bg-stone-100 transition-all ${
                     seen
@@ -689,18 +624,18 @@ export default function OnboardingPage() {
 
         <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-4 bg-white/95 backdrop-blur-sm border-t border-stone-100">
           <div className="max-w-lg mx-auto">
-            {batch1Selected.size > 0 && (
+            {selected.size > 0 && (
               <p className="text-center text-xs text-stone-400 mb-3">
-                {batch1Selected.size} film{batch1Selected.size !== 1 ? "s" : ""} selected
+                {selected.size} film{selected.size !== 1 ? "s" : ""} selected
               </p>
             )}
             <button
-              onClick={handleBatch1Continue}
-              disabled={batch1Selected.size === 0}
+              onClick={handleGridContinue}
+              disabled={selected.size === 0}
               className="w-full bg-orange-600 text-white font-bold py-3.5 rounded-full hover:bg-orange-500 transition-colors text-sm disabled:opacity-40 shadow-sm"
             >
-              {batch1Selected.size > 0
-                ? `Rate ${batch1Selected.size} film${batch1Selected.size !== 1 ? "s" : ""} →`
+              {selected.size > 0
+                ? `Rate ${selected.size} film${selected.size !== 1 ? "s" : ""} →`
                 : "Tap films you've watched"}
             </button>
           </div>
@@ -709,24 +644,24 @@ export default function OnboardingPage() {
     );
   }
 
-  // ── Step 4: Rate Batch 1 ──
+  // ── Step 4: Rating ──
   if (step === 4) {
-    const ratedCount = batch1Rated.filter(s => s.rating != null).length;
+    const ratedCount = ratedFilms.filter(s => s.rating != null).length;
 
     return (
       <div className="max-w-lg mx-auto px-4 pt-10 pb-36">
         <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 5 of 6</p>
+          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Last step</p>
           <h1 className="text-2xl font-black text-stone-900 mb-1">How did you feel about them?</h1>
           <p className="text-stone-500 text-sm">
             {ratedCount === 0
-              ? `Rate the ${batch1Rated.length} films you've seen`
-              : `${ratedCount} of ${batch1Rated.length} rated`}
+              ? `Rate the ${ratedFilms.length} films you've seen`
+              : `${ratedCount} of ${ratedFilms.length} rated`}
           </p>
         </div>
 
         <div className="space-y-3">
-          {batch1Rated.map(({ movie, rating }) => (
+          {ratedFilms.map(({ movie, rating }) => (
             <div
               key={movie.id}
               className={`bg-white border rounded-2xl p-4 shadow-sm transition-colors ${
@@ -752,7 +687,7 @@ export default function OnboardingPage() {
                 {RATINGS.map(r => (
                   <button
                     key={r.value}
-                    onClick={() => setRating(1, movie.id, r.value)}
+                    onClick={() => setRating(movie.id, r.value)}
                     className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border transition-all ${
                       rating === r.value
                         ? "border-orange-400 bg-orange-50"
@@ -771,7 +706,7 @@ export default function OnboardingPage() {
         <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-4 bg-white/95 backdrop-blur-sm border-t border-stone-100">
           <div className="max-w-lg mx-auto">
             <button
-              onClick={handleBatch1RatingContinue}
+              onClick={handleRatingContinue}
               disabled={ratedCount === 0}
               className="w-full bg-orange-600 text-white font-bold py-3.5 rounded-full hover:bg-orange-500 transition-colors text-sm disabled:opacity-40 shadow-sm"
             >
@@ -785,176 +720,7 @@ export default function OnboardingPage() {
     );
   }
 
-  // ── Step 5: Batch 2 Selection (Adaptive) ──
-  if (step === 5) {
-    return (
-      <div className="max-w-lg mx-auto px-4 pt-10 pb-36">
-        <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 6 of 6</p>
-          <h1 className="text-2xl font-black text-stone-900 mb-1">More recommendations for you</h1>
-          <p className="text-stone-500 text-sm">Based on what you've rated, here are more films we think you'll love</p>
-        </div>
-
-        {batch2Loading ? (
-          <div className="grid grid-cols-3 gap-2">
-            {Array.from({ length: 18 }).map((_, i) => (
-              <div key={i} className="aspect-[2/3] rounded-xl bg-stone-100 animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-3 gap-2">
-            {batch2Movies.map(movie => {
-              const seen = batch2Selected.has(movie.id);
-              return (
-                <button
-                  key={movie.id}
-                  onClick={() => {
-                    const next = new Set(batch2Selected);
-                    if (next.has(movie.id)) next.delete(movie.id); else next.add(movie.id);
-                    setBatch2Selected(next);
-                  }}
-                  className={`relative aspect-[2/3] rounded-xl overflow-hidden bg-stone-100 transition-all ${
-                    seen
-                      ? "ring-2 ring-orange-500 ring-offset-1 scale-[0.97]"
-                      : "hover:ring-1 hover:ring-stone-300 hover:scale-[1.02]"
-                  }`}
-                >
-                  {movie.poster_url ? (
-                    <img
-                      src={movie.poster_url}
-                      alt={movie.title}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-stone-300 text-2xl">🎬</div>
-                  )}
-
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent px-1.5 pb-1.5 pt-6">
-                    <p className="text-[9px] text-white font-semibold leading-tight line-clamp-2">{movie.title}</p>
-                  </div>
-
-                  {seen && (
-                    <div className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center shadow-sm">
-                      <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-                        <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                  )}
-
-                  {seen && (
-                    <div className="absolute inset-0 bg-orange-500/10 pointer-events-none" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-4 bg-white/95 backdrop-blur-sm border-t border-stone-100">
-          <div className="max-w-lg mx-auto">
-            {batch2Selected.size > 0 && (
-              <p className="text-center text-xs text-stone-400 mb-3">
-                {batch2Selected.size} film{batch2Selected.size !== 1 ? "s" : ""} selected
-              </p>
-            )}
-            <button
-              onClick={handleBatch2Continue}
-              disabled={batch2Selected.size === 0}
-              className="w-full bg-orange-600 text-white font-bold py-3.5 rounded-full hover:bg-orange-500 transition-colors text-sm disabled:opacity-40 shadow-sm"
-            >
-              {batch2Selected.size > 0
-                ? `Rate ${batch2Selected.size} film${batch2Selected.size !== 1 ? "s" : ""} →`
-                : "Tap films you'd like to rate"}
-            </button>
-            <button
-              onClick={handleBatch2RatingContinue}
-              className="w-full mt-2.5 text-stone-400 text-xs hover:text-stone-600 transition-colors"
-            >
-              Skip — continue without these
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── Step 6: Rate Batch 2 ──
-  if (step === 6) {
-    const ratedCount = batch2Rated.filter(s => s.rating != null).length;
-
-    return (
-      <div className="max-w-lg mx-auto px-4 pt-10 pb-36">
-        <div className="mb-6">
-          <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-2">Last step</p>
-          <h1 className="text-2xl font-black text-stone-900 mb-1">How did you feel about these?</h1>
-          <p className="text-stone-500 text-sm">
-            {ratedCount === 0
-              ? `Rate the ${batch2Rated.length} films`
-              : `${ratedCount} of ${batch2Rated.length} rated`}
-          </p>
-        </div>
-
-        <div className="space-y-3">
-          {batch2Rated.map(({ movie, rating }) => (
-            <div
-              key={movie.id}
-              className={`bg-white border rounded-2xl p-4 shadow-sm transition-colors ${
-                rating != null ? "border-stone-200" : "border-orange-200"
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-14 rounded-lg overflow-hidden bg-stone-100 shrink-0">
-                  {movie.poster_url
-                    ? <img src={movie.poster_url} alt={movie.title} className="w-full h-full object-cover" />
-                    : <div className="w-full h-full flex items-center justify-center text-lg">🎬</div>
-                  }
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm text-stone-900 truncate">{movie.title}</p>
-                  <p className="text-xs text-stone-400">{movie.year}</p>
-                  {rating == null && (
-                    <p className="text-[10px] text-orange-500 mt-0.5">Tap to rate ↓</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex gap-1.5">
-                {RATINGS.map(r => (
-                  <button
-                    key={r.value}
-                    onClick={() => setRating(2, movie.id, r.value)}
-                    className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border transition-all ${
-                      rating === r.value
-                        ? "border-orange-400 bg-orange-50"
-                        : "border-stone-200 bg-stone-50 hover:border-stone-300"
-                    }`}
-                  >
-                    <span className="text-base">{r.emoji}</span>
-                    <span className="text-[9px] text-stone-500 leading-tight text-center">{r.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-4 bg-white/95 backdrop-blur-sm border-t border-stone-100">
-          <div className="max-w-lg mx-auto">
-            <button
-              onClick={handleBatch2RatingContinue}
-              className="w-full bg-orange-600 text-white font-bold py-3.5 rounded-full hover:bg-orange-500 transition-colors text-sm shadow-sm"
-            >
-              {ratedCount > 0
-                ? `Continue with ${ratedCount} rating${ratedCount !== 1 ? "s" : ""} →`
-                : "Skip rating — finish up"}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── Step 7: Pairwise Compare ──
+  // ── Step 5: Pairwise Compare ──
   if (step === 7) {
     const pair = pairs[pairIdx];
 
