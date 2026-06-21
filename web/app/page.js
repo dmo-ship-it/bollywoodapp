@@ -102,17 +102,28 @@ export default function HomePage() {
   }, []);
 
   async function buildRecommendations(reactions, profile, ratedIds, userId, authSupabase) {
-    // Primary: taste engine — ranks ALL unseen films by the same personalized
-    // "for you" score shown on the cards, highest first. Only surface genuine
-    // matches (>= 60) so mediocre-fit films don't land in "Recommended".
+    // Primary: precomputed matrix-factorization recommendations (SVD, built weekly
+    // by scripts/build_recommendations.py from MovieLens + real user ratings).
+    if (userId) {
+      const { data: precomputed } = await authSupabase
+        .from("user_recommendations")
+        .select("movie_id, score, rank, movies(" + MOVIE_COLS + ")")
+        .eq("user_id", userId)
+        .order("rank", { ascending: true })
+        .limit(20);
+
+      if (precomputed?.length) {
+        setRecommended(precomputed.map((r) => r.movies).filter(Boolean));
+        return;
+      }
+    }
+
+    // Fallback: taste engine (content-based) when no precomputed recs exist yet.
     if (userId) {
       const tasteRecs = await getTasteBasedRecommendations(userId, { limit: 20 });
       const strong = tasteRecs.filter((m) => m.matchPct >= 60);
       if (strong.length >= 5) {
         setRecommended(strong);
-        // These films already carry their personalized score (matchPct) and don't
-        // include a tmdb_rating fallback — seed the card score map directly so the
-        // circles render even when the user has no strong baseline yet.
         setPersonalScores((prev) => {
           const next = { ...prev };
           for (const m of strong) if (next[m.id] == null) next[m.id] = m.matchPct;
@@ -122,7 +133,7 @@ export default function HomePage() {
       }
     }
 
-    // Fallback: simple genre/language-based recommendations
+    // Last resort: simple genre/language-based recommendations
     const genreCount = {};
     reactions.filter((r) => r.rating >= 4).forEach((r) => {
       (r.movies?.genres ?? []).forEach((g) => { genreCount[g] = (genreCount[g] ?? 0) + 1; });
