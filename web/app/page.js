@@ -37,6 +37,7 @@ export default function HomePage() {
   const [personalScores, setPersonalScores]= useState({});  // predicted "for you" scores (taste match)
   const [userId,         setUserId]        = useState(null);
   const [userWatchlist,  setUserWatchlist] = useState(new Set());
+  const [titleIndex,     setTitleIndex]    = useState([]);
 
   // The score shown on every card: the user's own score wins where they've rated,
   // otherwise the personalized taste-match prediction. Falls back to global score
@@ -45,8 +46,14 @@ export default function HomePage() {
 
   // Initial load — hero, curated sections, user data
   useEffect(() => {
+    // Seed title index from cache immediately so search works before the fetch returns.
+    try {
+      const cached = localStorage.getItem("rasika_title_index");
+      if (cached) setTitleIndex(JSON.parse(cached));
+    } catch {}
+
     async function loadCurated() {
-      const [heroRes, newRes, trendRes, soonRes] = await Promise.all([
+      const [heroRes, newRes, trendRes, soonRes, indexRes] = await Promise.all([
         supabase
           .from("movies")
           .select("id, title, year, overview, backdrop_url, poster_url, tmdb_rating, genres, ott_platforms, mood_tags, tone")
@@ -62,12 +69,19 @@ export default function HomePage() {
         supabase.from("movies").select(MOVIE_COLS + ", trailer_url")
           .gt("release_date", TODAY)
           .order("release_date", { ascending: true }).limit(20),
+        supabase.from("movies").select(MOVIE_COLS)
+          .order("tmdb_popularity", { ascending: false })
+          .limit(5000),
       ]);
 
       if (heroRes.data?.length) setHero(heroRes.data[Math.floor(Math.random() * heroRes.data.length)]);
       setNewReleases(newRes.data ?? []);
       setTrending(trendRes.data ?? []);
       setComingSoon(soonRes.data ?? []);
+      if (indexRes.data?.length) {
+        setTitleIndex(indexRes.data);
+        try { localStorage.setItem("rasika_title_index", JSON.stringify(indexRes.data)); } catch {}
+      }
       setCuratedLoading(false);
     }
     loadCurated();
@@ -174,11 +188,12 @@ export default function HomePage() {
   }, [userId, recommended, newReleases, trending, movies]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Grid fetch — runs when searching, filtering, or "see all"
-  const fetchMovies = useCallback(async () => {
+  const fetchMovies = useCallback(async (signal) => {
     setLoading(true);
 
     // Resolve actor/director filters to movie IDs (may require extra DB calls)
     const personIds = await resolvePersonMovieIds(filters, supabase);
+    if (signal.aborted) return;
     if (personIds !== null && personIds.length === 0) {
       setMovies([]);
       setLoading(false);
@@ -206,19 +221,32 @@ export default function HomePage() {
       query = query.order("tmdb_popularity", { ascending: false });
     }
 
-    const { data } = await query;
+    const { data } = await query.abortSignal(signal);
+    if (signal.aborted) return;
     setMovies(data ?? []);
     setLoading(false);
   }, [search, filters.language, filters.decade?.label, filters.actorId, filters.directorId, seeAll]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const hasActiveFilters = countActiveFilters(filters) > 0;
-  const isGridMode       = search || hasActiveFilters || seeAll;
+  const isGridMode       = (search && search.length >= 3) || hasActiveFilters || seeAll;
+
+  // Pure title search is handled client-side — no DB round-trip needed.
+  const isSearchOnly  = !!(search && search.length >= 3 && !hasActiveFilters && !seeAll);
+
+  const searchResults = useMemo(() => {
+    if (!isSearchOnly) return [];
+    const q = search.toLowerCase();
+    return titleIndex.filter((m) => m.title.toLowerCase().includes(q));
+  }, [isSearchOnly, search, titleIndex]);
 
   useEffect(() => {
-    if (!isGridMode) return;
-    const t = setTimeout(fetchMovies, 150);
-    return () => clearTimeout(t);
-  }, [fetchMovies, isGridMode]);
+    if (!isGridMode || isSearchOnly) return;
+    const controller = new AbortController();
+    const t = setTimeout(() => fetchMovies(controller.signal), 150);
+    return () => { clearTimeout(t); controller.abort(); };
+  }, [fetchMovies, isGridMode, isSearchOnly]);
+
+  const gridMovies = isSearchOnly ? searchResults : movies;
 
   function clearAll() { setSearch(""); setFilters(EMPTY_FILTERS); setSeeAll(null); }
 
@@ -392,25 +420,28 @@ export default function HomePage() {
                   ? "Coming Soon"
                   : seeAll === "recommended"
                   ? "Recommended for You"
-                  : `${movies.length} film${movies.length !== 1 ? "s" : ""}`}
+                  : `${gridMovies.length} film${gridMovies.length !== 1 ? "s" : ""}`}
               </p>
               <button onClick={clearAll} style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--brand)", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
                 ← Back to Discover
               </button>
             </div>
 
-            {loading ? (
+            {(!isSearchOnly && loading && gridMovies.length === 0) ? (
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">
                 {Array.from({ length: 21 }).map((_, i) => <div key={i} className="aspect-[2/3] rounded-xl shimmer" />)}
               </div>
-            ) : movies.length === 0 ? (
+            ) : gridMovies.length === 0 ? (
               <div className="text-center py-28">
                 <p style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "var(--ink-soft)", marginBottom: 6 }}>No films found</p>
                 <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--ink-mute)" }}>Try adjusting your filters or search term</p>
               </div>
             ) : (
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">
-                {movies.map((movie) => (
+              <div
+                className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4"
+                style={{ opacity: (!isSearchOnly && loading) ? 0.45 : 1, transition: "opacity 0.15s ease" }}
+              >
+                {gridMovies.map((movie) => (
                   <MovieCard
                     key={movie.id}
                     movie={movie}
