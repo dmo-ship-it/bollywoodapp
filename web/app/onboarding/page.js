@@ -529,49 +529,61 @@ export default function OnboardingPage() {
   async function handleFinish(sel = ratedFilms, cr = compResults) {
     setSaving(true);
     const currentUser = user || (await supabase.auth.getUser()).data.user;
-    if (currentUser) {
-      const scores    = computeScores(sel, cr);
-      const reactions = sel
-        .filter((s) => s.rating != null)
-        .map((s) => ({
-          user_id:  currentUser.id,
-          movie_id: s.movie.id,
-          rating:   s.rating,
-          score:    scores[s.movie.id] ?? INITIAL_SCORES[s.rating],
-        }));
-      if (reactions.length) {
-        const { error: reactErr } = await supabase
-          .from("user_reactions")
-          .upsert(reactions, { onConflict: "user_id,movie_id" });
-        if (reactErr) console.error("user_reactions upsert failed:", reactErr);
-      }
-
-      const { error: profileErr } = await supabase.from("user_profiles").upsert(
-        {
-          user_id:             currentUser.id,
-          display_name:        displayName.trim() || null,
-          username:            username.trim().toLowerCase() || null,
-          dna:                 buildDNA(sel),
-          onboarding_complete: true,
-          email:               currentUser.email,
-          country:             country || null,
-          city:                city.trim() || null,
-        },
-        { onConflict: "user_id" }
-      );
-      if (profileErr) console.error("user_profiles core upsert failed:", profileErr);
-
-      const meta = currentUser.user_metadata || {};
-      await supabase.from("user_profiles").upsert(
-        {
-          user_id:             currentUser.id,
-          full_name:           meta.full_name || meta.name || displayName.trim() || null,
-          profile_picture_url: meta.avatar_url || meta.picture || null,
-          preferred_languages: languageRanking.length > 0 ? languageRanking : null,
-        },
-        { onConflict: "user_id" }
-      );
+    if (!currentUser) {
+      console.error("handleFinish: no authenticated user");
+      router.push("/login");
+      return;
     }
+
+    const scores    = computeScores(sel, cr);
+    const reactions = sel
+      .filter((s) => s.rating != null)
+      .map((s) => ({
+        user_id:  currentUser.id,
+        movie_id: s.movie.id,
+        rating:   s.rating,
+        score:    scores[s.movie.id] ?? INITIAL_SCORES[s.rating],
+      }));
+
+    console.log(`[onboarding] saving ${reactions.length} reactions for user ${currentUser.id}`);
+
+    if (reactions.length) {
+      const { error: reactErr } = await supabase
+        .from("user_reactions")
+        .upsert(reactions, { onConflict: "user_id,movie_id" });
+      if (reactErr) {
+        console.error("[onboarding] user_reactions upsert failed:", JSON.stringify(reactErr));
+        // Surface to user so it's visible in UI testing
+        alert(`Save error (reactions): ${reactErr.message || reactErr.code || JSON.stringify(reactErr)}`);
+      }
+    }
+
+    const { error: profileErr } = await supabase.from("user_profiles").upsert(
+      {
+        user_id:             currentUser.id,
+        display_name:        displayName.trim() || null,
+        username:            username.trim().toLowerCase() || null,
+        dna:                 buildDNA(sel),
+        onboarding_complete: true,
+        email:               currentUser.email,
+        country:             country || null,
+        city:                city.trim() || null,
+      },
+      { onConflict: "user_id" }
+    );
+    if (profileErr) console.error("[onboarding] user_profiles core upsert failed:", JSON.stringify(profileErr));
+
+    const meta = currentUser.user_metadata || {};
+    await supabase.from("user_profiles").upsert(
+      {
+        user_id:             currentUser.id,
+        full_name:           meta.full_name || meta.name || displayName.trim() || null,
+        profile_picture_url: meta.avatar_url || meta.picture || null,
+        preferred_languages: languageRanking.length > 0 ? languageRanking : null,
+      },
+      { onConflict: "user_id" }
+    );
+
     router.push("/");
   }
 
