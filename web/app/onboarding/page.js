@@ -57,14 +57,287 @@ const RATINGS = [
 const INITIAL_SCORES = { 5: 90, 4: 70, 3: 50, 2: 30, 1: 10 };
 const BUCKET_RANGES  = { 5: [80, 100], 4: [60, 79], 3: [40, 59], 2: [20, 39], 1: [0, 19] };
 
-const ALL_DECADE_BUCKETS = [
-  { min: 1900, max: 1979, limit: 8  },
-  { min: 1980, max: 1989, limit: 8  },
-  { min: 1990, max: 1999, limit: 10 },
-  { min: 2000, max: 2009, limit: 10 },
-  { min: 2010, max: 2019, limit: 12 },
-  { min: 2020, max: 2030, limit: 8  },
-];
+const CURATED_FILMS = {
+  hi: [
+    // 1960s
+    { title: "Mughal-e-Azam",                    year: 1960 },
+    { title: "Sahib Bibi Aur Ghulam",            year: 1962 },
+    { title: "Guide",                             year: 1965 },
+    { title: "Waqt",                              year: 1965 },
+    { title: "Jewel Thief",                       year: 1967 },
+    { title: "Padosan",                           year: 1968 },
+    { title: "Aradhana",                          year: 1969 },
+    // 1970s
+    { title: "Anand",                             year: 1971 },
+    { title: "Bobby",                             year: 1973 },
+    { title: "Zanjeer",                           year: 1973 },
+    { title: "Sholay",                            year: 1975 },
+    { title: "Deewaar",                           year: 1975 },
+    { title: "Kabhi Kabhie",                      year: 1976 },
+    { title: "Amar Akbar Anthony",               year: 1977 },
+    { title: "Don",                               year: 1978 },
+    { title: "Muqaddar Ka Sikandar",              year: 1978 },
+    { title: "Gol Maal",                          year: 1979 },
+    // 1980s
+    { title: "Silsila",                           year: 1981 },
+    { title: "Arth",                              year: 1982 },
+    { title: "Masoom",                            year: 1983 },
+    { title: "Hero",                              year: 1983 },
+    { title: "Tezaab",                            year: 1988 },
+    { title: "Qayamat Se Qayamat Tak",            year: 1988 },
+    { title: "Chandni",                           year: 1989 },
+    { title: "Maine Pyar Kiya",                   year: 1989 },
+    { title: "Ram Lakhan",                        year: 1989 },
+    // 1990s
+    { title: "Dil",                               year: 1990 },
+    { title: "Hum",                               year: 1991 },
+    { title: "Jo Jeeta Wohi Sikandar",            year: 1992 },
+    { title: "Darr",                              year: 1993 },
+    { title: "Baazigar",                          year: 1993 },
+    { title: "1942: A Love Story",                year: 1994 },
+    { title: "Hum Aapke Hain Koun..!",           year: 1994 },
+    { title: "Dilwale Dulhania Le Jayenge",       year: 1995 },
+    { title: "Rangeela",                          year: 1995 },
+    { title: "Dil To Pagal Hai",                  year: 1997 },
+    { title: "Border",                            year: 1997 },
+    { title: "Kuch Kuch Hota Hai",               year: 1998 },
+    { title: "Satya",                             year: 1998 },
+    { title: "Hum Dil De Chuke Sanam",           year: 1999 },
+    { title: "Hum Saath Saath Hain",             year: 1999 },
+    { title: "Taal",                              year: 1999 },
+    // 2000s
+    { title: "Mohabbatein",                       year: 2000 },
+    { title: "Lagaan: Once Upon a Time in India", year: 2001 },
+    { title: "Kabhi Khushi Kabhie Gham",         year: 2001 },
+    { title: "Devdas",                            year: 2002 },
+    { title: "Kal Ho Naa Ho",                     year: 2003 },
+    { title: "Main Hoon Na",                      year: 2004 },
+    { title: "Veer-Zaara",                        year: 2004 },
+    { title: "Bunty Aur Babli",                  year: 2005 },
+    { title: "Black",                             year: 2005 },
+    { title: "Rang De Basanti",                   year: 2006 },
+    { title: "Lage Raho Munna Bhai",             year: 2006 },
+    { title: "Dhoom 2",                           year: 2006 },
+    { title: "Taare Zameen Par",                  year: 2007 },
+    { title: "Chak De! India",                    year: 2007 },
+    { title: "Jab We Met",                        year: 2007 },
+    { title: "Om Shanti Om",                      year: 2007 },
+    { title: "Kaminey",                           year: 2009 },
+    { title: "3 Idiots",                          year: 2009 },
+    // 2010s
+    { title: "Dabangg",                           year: 2010 },
+    { title: "Udaan",                             year: 2010 },
+    { title: "Zindagi Na Milegi Dobara",          year: 2011 },
+    { title: "Rockstar",                          year: 2011 },
+    { title: "Gangs of Wasseypur - Part 1",      year: 2012 },
+    { title: "Kahaani",                           year: 2012 },
+    { title: "Barfi!",                            year: 2012 },
+    { title: "English Vinglish",                  year: 2012 },
+    { title: "Bhaag Milkha Bhaag",               year: 2013 },
+    { title: "Queen",                             year: 2014 },
+    { title: "PK",                                year: 2014 },
+    { title: "Haider",                            year: 2014 },
+    { title: "Highway",                           year: 2014 },
+    { title: "Bajrangi Bhaijaan",                year: 2015 },
+    { title: "Piku",                              year: 2015 },
+    { title: "Bajirao Mastani",                   year: 2015 },
+    { title: "Dil Dhadakne Do",                   year: 2015 },
+    { title: "Dangal",                            year: 2016 },
+    { title: "Sultan",                            year: 2016 },
+    { title: "Ae Dil Hai Mushkil",               year: 2016 },
+    { title: "Udta Punjab",                       year: 2016 },
+    { title: "Raazi",                             year: 2018 },
+    { title: "Andhadhun",                         year: 2018 },
+    { title: "Sanju",                             year: 2018 },
+    { title: "Gully Boy",                         year: 2019 },
+    { title: "Article 15",                        year: 2019 },
+    { title: "Kabir Singh",                       year: 2019 },
+    { title: "Chhichhore",                        year: 2019 },
+    // 2020s
+    { title: "Shershaah",                         year: 2021 },
+    { title: "Sardar Udham",                      year: 2021 },
+    { title: "Gangubai Kathiawadi",               year: 2022 },
+    { title: "Drishyam 2",                        year: 2022 },
+    { title: "The Kashmir Files",                 year: 2022 },
+    { title: "Pathaan",                           year: 2023 },
+    { title: "Jawan",                             year: 2023 },
+    { title: "Animal",                            year: 2023 },
+    { title: "12th Fail",                         year: 2023 },
+    { title: "Rocky Aur Rani Kii Prem Kahaani",  year: 2023 },
+    { title: "Stree 2",                           year: 2024 },
+  ],
+
+  ta: [
+    { title: "Parasakthi",                        year: 1952 },
+    { title: "Ninaithaale Inikkum",               year: 1979 },
+    { title: "Moondram Pirai",                    year: 1982 },
+    { title: "Nayakan",                           year: 1987 },
+    { title: "Agni Natchathiram",                 year: 1988 },
+    { title: "Apoorva Sagodharargal",             year: 1989 },
+    { title: "Thalapathi",                        year: 1991 },
+    { title: "Roja",                              year: 1992 },
+    { title: "Thevar Magan",                      year: 1992 },
+    { title: "Bombay",                            year: 1995 },
+    { title: "Baasha",                            year: 1995 },
+    { title: "Indian",                            year: 1996 },
+    { title: "Iruvar",                            year: 1997 },
+    { title: "Padayappa",                         year: 1999 },
+    { title: "Alaipayuthey",                      year: 2000 },
+    { title: "Anbe Sivam",                        year: 2003 },
+    { title: "Virumaandi",                        year: 2004 },
+    { title: "Ghilli",                            year: 2004 },
+    { title: "Anniyan",                           year: 2005 },
+    { title: "Chandramukhi",                      year: 2005 },
+    { title: "Ghajini",                           year: 2005 },
+    { title: "Sivaji: The Boss",                  year: 2007 },
+    { title: "Vaaranam Aayiram",                  year: 2008 },
+    { title: "Dasavatharam",                      year: 2008 },
+    { title: "Enthiran",                          year: 2010 },
+    { title: "Singam",                            year: 2010 },
+    { title: "Vinnaithaandi Varuvaayaa",          year: 2010 },
+    { title: "Aadukalam",                         year: 2011 },
+    { title: "3",                                 year: 2012 },
+    { title: "Thuppakki",                         year: 2012 },
+    { title: "Pizza",                             year: 2012 },
+    { title: "Soodhu Kavvum",                     year: 2013 },
+    { title: "Jigarthanda",                       year: 2014 },
+    { title: "Velaiyilla Pattathari",             year: 2014 },
+    { title: "Kaaka Muttai",                      year: 2015 },
+    { title: "Thani Oruvan",                      year: 2015 },
+    { title: "O Kadhal Kanmani",                  year: 2015 },
+    { title: "Papanasam",                         year: 2015 },
+    { title: "Kabali",                            year: 2016 },
+    { title: "Theri",                             year: 2016 },
+    { title: "Dhuruvangal Pathinaaru",            year: 2016 },
+    { title: "Visaranai",                         year: 2016 },
+    { title: "24",                                year: 2016 },
+    { title: "Vikram Vedha",                      year: 2017 },
+    { title: "Mersal",                            year: 2017 },
+    { title: "Aruvi",                             year: 2017 },
+    { title: "Theeran Adhigaaram Ondru",          year: 2017 },
+    { title: "96",                                year: 2018 },
+    { title: "Pariyerum Perumal",                 year: 2018 },
+    { title: "Vada Chennai",                      year: 2018 },
+    { title: "Ratsasan",                          year: 2018 },
+    { title: "Asuran",                            year: 2019 },
+    { title: "Super Deluxe",                      year: 2019 },
+    { title: "Kaithi",                            year: 2019 },
+    { title: "Bigil",                             year: 2019 },
+    { title: "Soorarai Pottru",                   year: 2020 },
+    { title: "Master",                            year: 2021 },
+    { title: "Jai Bhim",                          year: 2021 },
+    { title: "Karnan",                            year: 2021 },
+    { title: "Sarpatta Parambarai",               year: 2021 },
+    { title: "Doctor",                            year: 2021 },
+    { title: "Vikram",                            year: 2022 },
+    { title: "Ponniyin Selvan: Part I",           year: 2022 },
+    { title: "Leo",                               year: 2023 },
+    { title: "Jailer",                            year: 2023 },
+    { title: "Amaran",                            year: 2024 },
+    { title: "Maharaja",                          year: 2024 },
+  ],
+
+  te: [
+    { title: "Mayabazar",                         year: 1957 },
+    { title: "Sankarabharanam",                   year: 1980 },
+    { title: "Sagara Sangamam",                   year: 1983 },
+    { title: "Swarnakamalam",                     year: 1988 },
+    { title: "Geethanjali",                       year: 1989 },
+    { title: "Siva",                              year: 1989 },
+    { title: "Kshana Kshanam",                    year: 1991 },
+    { title: "Muta Mestri",                       year: 1993 },
+    { title: "Allari Premikudu",                  year: 1994 },
+    { title: "Ninne Pelladatha",                  year: 1996 },
+    { title: "Okkadu",                            year: 2003 },
+    { title: "Aarya",                             year: 2004 },
+    { title: "Athadu",                            year: 2005 },
+    { title: "Pokiri",                            year: 2006 },
+    { title: "Bommarillu",                        year: 2006 },
+    { title: "Magadheera",                        year: 2009 },
+    { title: "Vedam",                             year: 2010 },
+    { title: "Dookudu",                           year: 2011 },
+    { title: "Eega",                              year: 2012 },
+    { title: "Businessman",                       year: 2012 },
+    { title: "Atharintiki Daaredi",               year: 2013 },
+    { title: "Manam",                             year: 2014 },
+    { title: "Race Gurram",                       year: 2014 },
+    { title: "Son of Satyamurthy",               year: 2015 },
+    { title: "Srimanthudu",                       year: 2015 },
+    { title: "B\u0101hubali: The Beginning",     year: 2015 },
+    { title: "Pelli Choopulu",                    year: 2016 },
+    { title: "Sarrainodu",                        year: 2016 },
+    { title: "B\u0101hubali 2: The Conclusion",  year: 2017 },
+    { title: "Arjun Reddy",                       year: 2017 },
+    { title: "DJ: Duvvada Jagannadham",           year: 2017 },
+    { title: "Bharat Ane Nenu",                   year: 2018 },
+    { title: "Rangasthalam",                      year: 2018 },
+    { title: "Mahanati",                          year: 2018 },
+    { title: "Geetha Govindam",                   year: 2018 },
+    { title: "Taxiwala",                          year: 2018 },
+    { title: "Jersey",                            year: 2019 },
+    { title: "Dear Comrade",                      year: 2019 },
+    { title: "Agent Sai Srinivasa Athreya",       year: 2019 },
+    { title: "Ala Vaikunthapurramuloo",           year: 2020 },
+    { title: "Pushpa: The Rise",                  year: 2021 },
+    { title: "Shyam Singha Roy",                  year: 2021 },
+    { title: "RRR",                               year: 2022 },
+    { title: "Sita Ramam",                        year: 2022 },
+    { title: "Ante... Sundaraniki!",              year: 2022 },
+    { title: "Viraata Parvam",                    year: 2022 },
+    { title: "Hi Nanna",                          year: 2023 },
+    { title: "Kalki 2898-AD",                     year: 2024 },
+    { title: "Lucky Baskhar",                     year: 2024 },
+  ],
+
+  ml: [
+    { title: "Chemmeen",                          year: 1965 },
+    { title: "Swayamvaram",                       year: 1972 },
+    { title: "Nirmalyam",                         year: 1973 },
+    { title: "Nadodikkattu",                      year: 1987 },
+    { title: "Kireedam",                          year: 1989 },
+    { title: "Ramji Rao Speaking",                year: 1989 },
+    { title: "In Harihar Nagar",                  year: 1990 },
+    { title: "Kilukkam",                          year: 1991 },
+    { title: "Sandhesam",                         year: 1991 },
+    { title: "Manichitrathazhu",                  year: 1993 },
+    { title: "Devasuram",                         year: 1993 },
+    { title: "Spadikam",                          year: 1995 },
+    { title: "Arabikkatha",                       year: 2007 },
+    { title: "Salt N\' Pepper",                  year: 2011 },
+    { title: "Ustad Hotel",                       year: 2012 },
+    { title: "Drishyam",                          year: 2013 },
+    { title: "Bangalore Days",                    year: 2014 },
+    { title: "Premam",                            year: 2015 },
+    { title: "Charlie",                           year: 2015 },
+    { title: "Maheshinte Prathikaaram",           year: 2016 },
+    { title: "Pulimurugan",                       year: 2016 },
+    { title: "Kammatti Paadam",                   year: 2016 },
+    { title: "Thondimuthalum Driksakshiyum",      year: 2017 },
+    { title: "Angamaly Diaries",                  year: 2017 },
+    { title: "Take Off",                          year: 2017 },
+    { title: "Mayaanadhi",                        year: 2017 },
+    { title: "Ee.Ma.Yau.",                        year: 2018 },
+    { title: "Lucifer",                           year: 2019 },
+    { title: "Kumbalangi Nights",                 year: 2019 },
+    { title: "Jallikattu",                        year: 2019 },
+    { title: "Virus",                             year: 2019 },
+    { title: "Ayyappanum Koshiyum",               year: 2020 },
+    { title: "Joji",                              year: 2021 },
+    { title: "Minnal Murali",                     year: 2021 },
+    { title: "The Great Indian Kitchen",          year: 2021 },
+    { title: "Nayattu",                           year: 2021 },
+    { title: "Drishyam 2",                        year: 2021 },
+    { title: "Jana Gana Mana",                    year: 2022 },
+    { title: "Hridayam",                          year: 2022 },
+    { title: "2018",                              year: 2023 },
+    { title: "Romancham",                         year: 2023 },
+    { title: "Aavesham",                          year: 2024 },
+    { title: "Manjummel Boys",                    year: 2024 },
+    { title: "Bramayugam",                        year: 2024 },
+    { title: "The Goat Life",                     year: 2024 },
+    { title: "Premalu",                           year: 2024 },
+  ],
+};
 
 function buildDNA(selected) {
   const rated = selected.filter((s) => s.rating > 0);
@@ -187,22 +460,17 @@ export default function OnboardingPage() {
     init();
   }, []);
 
-  async function fetchStratified(buckets, langCodes) {
-    const results = await Promise.all(
-      buckets.map(({ min, max, limit }) => {
-        let q = supabase
-          .from("movies")
-          .select("id, title, year, poster_url, genres")
-          .gte("year", min)
-          .lte("year", max)
-          .gte("tmdb_rating", 6.5)
-          .order("tmdb_rating", { ascending: false })
-          .limit(limit);
-        if (langCodes.length > 0) q = q.in("language", langCodes);
-        return q;
-      })
-    );
-    return results.flatMap(r => r.data ?? []);
+  async function fetchCuratedFilms(langs) {
+    const selectedLangs = langs?.length > 0 ? langs : ["hi"];
+    const allFilms = selectedLangs.flatMap(code => CURATED_FILMS[code] || []);
+    const titles = [...new Set(allFilms.map(f => f.title))];
+    const { data } = await supabase
+      .from("movies")
+      .select("id, title, year, poster_url, genres")
+      .in("title", titles)
+      .limit(500);
+    if (!data?.length) return [];
+    return data.sort((a, b) => (b.year || 0) - (a.year || 0));
   }
 
   function handleIdentityContinue() { setStep(1); }
@@ -211,11 +479,7 @@ export default function OnboardingPage() {
   async function handleLanguageContinue() {
     setStep(3);
     setGridLoading(true);
-    let movies = await fetchStratified(ALL_DECADE_BUCKETS, languageRanking);
-    if (movies.length < 20) {
-      movies = await fetchStratified(ALL_DECADE_BUCKETS, []);
-    }
-    movies.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
+    const movies = await fetchCuratedFilms(languageRanking.slice(0, 1));
     setGridMovies(movies);
     setGridLoading(false);
   }
