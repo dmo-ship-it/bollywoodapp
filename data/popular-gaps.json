@@ -1,0 +1,2853 @@
+{
+  "fetched_at": "2026-06-23T03:06:24.802Z",
+  "count": 24,
+  "movies": [
+    {
+      "tmdb_id": 496331,
+      "imdb_id": "tt6277462",
+      "title": "Brahmāstra Part One: Shiva",
+      "original_title": "ब्रह्मास्त्र पहला भाग: शिवा",
+      "tagline": "The God of all elements.",
+      "overview": "The story of Shiva – a young man on the brink of an epic love, with a girl named Isha. But their world is turned upside down when Shiva learns that he has a mysterious connection to the Brahmāstra... and a great power within him that he doesn’t understand just yet - the power of Fire.",
+      "year": 2022,
+      "release_date": "2022-09-08",
+      "poster_url": "https://image.tmdb.org/t/p/w500/x61qdvHIsr9U53FwoLVDQqAGur0.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/9oAqll65ytlOBLzZwUwkmo5RwIK.jpg",
+      "trailer_url": "https://www.youtube.com/watch?v=JwZRx6IGL_k",
+      "runtime_minutes": 168,
+      "language": "hi",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "keywords": [
+        "superhero",
+        "mythology",
+        "astraverse"
+      ],
+      "production_houses": [
+        "Dharma Productions",
+        "Prime Focus",
+        "Starlight Pictures",
+        "Star Studios"
+      ],
+      "tmdb_rating": 6.288,
+      "tmdb_votes": 200,
+      "tmdb_popularity": 1.8655,
+      "ott_platforms": [
+        "VI movies and tv"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 85034,
+          "name": "Ranbir Kapoor",
+          "character": "Shiva",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ymYNHV9luwgyrw17NXHqbOWTQkg.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1108120,
+          "name": "Alia Bhatt",
+          "character": "Isha Chatterjee",
+          "photo_url": "https://image.tmdb.org/t/p/w185/RBnTJPegPFLBS4VPsNLbf6iAoD.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1251224,
+          "name": "Mouni Roy",
+          "character": "Junoon",
+          "photo_url": "https://image.tmdb.org/t/p/w185/zT2fG1Ou6SuCno9LtaRTCDY4FfQ.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 35780,
+          "name": "Amitabh Bachchan",
+          "character": "Guru",
+          "photo_url": "https://image.tmdb.org/t/p/w185/u69PvpWqGkywSm0YjFiw77j9eqS.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 149958,
+          "name": "Nagarjuna Akkineni",
+          "character": "Anish Shetty",
+          "photo_url": "https://image.tmdb.org/t/p/w185/i42K59YZY2NbNfqxfo78YoFz6Bv.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 35742,
+          "name": "Shah Rukh Khan",
+          "character": "Mohan Bhargav",
+          "photo_url": "https://image.tmdb.org/t/p/w185/gc3Ul6EtVYKgjBuYAaD8U2qIcSl.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 78921,
+          "name": "Dimple Kapadia",
+          "character": "Savitri Devi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/rrISOX9TnetEAiZ5zCosTkmFdh2.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 2997770,
+          "name": "Saurav Gurjar",
+          "character": "Zor",
+          "photo_url": "https://image.tmdb.org/t/p/w185/RAgtetjpCiTMD1iPWFHFKbTUCt.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 3694851,
+          "name": "Rouhallah Gazi",
+          "character": "Raftaar",
+          "photo_url": "https://image.tmdb.org/t/p/w185/8SFSYxFvmNwWGAlY8opv5idTkUe.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 2555038,
+          "name": "Gurfateh Pirzada",
+          "character": "Sher",
+          "photo_url": "https://image.tmdb.org/t/p/w185/gfeOmcTUCPoAJytEjxo5SvkKObb.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 89151,
+          "name": "Sudeep Chatterjee",
+          "job": "Director of Photography",
+          "photo_url": "https://image.tmdb.org/t/p/w185/15GgrkFoxuNBETljcK6Ety2KyPN.jpg"
+        },
+        {
+          "tmdb_id": 1705460,
+          "name": "Marijke deSouza",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/rpiqNpFXAcvuFZnuRTvqNsuKAUi.jpg"
+        },
+        {
+          "tmdb_id": 87378,
+          "name": "Ayan Mukerji",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/h2je0la48xmeXazM61bZ4hwlWcs.jpg"
+        },
+        {
+          "tmdb_id": 3350441,
+          "name": "Vikash Nowlakha",
+          "job": "Director of Photography",
+          "photo_url": "https://image.tmdb.org/t/p/w185/9niQn9jpfngfbi0DztAy0da7IlY.jpg"
+        },
+        {
+          "tmdb_id": 85034,
+          "name": "Ranbir Kapoor",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ymYNHV9luwgyrw17NXHqbOWTQkg.jpg"
+        },
+        {
+          "tmdb_id": 1616701,
+          "name": "Patrick Duroux",
+          "job": "Director of Photography",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 3488448,
+          "name": "Bikram Duggal",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1339737,
+          "name": "V. Manikandan",
+          "job": "Director of Photography",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 3348438,
+          "name": "Namit Malhotra",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/6IVJAvX607Jkj7R8WwQsKaHBoxW.jpg"
+        },
+        {
+          "tmdb_id": 35736,
+          "name": "Karan Johar",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/zip1x7OXOBxXxcdYvKOgw6MnAWm.jpg"
+        },
+        {
+          "tmdb_id": 131836,
+          "name": "Apoorva Mehta",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/1AJ9HUiwkA7zuIX57YNZ0yvw9sj.jpg"
+        },
+        {
+          "tmdb_id": 1756104,
+          "name": "Pankaj Kumar",
+          "job": "Director of Photography",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 87378,
+          "name": "Ayan Mukerji",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/h2je0la48xmeXazM61bZ4hwlWcs.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:00.291Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 441875,
+      "imdb_id": "tt5785170",
+      "title": "Toilet: A Love Story",
+      "original_title": "टॉयलेट: एक प्रेम कथा",
+      "tagline": null,
+      "overview": "A woman threatens to leave her husband unless he installs a toilet in their home. To win back her love and respect, he heads out on a journey to fight against the backward society.",
+      "year": 2017,
+      "release_date": "2017-08-11",
+      "poster_url": "https://image.tmdb.org/t/p/w500/8YUBka56t4HcHLVMGnGA1WizpMV.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/2dbbPwh5Nb7FV4tqAJTg8FDbpm.jpg",
+      "trailer_url": "https://www.youtube.com/watch?v=ym4EJQ7XORk",
+      "runtime_minutes": 155,
+      "language": "hi",
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Romance"
+      ],
+      "keywords": [
+        "newspaper",
+        "husband wife relationship",
+        "village",
+        "toilet",
+        "romance",
+        "inequality",
+        "social issues"
+      ],
+      "production_houses": [
+        "KriArj Entertainment",
+        "Grazing Goat Pictures",
+        "Friday Filmworks",
+        "Abundantia Entertainment",
+        "Plan C Studios"
+      ],
+      "tmdb_rating": 6.817,
+      "tmdb_votes": 219,
+      "tmdb_popularity": 1.1639,
+      "ott_platforms": [
+        "Zee5"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 35070,
+          "name": "Akshay Kumar",
+          "character": "Keshav Sharma",
+          "photo_url": "https://image.tmdb.org/t/p/w185/sR8nASRtTpiwXqkFHjG2jdRBZ7a.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1434137,
+          "name": "Bhumi Pednekar",
+          "character": "Jaya Sharma",
+          "photo_url": "https://image.tmdb.org/t/p/w185/qaMDhXyAWBV3FXEGPavXoYwh3kb.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 6217,
+          "name": "Anupam Kher",
+          "character": "Kakka",
+          "photo_url": "https://image.tmdb.org/t/p/w185/kgU5Ap1Kf9RnicB5DMcXEZqed2f.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 657374,
+          "name": "Sudhir Pandey",
+          "character": "Panditji",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ievuv0Moehpe9QYs5pzWAPobTiz.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 648087,
+          "name": "Rajesh Sharma",
+          "character": "Mathur",
+          "photo_url": "https://image.tmdb.org/t/p/w185/cBmZY1EICMD1q16Fx7GqpHkc6A1.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 105653,
+          "name": "Shubha Khote",
+          "character": "Dadi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ocmZOFePzSgxEXJe3yzhGen1skN.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 85589,
+          "name": "Sachin Khedekar",
+          "character": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/jRSgXFTDAbAb4RsW9nvNYsdhxWo.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 585328,
+          "name": "Sana Khaan",
+          "character": "Mallika",
+          "photo_url": "https://image.tmdb.org/t/p/w185/tZFa7t3kpbHB4dTjtTtKWhJJAbQ.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 1873664,
+          "name": "Ayesha Raza Mishra",
+          "character": "Vidya",
+          "photo_url": "https://image.tmdb.org/t/p/w185/cKC6Gj5AbeoLpH0bxnSj8SEzewi.jpg",
+          "billing_order": 9
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 123225,
+          "name": "Shree Narayan Singh",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1871587,
+          "name": "Arjun N Kapoor",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 123221,
+          "name": "Shital Bhatia",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 933376,
+          "name": "Anshuman Mahaley",
+          "job": "Director of Photography",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:00.958Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 59265,
+      "imdb_id": "tt0097416",
+      "title": "Kaadhalan",
+      "original_title": "காதலன்",
+      "tagline": null,
+      "overview": "Prabhu, a college student, falls in love with Shruthi, a governor's daughter. On knowing about their love affair, her father imprisons Prabhu and forbids him to meet Shruthi.",
+      "year": 1994,
+      "release_date": "1994-09-17",
+      "poster_url": "https://image.tmdb.org/t/p/w500/pt56OBUH0MjPIDSgx6YpJQRc5vA.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/yI2Dvc2yNhL5pf9RGSrieKL1FXs.jpg",
+      "trailer_url": null,
+      "runtime_minutes": 170,
+      "language": "ta",
+      "genres": [
+        "Action",
+        "Drama",
+        "Romance"
+      ],
+      "keywords": [
+        "forbidden love"
+      ],
+      "production_houses": [
+        "A. R. S. Film International"
+      ],
+      "tmdb_rating": 6.6,
+      "tmdb_votes": 18,
+      "tmdb_popularity": 0.8329,
+      "ott_platforms": [
+        "Amazon Prime Video",
+        "Sun Nxt",
+        "VI movies and tv",
+        "Eros Now Select Apple TV Channel",
+        "Amazon Prime Video with Ads",
+        " AP International South Cinema Amazon Channel"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 89154,
+          "name": "Prabhu Deva",
+          "character": "Prabhu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/lfVxoyweEPkIu6zFa44ajPuSJA1.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 229117,
+          "name": "Nagma",
+          "character": "Shruti",
+          "photo_url": "https://image.tmdb.org/t/p/w185/osQbepU8ejfIaeONvAlqsGVCOeC.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 91549,
+          "name": "Vadivelu",
+          "character": "Vasanth",
+          "photo_url": "https://image.tmdb.org/t/p/w185/sgrnhPeUBocXnFVdCx0NJ5QCOFb.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 237697,
+          "name": "Raghuvaran",
+          "character": "Mallikarjuna",
+          "photo_url": "https://image.tmdb.org/t/p/w185/z6IJ61kEaU6cjBHVX2eqxL2nnMx.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 584585,
+          "name": "S. P. Balasubramaniam",
+          "character": "Kathiresan",
+          "photo_url": "https://image.tmdb.org/t/p/w185/vKcUYibvLFRPADiNwQtl27e1STy.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 552989,
+          "name": "Manorama",
+          "character": "Shruthi's Grandmother",
+          "photo_url": "https://image.tmdb.org/t/p/w185/cykXsswggS5kwnDnJjZx3x8SYLa.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 83593,
+          "name": "Girish Karnad",
+          "character": "Kakarla Sathyanarayana Moorthy",
+          "photo_url": "https://image.tmdb.org/t/p/w185/vxnh2pdWTdarTUfDoTbJwlUROYh.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 584685,
+          "name": "Allu Ramalingaiah",
+          "character": "Shruthi's Grandfather",
+          "photo_url": "https://image.tmdb.org/t/p/w185/tYVXmeZSgbYCuIsResUfrm2kjnz.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 583977,
+          "name": "Ajay Rathnam",
+          "character": "Security Officer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/rp3JaGD554QTNzd7fAoKg742nq2.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 2008840,
+          "name": "Padmapriya",
+          "character": "Prabhu's mother",
+          "photo_url": "https://image.tmdb.org/t/p/w185/fwemzwbPrea8YbkBbStRj0TkGZJ.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 91552,
+          "name": "Shankar",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/p9fL8NqPX6m5u9cFDo8suAlunaR.jpg"
+        },
+        {
+          "tmdb_id": 580844,
+          "name": "Jeeva",
+          "job": "Director of Photography",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 545007,
+          "name": "K. T. Kunjumon",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/poOsO2uzAM9pEU9qXJ9y7vZZ9dI.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:02.033Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 146853,
+      "imdb_id": "tt2387224",
+      "title": "Aarohanam",
+      "original_title": "ஆரோகணம்",
+      "tagline": null,
+      "overview": "Every cloud has a silver lining and Aarohanam showcases the brighter side of a mental disorder, along with all the trials and turbulence of such a life. In an age where the morbidity of poverty has been vehemently publicized, this film strives to unassumingly uncover the true essence of Indian culture while offering a raw and intimate experience of family and community life in the Indian slums.",
+      "year": 2012,
+      "release_date": "2012-10-26",
+      "poster_url": "https://image.tmdb.org/t/p/w500/uaKvV08BKbJVEcBV5fuVJ8M6eEd.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/5mXwrffqUAqiaELvRrhRJXVkcAp.jpg",
+      "trailer_url": null,
+      "runtime_minutes": 90,
+      "language": "ta",
+      "genres": [
+        "Drama"
+      ],
+      "keywords": [],
+      "production_houses": [
+        "AVA Productions",
+        "Monkey Creative Labs"
+      ],
+      "tmdb_rating": 8.5,
+      "tmdb_votes": 2,
+      "tmdb_popularity": 0.1088,
+      "ott_platforms": [
+        "Sun Nxt"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 1124946,
+          "name": "Viji Chandrasekhar",
+          "character": "Nirmala",
+          "photo_url": "https://image.tmdb.org/t/p/w185/aErRKX7Z6iS6kwFxVQhXxd3OQIr.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 560038,
+          "name": "Jayaprakash",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/eyYfMqy7NsED7SYrAzaso9ZjLT5.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 85595,
+          "name": "Sampath Raj",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/oQgoihP26Hyg6gMFVpACRAygZli.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 580894,
+          "name": "Uma Padmanabhan",
+          "character": "Jay",
+          "photo_url": "https://image.tmdb.org/t/p/w185/3SRptZ5iRBnJhbD6zQho0pYr7ly.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 1337228,
+          "name": "Rethika Srinivas",
+          "character": "Character Role",
+          "photo_url": "https://image.tmdb.org/t/p/w185/2G4ZFfBz6lg5JOAiaBekKiFHQMJ.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 1292322,
+          "name": "G. Marimuthu",
+          "character": "Vallimuthu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/gDBqLLiwYqYtKdhHowX7ppCmko8.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 2054249,
+          "name": "Jai Quehaeni",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/b9Tkpu8nvq6STdNd3EqJlrGam8D.jpg",
+          "billing_order": 7
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 584760,
+          "name": "A.V. Anoop",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/qkLKyYRTI3JISZRzcFlfcvduucF.jpg"
+        },
+        {
+          "tmdb_id": 144787,
+          "name": "Lakshmi Ramakrishnan",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/uoVZg9ERltH9WI7Qe9xSnL8PJPW.jpg"
+        },
+        {
+          "tmdb_id": 587754,
+          "name": "Krishna Kumar",
+          "job": "Music",
+          "photo_url": "https://image.tmdb.org/t/p/w185/q7Y4HupQV8Wbip9SCJyTNs1c4m3.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:03.715Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 368017,
+      "imdb_id": "tt5124096",
+      "title": "Thangamagan",
+      "original_title": "தங்கமகன்",
+      "tagline": null,
+      "overview": "The happiness of Tamizh and his middle-class family is shattered when his dad commits suicide. The youngster tries to understand why his father took this extreme step and clear his name.",
+      "year": 2015,
+      "release_date": "2015-12-18",
+      "poster_url": "https://image.tmdb.org/t/p/w500/mRNbc52rDcFrr3EnIcHY1tVTqUB.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/lSSHgrnjQf3jC6YNbKmGUE0z1J.jpg",
+      "trailer_url": "https://www.youtube.com/watch?v=1DYWEC_Rfy0",
+      "runtime_minutes": 121,
+      "language": "ta",
+      "genres": [
+        "Action",
+        "Comedy",
+        "Romance"
+      ],
+      "keywords": [
+        "betrayal",
+        "relationship",
+        "family"
+      ],
+      "production_houses": [
+        "Gopuram films",
+        "Wunderbar Films"
+      ],
+      "tmdb_rating": 5.811,
+      "tmdb_votes": 37,
+      "tmdb_popularity": 0.8508,
+      "ott_platforms": [
+        "Sun Nxt"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 550165,
+          "name": "Dhanush",
+          "character": "Thamizh Vijayraghavan",
+          "photo_url": "https://image.tmdb.org/t/p/w185/7bI9oy1BXIk58hsOK8WfN5g0i1P.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 225312,
+          "name": "Samantha Ruth Prabhu",
+          "character": "Yamuna Thamizh",
+          "photo_url": "https://image.tmdb.org/t/p/w185/iGQ0AT1bNULlrJwSOGSRqLDSfGG.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 130110,
+          "name": "Amy Jackson",
+          "character": "Hema D'Souza",
+          "photo_url": "https://image.tmdb.org/t/p/w185/qMWitVFeHAfDTZWcChsWFtBdYap.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 130122,
+          "name": "Sathish",
+          "character": "Kumaran",
+          "photo_url": "https://image.tmdb.org/t/p/w185/1v0zxrknL0dEfAj4bHv9TVVyO93.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 562177,
+          "name": "Radikaa Sarathkumar",
+          "character": "Thamizh's mother",
+          "photo_url": "https://image.tmdb.org/t/p/w185/kEKzT8HAJw8lfFUtWWd0SoQ9kC9.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 93194,
+          "name": "K. S. Ravikumar",
+          "character": "Vijayraghavan",
+          "photo_url": "https://image.tmdb.org/t/p/w185/8dUdM3sFvL4aXnDtLJJCkDMNEbo.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 560038,
+          "name": "Jayaprakash",
+          "character": "Prakash Kumar",
+          "photo_url": "https://image.tmdb.org/t/p/w185/eyYfMqy7NsED7SYrAzaso9ZjLT5.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 130114,
+          "name": "M. S. Bhaskar",
+          "character": "Prakash Kumar's assistant",
+          "photo_url": "https://image.tmdb.org/t/p/w185/jyamX33xAwz2ZWCgh29qkg9exb8.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 534184,
+          "name": "Seetha",
+          "character": "Aarvind's mother",
+          "photo_url": "https://image.tmdb.org/t/p/w185/gMIqg8c4gnP9mO40rCW7Sc0ei8D.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 1014832,
+          "name": "Udhayabanu Mageswaran",
+          "character": "Jen Builders Agent",
+          "photo_url": "https://image.tmdb.org/t/p/w185/7DMw9sN1ITqcZbnvwalFzxaENHJ.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1097385,
+          "name": "R. Velraj",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/tZo7n40iNRHkiNXn6ZtEddLJrkc.jpg"
+        },
+        {
+          "tmdb_id": 1413777,
+          "name": "G.N. Anbu Chezhiyan",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 550165,
+          "name": "Dhanush",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/7bI9oy1BXIk58hsOK8WfN5g0i1P.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:05.095Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 433121,
+      "imdb_id": "tt6237966",
+      "title": "Thaanaa Serndha Koottam",
+      "original_title": "தானா சேர்ந்த கூட்டம்",
+      "tagline": null,
+      "overview": "Angered by the corruption that stopped him from becoming a CBI officer, a young man forms a gang who pose as CBI officers and raids the corrupt.",
+      "year": 2018,
+      "release_date": "2018-01-12",
+      "poster_url": "https://image.tmdb.org/t/p/w500/aBMQTZgjUH5JsfMVApIFNBUXjMt.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/kDnpdMY9iaAkGkvQtFBM3T5tBNz.jpg",
+      "trailer_url": "https://www.youtube.com/watch?v=hYM_iZII4U4",
+      "runtime_minutes": 138,
+      "language": "ta",
+      "genres": [
+        "Crime",
+        "Action",
+        "Comedy"
+      ],
+      "keywords": [
+        "corruption",
+        "money laundering",
+        "black money"
+      ],
+      "production_houses": [
+        "2D Entertainment",
+        "Studio Green"
+      ],
+      "tmdb_rating": 5.6,
+      "tmdb_votes": 38,
+      "tmdb_popularity": 0.7522,
+      "ott_platforms": [
+        "Sun Nxt"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 85720,
+          "name": "Suriya",
+          "character": "Iniyan",
+          "photo_url": "https://image.tmdb.org/t/p/w185/hIFXv3gIjlNS78gJmaguEOxvfPH.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1295762,
+          "name": "Keerthy Suresh",
+          "character": "Madhu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/fTdgSinsAitdujBBEUEA72GY0pv.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 141701,
+          "name": "Ramya Krishnan",
+          "character": "Azhagu Meena/Jhansi Rani",
+          "photo_url": "https://image.tmdb.org/t/p/w185/5cWImxBdNn5eIKOinZHZhya3Bbn.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 140468,
+          "name": "Senthil",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/4p0yBgR0tmfVi8evBBG5epJtVIs.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 303927,
+          "name": "Karthik Muthuraman",
+          "character": "Kurunjivendhan",
+          "photo_url": "https://image.tmdb.org/t/p/w185/bmC9Pp5OADceT8P8FxCBM1iE3Ci.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 1336542,
+          "name": "Suresh Chandra Menon",
+          "character": "Uthaman",
+          "photo_url": "https://image.tmdb.org/t/p/w185/lfb3QpmQWs8HcaJzrj4htH0BSg4.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 1182187,
+          "name": "RJ Balaji",
+          "character": "Pallavaram Paranjothi Pandian",
+          "photo_url": "https://image.tmdb.org/t/p/w185/vguX29CK1j9JGOoHQOO5MGsQrT6.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 545013,
+          "name": "Nandha",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/o8gmCEcbop9NgtmcZqfhx2mnmEF.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 1114589,
+          "name": "Thambi Ramaiah",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/murNGZdySdA7uKgLBeMwOK4wEdg.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 478546,
+          "name": "Sathyan Sivakumar",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/11dbFufMpNyhPsZc6X8NYjMqe9X.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1118774,
+          "name": "Vignesh Shivan",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/axVrHgQD1089EyFvfdYP4VX1Tgi.jpg"
+        },
+        {
+          "tmdb_id": 1136780,
+          "name": "K. E. Gnanavelraja",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 85720,
+          "name": "Suriya",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/hIFXv3gIjlNS78gJmaguEOxvfPH.jpg"
+        },
+        {
+          "tmdb_id": 1171271,
+          "name": "Dinesh Krishnan B.",
+          "job": "Director of Photography",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:06.165Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 786345,
+      "imdb_id": "tt11396310",
+      "title": "Viduthalai: Part I",
+      "original_title": "விடுதலை: பாகம் I",
+      "tagline": null,
+      "overview": "Kumaresan, a police constable, gets recruited for an operation implanted to capture Perumal Vaathiyar, who leads a separatist group dedicated to fighting against the authorities for committing atrocities against innocent village women in the name of police interrogations.",
+      "year": 2023,
+      "release_date": "2023-03-30",
+      "poster_url": "https://image.tmdb.org/t/p/w500/oTxPji8PY3PL0SK9e4mkt2laJKg.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/zHcOppWpmIfbmbuvF98xTnqf4jk.jpg",
+      "trailer_url": "https://www.youtube.com/watch?v=GYeSfq_bj_M",
+      "runtime_minutes": 146,
+      "language": "ta",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Drama"
+      ],
+      "keywords": [],
+      "production_houses": [
+        "R S Infotainment",
+        "Grass Root Film Company"
+      ],
+      "tmdb_rating": 7.87,
+      "tmdb_votes": 50,
+      "tmdb_popularity": 0.7538,
+      "ott_platforms": [
+        "Amazon Prime Video",
+        "Zee5",
+        "Amazon Prime Video with Ads"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 544897,
+          "name": "Soori",
+          "character": "Kumaresan",
+          "photo_url": "https://image.tmdb.org/t/p/w185/iBpTFbCbkMO3zdw3WK4YaPqk3DA.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 2036697,
+          "name": "Bhavani Sre",
+          "character": "Tamilarasi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/anf7ScltYwHf8VkeptYNT7yI25v.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1321712,
+          "name": "Chetan",
+          "character": "Ragavendar",
+          "photo_url": "https://image.tmdb.org/t/p/w185/jE66LoKC6ctmSLitdtIQUOrpTkI.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 120953,
+          "name": "Gautham Vasudev Menon",
+          "character": "Sunil Menon",
+          "photo_url": "https://image.tmdb.org/t/p/w185/qOFycWPpr3Hi4kVXKWnTTKCAnGk.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 139896,
+          "name": "Rajiv Menon",
+          "character": "A. Subramaniyan",
+          "photo_url": "https://image.tmdb.org/t/p/w185/gMOTcaKxG7wnzRlx77Nwuw5QUMI.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 580626,
+          "name": "Ilavarasu",
+          "character": "PWD Minister Ilavarasu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/gWCREhajMvlOE49g79zyvwdpf5E.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 1327228,
+          "name": "Munnar Ramesh",
+          "character": "Ramasamy",
+          "photo_url": "https://image.tmdb.org/t/p/w185/oGP3RCRHcq04l2afoZ8Cce3REqa.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 3161864,
+          "name": "Tamizh",
+          "character": "Amudhan",
+          "photo_url": "https://image.tmdb.org/t/p/w185/67atHtV6UWaWqaJk4NJhj2JHyY9.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 4492061,
+          "name": "Manimegalai",
+          "character": "Tamilarsi's Grandmother",
+          "photo_url": null,
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 1123766,
+          "name": "Vijay Sethupathi",
+          "character": "Perumal \"Vaathiyaar\"",
+          "photo_url": "https://image.tmdb.org/t/p/w185/6qaMCgZ4MMBMYvTYEKCjLIdq0B5.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1121840,
+          "name": "Elred Kumar",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1097385,
+          "name": "R. Velraj",
+          "job": "Director of Photography",
+          "photo_url": "https://image.tmdb.org/t/p/w185/tZo7n40iNRHkiNXn6ZtEddLJrkc.jpg"
+        },
+        {
+          "tmdb_id": 550172,
+          "name": "Vetrimaaran",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/dEb8XJGaIqWf2eLaj4ecUlC3b2Z.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:07.357Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 94957,
+      "imdb_id": "tt0259416",
+      "title": "Malliswari",
+      "original_title": "Malliswari",
+      "tagline": null,
+      "overview": "During the days of the Vijayanagara Empire there was a system to bring willing women to the royal palace and render them official residents. This was called 'Rani Vasam'. According to this royal tradition, they sent palanquins to their houses, after they presented the family with gifts and jewelry. These Rani Vasam women should never have any contact with any man or let any man see them without permission. If any one violated the law, they were beheaded.  Malleswari (Bhanumathi) was taken to this Rani Vasam. She was forced to accept this, for lure of money and jewelry by her parents. But she was already in love with her 'Bava' Nagaraju (N.T. Rama Rao), a sculptor. He stealthily got into the garden of the palace to meet his beloved and was caught. He was to get the death penalty. Krishnadevaraya for once pardoned the hero and allowed Malleswari to go with him.",
+      "year": 1951,
+      "release_date": "1951-12-20",
+      "poster_url": "https://image.tmdb.org/t/p/w500/63Av9DNlSRu0qq0WAIpheqcApJl.jpg",
+      "backdrop_url": null,
+      "trailer_url": null,
+      "runtime_minutes": 175,
+      "language": "te",
+      "genres": [
+        "Romance",
+        "Drama",
+        "Fantasy"
+      ],
+      "keywords": [],
+      "production_houses": [
+        "Vauhini Studios"
+      ],
+      "tmdb_rating": 10,
+      "tmdb_votes": 2,
+      "tmdb_popularity": 0.133,
+      "ott_platforms": [
+        "Amazon Prime Video",
+        "Eros Now Select Apple TV Channel",
+        "Amazon Prime Video with Ads"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 1003933,
+          "name": "N.T. Rama Rao",
+          "character": "Nagaraju",
+          "photo_url": "https://image.tmdb.org/t/p/w185/eAtPt0FJxUarWgt9XoFLX0t6BaB.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1003965,
+          "name": "Bhanumathi",
+          "character": "Malliswari",
+          "photo_url": "https://image.tmdb.org/t/p/w185/9ejplTXoqbhjQVB5OiktvHoAlwB.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1661016,
+          "name": "T. G. Kamala Devi",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/kpbmGDCDcdssnxWHOkcXSzVAtdz.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 1660769,
+          "name": "Srivastava",
+          "character": "",
+          "photo_url": null,
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 1660543,
+          "name": "Rushyendramani",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/2eOl2udZHT3FmohrSw8XGS55pOy.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 1661134,
+          "name": "Doraiswamy",
+          "character": "",
+          "photo_url": null,
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 1635675,
+          "name": "Vangara Venkata Subbaiah",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/zdIQd9ok3dAEVOuHViCVwRSVxbr.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 1339084,
+          "name": "Kumari",
+          "character": "",
+          "photo_url": null,
+          "billing_order": 8
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1344860,
+          "name": "B.N. Reddi",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1139301,
+          "name": "Saluri Rajeswara Rao",
+          "job": "Music",
+          "photo_url": "https://image.tmdb.org/t/p/w185/9qsMNtwJ24NSFEpGnxojcu9pT0z.jpg"
+        },
+        {
+          "tmdb_id": 1660767,
+          "name": "Addepalli Rama Rao",
+          "job": "Music",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1660219,
+          "name": "Adi M. Irani",
+          "job": "Director of Photography",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1660764,
+          "name": "B. N. Konda Reddy",
+          "job": "Director of Photography",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:08.073Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 307129,
+      "imdb_id": "tt0254967",
+      "title": "Appu Chesi Pappu Koodu",
+      "original_title": "అప్పు చేసి పప్పు కూడు",
+      "tagline": "Live Comfortably on Credit",
+      "overview": "Ramadasu, a perpetual debtor, wants his son Raghu to marry Manjari in order to acquire Mukunda Rao's assets. But Raghu is already married to Leela and Manjari loves Raja, Leela's brother. Raja and his friend Bhaja Govindam hatch a plan to teach everyone a lesson.",
+      "year": 1959,
+      "release_date": "1959-01-14",
+      "poster_url": "https://image.tmdb.org/t/p/w500/5v3VAglFXQZJG6Jla60o8QzhjIJ.jpg",
+      "backdrop_url": null,
+      "trailer_url": null,
+      "runtime_minutes": 158,
+      "language": "te",
+      "genres": [
+        "Comedy",
+        "Drama"
+      ],
+      "keywords": [],
+      "production_houses": [
+        "Vijaya Pictures"
+      ],
+      "tmdb_rating": 7,
+      "tmdb_votes": 2,
+      "tmdb_popularity": 0.2683,
+      "ott_platforms": [
+        "Amazon Prime Video",
+        "Amazon Prime Video with Ads"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 1003933,
+          "name": "N.T. Rama Rao",
+          "character": "Raja Rao",
+          "photo_url": "https://image.tmdb.org/t/p/w185/eAtPt0FJxUarWgt9XoFLX0t6BaB.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1335686,
+          "name": "Kongara Jaggayya",
+          "character": "Raghu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/aYYoYtHnjOiNPunr62OPocokdAH.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1166378,
+          "name": "Savitri",
+          "character": "Manjari Devi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ouEi3MJ5E1hdEnrcuC61veeG8GX.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 1614192,
+          "name": "Relangi Venkata Ramaiah",
+          "character": "Bhaja Govindam",
+          "photo_url": "https://image.tmdb.org/t/p/w185/D9KpsYaU6Yx0l7NV4P2a2RA97a.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 1661013,
+          "name": "C S R Anjaneyulu",
+          "character": "Rao Bahadur Ramadasu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/adOT3o1HKgURVQz6odgfcw9fxoQ.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 1003966,
+          "name": "S. V. Ranga Rao",
+          "character": "Mukunda Rao",
+          "photo_url": "https://image.tmdb.org/t/p/w185/yzDKN7DqHOc7OKOrELatN56HMdr.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 1208886,
+          "name": "Ramana Reddy",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/nYN6YoA9pbjQE0J8b9jS496YjP6.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 1635667,
+          "name": "Mukkamala",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/o8NNoUw06cv0KIGfujrsg73aUJg.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 1034831,
+          "name": "Jamuna",
+          "character": "Leela",
+          "photo_url": "https://image.tmdb.org/t/p/w185/vev05ehTlBa4YHb3ZhPdS4eon2q.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 1180573,
+          "name": "Suryakantham",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/AuZe7FwhUlJtPc6FZHnmpo1OeC5.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1143499,
+          "name": "L. V. Prasad",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1180575,
+          "name": "Chakrapani",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/l8nFcAjMXfdJCxu96HYFWxh6pCR.jpg"
+        },
+        {
+          "tmdb_id": 1012612,
+          "name": "B. Nagi Reddy",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/8MukznuPIqxrbLrkPm0TrnMDQU0.jpg"
+        },
+        {
+          "tmdb_id": 1139301,
+          "name": "Saluri Rajeswara Rao",
+          "job": "Music",
+          "photo_url": "https://image.tmdb.org/t/p/w185/9qsMNtwJ24NSFEpGnxojcu9pT0z.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:09.538Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 285309,
+      "imdb_id": "tt0263402",
+      "title": "Gulebakavali Katha",
+      "original_title": "గులేబకావళి కథ",
+      "tagline": null,
+      "overview": "Once upon a time, when Pataliputra was ruled by Chandrasena. He has two wives, Gunavati & Rupavati. The King is engrossed in love with the second, and they contain 3 sons. Vakraketu, a vicious sibling of Rupavati, always ploys to usurp the throne, for which he molds his nephews as creampuff. The childless Gunavati penances conceive acquiring a boon from Siva, who blesses a baby boy, Vijaya.",
+      "year": 1962,
+      "release_date": "1962-03-20",
+      "poster_url": "https://image.tmdb.org/t/p/w500/h2wTwuTdjMRA7RnS32m6jiLTPgO.jpg",
+      "backdrop_url": null,
+      "trailer_url": null,
+      "runtime_minutes": 170,
+      "language": "te",
+      "genres": [
+        "Fantasy",
+        "Action"
+      ],
+      "keywords": [],
+      "production_houses": [],
+      "tmdb_rating": 9,
+      "tmdb_votes": 1,
+      "tmdb_popularity": 0.204,
+      "ott_platforms": [],
+      "cast": [
+        {
+          "tmdb_id": 1003933,
+          "name": "N.T. Rama Rao",
+          "character": "Vijay",
+          "photo_url": "https://image.tmdb.org/t/p/w185/eAtPt0FJxUarWgt9XoFLX0t6BaB.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1034831,
+          "name": "Jamuna",
+          "character": "Yuktimati",
+          "photo_url": "https://image.tmdb.org/t/p/w185/vev05ehTlBa4YHb3ZhPdS4eon2q.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 4431518,
+          "name": "Nagarathna",
+          "character": "Bakavali",
+          "photo_url": null,
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 1635667,
+          "name": "Mukkamala",
+          "character": "Chandrasena",
+          "photo_url": "https://image.tmdb.org/t/p/w185/o8NNoUw06cv0KIGfujrsg73aUJg.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 1611382,
+          "name": "Rajanala Kaleswara Rao",
+          "character": "Vakraketu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/fYnCbXV0Fh9eUrPgQI2YOwXdsw3.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 1356414,
+          "name": "Mikkilineni",
+          "character": "Mahendra",
+          "photo_url": "https://image.tmdb.org/t/p/w185/hixximPs8FRe2pHlBjqyi01ZwyY.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 1445604,
+          "name": "Peketi Sivaram",
+          "character": "One of Rupavathi's Son",
+          "photo_url": null,
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 1335722,
+          "name": "Padmanabham",
+          "character": "One of Rupavathi's Son",
+          "photo_url": "https://image.tmdb.org/t/p/w185/yKwLIP9RP3o8GWm3Q5CLJLFkeX1.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 585379,
+          "name": "Valluri Balakrishna",
+          "character": "Ati Telivi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/A1ShW7gAhBmcJBucn3PUkQy6tS8.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 1660543,
+          "name": "Rushyendramani",
+          "character": "Gunavathi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/2eOl2udZHT3FmohrSw8XGS55pOy.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1034768,
+          "name": "Trivikrama Rao T.",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1003933,
+          "name": "N.T. Rama Rao",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/eAtPt0FJxUarWgt9XoFLX0t6BaB.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:10.325Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 1141436,
+      "imdb_id": null,
+      "title": "Manchi Manasulu",
+      "original_title": "Manchi Manasulu",
+      "tagline": "Good Hearts",
+      "overview": "Venu is a very poor student and seeks to come out of the hostel by being unable to bear its expenses. Thus, he shifts to a lawyer Anand Rao's summer-house, who gives it to him free of cost. Venu has a brother who is a blacksmith and funds Venu's studies and his daughter's needs in their village. Anand Rao's wife doesn't agree to give their summer house to a bachelor, so Anand Rao insists that he is married.",
+      "year": 1962,
+      "release_date": "1962-04-11",
+      "poster_url": "https://image.tmdb.org/t/p/w500/fN8XGgB5e3xhPzTQ1BYXOlO3dtG.jpg",
+      "backdrop_url": null,
+      "trailer_url": null,
+      "runtime_minutes": 163,
+      "language": "en",
+      "genres": [
+        "Drama"
+      ],
+      "keywords": [],
+      "production_houses": [
+        "Babu Films"
+      ],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.2101,
+      "ott_platforms": [
+        "Sun Nxt"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 237254,
+          "name": "Nageshwara Rao Akkineni",
+          "character": "Venu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/esv4H8U0GFMzrekmsNu24PmPa2F.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1166378,
+          "name": "Savitri",
+          "character": "Shanthi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ouEi3MJ5E1hdEnrcuC61veeG8GX.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 584415,
+          "name": "Sowcar Janaki",
+          "character": "Radha",
+          "photo_url": "https://image.tmdb.org/t/p/w185/7gNfdjAXaksI2ozyvzlVUnqImjf.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 1003966,
+          "name": "S. V. Ranga Rao",
+          "character": "Ananda Rao",
+          "photo_url": "https://image.tmdb.org/t/p/w185/yzDKN7DqHOc7OKOrELatN56HMdr.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 1335709,
+          "name": "Gummadi",
+          "character": "Rangayya",
+          "photo_url": "https://image.tmdb.org/t/p/w185/qKXVkv7RmDKveWWZael013w7h1B.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 1208886,
+          "name": "Ramana Reddy",
+          "character": "Sankarayya",
+          "photo_url": "https://image.tmdb.org/t/p/w185/nYN6YoA9pbjQE0J8b9jS496YjP6.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 1661827,
+          "name": "Nagabhushanam",
+          "character": "Kumar",
+          "photo_url": "https://image.tmdb.org/t/p/w185/k15yCgKqJiCRkIe87QK4UrPr9jQ.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 584685,
+          "name": "Allu Ramalingaiah",
+          "character": "Bheemanna",
+          "photo_url": "https://image.tmdb.org/t/p/w185/tYVXmeZSgbYCuIsResUfrm2kjnz.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 1635675,
+          "name": "Vangara Venkata Subbaiah",
+          "character": "Vaikuntam",
+          "photo_url": "https://image.tmdb.org/t/p/w185/zdIQd9ok3dAEVOuHViCVwRSVxbr.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 1180573,
+          "name": "Suryakantham",
+          "character": "Suryakanthamma",
+          "photo_url": "https://image.tmdb.org/t/p/w185/AuZe7FwhUlJtPc6FZHnmpo1OeC5.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 2992104,
+          "name": "C. Shanmuga Sundaram",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 975051,
+          "name": "Adurthi Subba Rao",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 584606,
+          "name": "K. V. Mahadevan",
+          "job": "Music",
+          "photo_url": "https://image.tmdb.org/t/p/w185/sItCos5KpE9SM0Cpf6j9xiCOVlG.jpg"
+        },
+        {
+          "tmdb_id": 1660488,
+          "name": "P. L. Roy",
+          "job": "Director of Photography",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:11.019Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 183167,
+      "imdb_id": "tt0206877",
+      "title": "Lava Kusa",
+      "original_title": "లవకుశ",
+      "tagline": null,
+      "overview": "This movie deals with the later part of Ramayana written by Valmiki Maharshi and depicts the lives of the sons of Rama & Sita.",
+      "year": 1963,
+      "release_date": "1963-03-29",
+      "poster_url": "https://image.tmdb.org/t/p/w500/4VPobiXQIhXZML6eSh86iJnU0SF.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/cgLm80WsYCwISJbgI6Y4Ohy5Bx1.jpg",
+      "trailer_url": "https://www.youtube.com/watch?v=XbX80L9Y_lI",
+      "runtime_minutes": 165,
+      "language": "te",
+      "genres": [
+        "Fantasy"
+      ],
+      "keywords": [
+        "mythology",
+        "musical",
+        "religion",
+        "family feud"
+      ],
+      "production_houses": [],
+      "tmdb_rating": 8.75,
+      "tmdb_votes": 3,
+      "tmdb_popularity": 0.3481,
+      "ott_platforms": [
+        "Sun Nxt"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 1003933,
+          "name": "N.T. Rama Rao",
+          "character": "Lord Rama",
+          "photo_url": "https://image.tmdb.org/t/p/w185/eAtPt0FJxUarWgt9XoFLX0t6BaB.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 581669,
+          "name": "Anjali Devi",
+          "character": "Goddess Sita",
+          "photo_url": "https://image.tmdb.org/t/p/w185/tdikuflNRFwaO38eSBlmK3FMXkg.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1208884,
+          "name": "Kanta Rao",
+          "character": "Laxmana",
+          "photo_url": "https://image.tmdb.org/t/p/w185/75sR0b4eTPI1VLoHOeuRO5pPCDj.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 552991,
+          "name": "Kaikala Satyanarayana",
+          "character": "Bharata",
+          "photo_url": "https://image.tmdb.org/t/p/w185/wEw5EQRIi7KLAQWIMlOyHxZxeuy.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 1208885,
+          "name": "Sobhan Babu",
+          "character": "Shatrughna",
+          "photo_url": "https://image.tmdb.org/t/p/w185/t7AZwl1hs56SnayALuAlOM4gesj.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 1208886,
+          "name": "Ramana Reddy",
+          "character": "Valmiki's disciple",
+          "photo_url": "https://image.tmdb.org/t/p/w185/nYN6YoA9pbjQE0J8b9jS496YjP6.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 1180573,
+          "name": "Suryakantham",
+          "character": "Valmiki disciple's wife",
+          "photo_url": "https://image.tmdb.org/t/p/w185/AuZe7FwhUlJtPc6FZHnmpo1OeC5.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 1208887,
+          "name": "P. Kannamba",
+          "character": "Kousalya",
+          "photo_url": "https://image.tmdb.org/t/p/w185/3AR3UCv7zE7FNnfjTYVaReJ3cW7.jpg",
+          "billing_order": 8
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1208888,
+          "name": "Chittajallu Srinivasa Rao",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1208890,
+          "name": "Allareddy Shankar Reddy",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1166346,
+          "name": "Chittajalu Pullayya",
+          "job": "Director",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:11.863Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 795356,
+      "imdb_id": "tt0260842",
+      "title": "Dasara Bullodu",
+      "original_title": "Dasara Bullodu",
+      "tagline": null,
+      "overview": "Both Radha and Nirmala love a young man named Gopi. But Nirmala's father wants to make Gopi marry Nirmala in order to grab his property. But she realizes that Gopi and Radha are in love and tries to unite them.",
+      "year": 1971,
+      "release_date": "1971-01-13",
+      "poster_url": "https://image.tmdb.org/t/p/w500/eVTtRPOwckbrLChgh9pGMOCMmDY.jpg",
+      "backdrop_url": null,
+      "trailer_url": null,
+      "runtime_minutes": 160,
+      "language": "te",
+      "genres": [],
+      "keywords": [],
+      "production_houses": [],
+      "tmdb_rating": 9,
+      "tmdb_votes": 1,
+      "tmdb_popularity": 0.2613,
+      "ott_platforms": [
+        "Amazon Prime Video",
+        "Amazon Prime Video with Ads"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 237254,
+          "name": "Nageshwara Rao Akkineni",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/esv4H8U0GFMzrekmsNu24PmPa2F.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 583972,
+          "name": "Vanisri",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/a3orZ1KKPndvk2DV0sIuXCCVK1f.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1003966,
+          "name": "S. V. Ranga Rao",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/yzDKN7DqHOc7OKOrELatN56HMdr.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 1180573,
+          "name": "Suryakantham",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/AuZe7FwhUlJtPc6FZHnmpo1OeC5.jpg",
+          "billing_order": 4
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 186059,
+          "name": "V. B. Rajendra Prasad",
+          "job": "Director",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:13.312Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 808494,
+      "imdb_id": "tt0186957",
+      "title": "Devatha",
+      "original_title": "Devatha",
+      "tagline": null,
+      "overview": "Janaki (Jayaprada) and Lalita (Sridevi) are sisters who love each other dearly. They both love Shobhan babu....",
+      "year": 1982,
+      "release_date": "1982-09-04",
+      "poster_url": "https://image.tmdb.org/t/p/w500/nclTL6Rf8m24R83WqskUvLX736q.jpg",
+      "backdrop_url": null,
+      "trailer_url": null,
+      "runtime_minutes": null,
+      "language": "te",
+      "genres": [
+        "Drama"
+      ],
+      "keywords": [],
+      "production_houses": [],
+      "tmdb_rating": 7,
+      "tmdb_votes": 1,
+      "tmdb_popularity": 0.3257,
+      "ott_platforms": [
+        "VI movies and tv"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 238016,
+          "name": "Jaya Prada",
+          "character": "Janaki",
+          "photo_url": "https://image.tmdb.org/t/p/w185/jD3BDABDH36vYPaQrI3PFWM9KJ9.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 109549,
+          "name": "Sridevi",
+          "character": "Lalitha",
+          "photo_url": "https://image.tmdb.org/t/p/w185/6wxquADm0CMYMon04uEI48ZiBBf.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1208885,
+          "name": "Sobhan Babu",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/t7AZwl1hs56SnayALuAlOM4gesj.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 585268,
+          "name": "Mohan Babu",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/zwqcXtnk0ju0nhuhvZXSLL2nLIy.jpg",
+          "billing_order": 4
+        }
+      ],
+      "crew": [],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:14.116Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 395714,
+      "imdb_id": "tt0251834",
+      "title": "Meghasandesam",
+      "original_title": "Meghasandesam",
+      "tagline": null,
+      "overview": "Meghasandesam is the story of a common man who has an innate urge for poetry. He leads a simple life, marrying a common villager, with children and respected in society. His life is normal until he finds a lady who is a Devadasi (a village dancer), and she inspires his creativity. As a truly inspired poet, he writes excellent poetry. But the other villagers mistake him as being attracted to the dancer.",
+      "year": 1982,
+      "release_date": "1982-09-24",
+      "poster_url": null,
+      "backdrop_url": null,
+      "trailer_url": null,
+      "runtime_minutes": 151,
+      "language": "en",
+      "genres": [],
+      "keywords": [],
+      "production_houses": [],
+      "tmdb_rating": 8.5,
+      "tmdb_votes": 2,
+      "tmdb_popularity": 0.1773,
+      "ott_platforms": [
+        "Sun Nxt",
+        "VI movies and tv"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 237254,
+          "name": "Nageshwara Rao Akkineni",
+          "character": "Ravindra Babu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/esv4H8U0GFMzrekmsNu24PmPa2F.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 584418,
+          "name": "Jayasudha",
+          "character": "Ravindra Babu's wife",
+          "photo_url": "https://image.tmdb.org/t/p/w185/xOP3pYlrqyBw5x9CDEMkYXPzpNu.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 238016,
+          "name": "Jaya Prada",
+          "character": "Padma",
+          "photo_url": "https://image.tmdb.org/t/p/w185/jD3BDABDH36vYPaQrI3PFWM9KJ9.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 1335686,
+          "name": "Kongara Jaggayya",
+          "character": "Ravindra Babu's brother-in-law",
+          "photo_url": "https://image.tmdb.org/t/p/w185/aYYoYtHnjOiNPunr62OPocokdAH.jpg",
+          "billing_order": 4
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1335262,
+          "name": "Dasari Narayana Rao",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/y45ZAkHZvsuRbHMoeBx9zIF4ohT.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:14.886Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 994631,
+      "imdb_id": "tt0257571",
+      "title": "Driver Ramudu",
+      "original_title": "డ్రైవర్ రాముడు",
+      "tagline": null,
+      "overview": "Ramu, an honest truck driver, gets falsely implicated in a smuggling scam. However, he goes to great lengths to prove his innocence.",
+      "year": 1979,
+      "release_date": "1979-02-02",
+      "poster_url": "https://image.tmdb.org/t/p/w500/q3BhcTjt6VSDsWtWCmgJaGY06Pm.jpg",
+      "backdrop_url": null,
+      "trailer_url": null,
+      "runtime_minutes": 146,
+      "language": "te",
+      "genres": [
+        "Action",
+        "Drama"
+      ],
+      "keywords": [],
+      "production_houses": [
+        "Ramakrishna Cine Studios"
+      ],
+      "tmdb_rating": 9,
+      "tmdb_votes": 1,
+      "tmdb_popularity": 0.2266,
+      "ott_platforms": [],
+      "cast": [
+        {
+          "tmdb_id": 1003933,
+          "name": "N.T. Rama Rao",
+          "character": "Ramu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/eAtPt0FJxUarWgt9XoFLX0t6BaB.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 584418,
+          "name": "Jayasudha",
+          "character": "Chukkamma",
+          "photo_url": "https://image.tmdb.org/t/p/w185/xOP3pYlrqyBw5x9CDEMkYXPzpNu.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 584684,
+          "name": "Rao Gopal Rao",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/5s1FqtrDKSc35NUCH42cPPbtSSs.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 552991,
+          "name": "Kaikala Satyanarayana",
+          "character": "Vasu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/wEw5EQRIi7KLAQWIMlOyHxZxeuy.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 584685,
+          "name": "Allu Ramalingaiah",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/tYVXmeZSgbYCuIsResUfrm2kjnz.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 585268,
+          "name": "Mohan Babu",
+          "character": "Kamal Babu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/zwqcXtnk0ju0nhuhvZXSLL2nLIy.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 3608455,
+          "name": "Sreedhar",
+          "character": "Inspector Raja Reddy",
+          "photo_url": null,
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 2026457,
+          "name": "Mada Venkateswara Rao",
+          "character": "",
+          "photo_url": null,
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 585270,
+          "name": "Chalapathi Rao",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/51zzAobEchxSwHI1b4tUxrVpQaz.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 1611653,
+          "name": "Roja Ramani",
+          "character": "Meena",
+          "photo_url": "https://image.tmdb.org/t/p/w185/v7mQJIXusWWj9AJAjfO97BdWlnS.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 237252,
+          "name": "K Raghavendra Rao",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/aXUNYnHOFs7GTJPKkscsFjtbUgo.jpg"
+        },
+        {
+          "tmdb_id": 1341368,
+          "name": "Harikrishna Nandamuri",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/wUFgB0oR8PAor4KD5KSA28LVm3F.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:15.564Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 82214,
+      "imdb_id": "tt0463670",
+      "title": "Nuvve... Nuvve...",
+      "original_title": "నువ్వే... నువ్వే...",
+      "tagline": null,
+      "overview": "Vishwanath is a millionaire who loves his daughter Anjali obsessively. When Vishwanath discovers that Anjali is in love with Rishi, a happy-go-lucky man from a middle class family, he tries his best to separate them.",
+      "year": 2002,
+      "release_date": "2002-10-10",
+      "poster_url": "https://image.tmdb.org/t/p/w500/7oTCYwdRnTP9HyPxnOBebC23pj3.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/Aqx06TAD6KCfnfIhdkXIR8PQZs1.jpg",
+      "trailer_url": null,
+      "runtime_minutes": 161,
+      "language": "te",
+      "genres": [
+        "Family",
+        "Drama",
+        "Romance",
+        "Comedy"
+      ],
+      "keywords": [],
+      "production_houses": [
+        "Sri Sravanthi Movies"
+      ],
+      "tmdb_rating": 6.714,
+      "tmdb_votes": 7,
+      "tmdb_popularity": 0.7969,
+      "ott_platforms": [],
+      "cast": [
+        {
+          "tmdb_id": 584669,
+          "name": "Tarun",
+          "character": "Rishi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/nv8fB5YH0nvgrA2eM9klpN707eP.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 145628,
+          "name": "Shriya Saran",
+          "character": "Anjali",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ioOgKBSCJhOdKoZpg86ld7zANbf.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 89153,
+          "name": "Prakash Raj",
+          "character": "Vishwanath",
+          "photo_url": "https://image.tmdb.org/t/p/w185/dJvFZOXmZdkYCOUcKTXQAhBcAoH.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 586627,
+          "name": "Chandramohan",
+          "character": "Rishi's father",
+          "photo_url": "https://image.tmdb.org/t/p/w185/pXkbPFie2pOGgc9cd84BUz0OP4A.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 213428,
+          "name": "Sunil Varma",
+          "character": "Pandu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ifmUCkLgpEzbfnRjIw62otrADpI.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 559738,
+          "name": "Rajiv Kanakala",
+          "character": "Anjali's brother",
+          "photo_url": "https://image.tmdb.org/t/p/w185/29Czs1esSU744TOe3ddDzCuCa0g.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 3406328,
+          "name": "Anitha Chowdary",
+          "character": "Anjali's sister-in-law",
+          "photo_url": "https://image.tmdb.org/t/p/w185/eKt7WZOpzaoGRgtdt787u6cnucj.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 544889,
+          "name": "Sudha",
+          "character": "Rishi's mother",
+          "photo_url": "https://image.tmdb.org/t/p/w185/eod26HfPLe95cxTk2ieT1YzNaSl.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 544990,
+          "name": "Pragathi Mahavadi",
+          "character": "Anjali's mother",
+          "photo_url": "https://image.tmdb.org/t/p/w185/9v63JB33LMkfR90raHu9O1iHZOQ.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 584787,
+          "name": "Madhumitha",
+          "character": "Anjali's friend",
+          "photo_url": "https://image.tmdb.org/t/p/w185/3COE5hzDBOWzAfay5YFEjzF1nNl.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 116923,
+          "name": "Trivikram Srinivas",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/i8FMmDxo2tXbKyrpAJWxokeClWI.jpg"
+        },
+        {
+          "tmdb_id": 1137474,
+          "name": "Sravanthi Ravi Kishore",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ebo869IeQGMhqxVYNMw3dP3jnW4.jpg"
+        },
+        {
+          "tmdb_id": 552984,
+          "name": "Saluri Koteswara Rao",
+          "job": "Music",
+          "photo_url": "https://image.tmdb.org/t/p/w185/mihUu99EOf6qLCM3jlMtlwgLqbJ.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:17.391Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 857598,
+      "imdb_id": "tt16539454",
+      "title": "Pushpa 2 - The Rule",
+      "original_title": "పుష్పా 2 - The Rule",
+      "tagline": "The rule begins.",
+      "overview": "As his smuggling empire grows, a brazen Pushpa longs for power and respect on his vengeful journey, while facing old rivals and new.",
+      "year": 2024,
+      "release_date": "2024-12-04",
+      "poster_url": "https://image.tmdb.org/t/p/w500/bhxZj3y59cK7JtGdV285dhDRaMe.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/keC82cQ8q0ZHthrbvzWq04kGnbv.jpg",
+      "trailer_url": "https://www.youtube.com/watch?v=1kVK0MZlbI4",
+      "runtime_minutes": 201,
+      "language": "te",
+      "genres": [
+        "Action",
+        "Drama",
+        "Thriller",
+        "Crime"
+      ],
+      "keywords": [
+        "sequel",
+        "ego clash"
+      ],
+      "production_houses": [
+        "Mythri Movie Makers",
+        "Sukumar Writings",
+        "CineSpare"
+      ],
+      "tmdb_rating": 6.303,
+      "tmdb_votes": 147,
+      "tmdb_popularity": 9.4033,
+      "ott_platforms": [
+        "Netflix"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 108215,
+          "name": "Allu Arjun",
+          "character": "Pushpa Raj",
+          "photo_url": "https://image.tmdb.org/t/p/w185/wHr3bKhYpiDiYVMZLZqebeauEVw.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1752056,
+          "name": "Rashmika Mandanna",
+          "character": "Srivalli",
+          "photo_url": "https://image.tmdb.org/t/p/w185/c1wQq0OAzU9nFhGYn4iOoi7dmqD.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1072750,
+          "name": "Fahadh Faasil",
+          "character": "Bhanwar Singh Shekhawat",
+          "photo_url": "https://image.tmdb.org/t/p/w185/wmkwZWFHqMptqdt4HacMIAe8OBP.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 2198106,
+          "name": "Jagadeesh Bandari",
+          "character": "Kesava",
+          "photo_url": "https://image.tmdb.org/t/p/w185/cntovFhpWby0XJdMszCJCTrLk2g.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 586629,
+          "name": "Rao Ramesh",
+          "character": "Bhumireddy Siddappa Naidu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/jzO0wN21tEcmz0haekvliQU91JM.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 213428,
+          "name": "Sunil Varma",
+          "character": "Mangalam Srinu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ifmUCkLgpEzbfnRjIw62otrADpI.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 1587861,
+          "name": "Anasuya Bharadwaj",
+          "character": "Dakshayani",
+          "photo_url": "https://image.tmdb.org/t/p/w185/adfyR0yHuTdj3sMiJQNDtBBXz9Q.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 586625,
+          "name": "Ajay",
+          "character": "Molleti Mohan Raj",
+          "photo_url": "https://image.tmdb.org/t/p/w185/uByCHJa3eaCL0SgFGDYYLlsVggC.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 2489504,
+          "name": "Kalpalatha",
+          "character": "Parvathamma",
+          "photo_url": "https://image.tmdb.org/t/p/w185/j3sKWeC05kHdnpOmCgbv1XBaQt8.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 4097387,
+          "name": "Pavani Karanam",
+          "character": "Molleti Kaveri",
+          "photo_url": "https://image.tmdb.org/t/p/w185/v6U8bCFGs6PmYnYoiB6XbEtBtDc.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 237051,
+          "name": "Sukumar",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/jUnBwmEjf82UxUDQpJI0CwscfHC.jpg"
+        },
+        {
+          "tmdb_id": 1616976,
+          "name": "Mirosław Kuba Brożek",
+          "job": "Director of Photography",
+          "photo_url": "https://image.tmdb.org/t/p/w185/xmuF6RgOYLM0asNqmNElfeV3DJW.jpg"
+        },
+        {
+          "tmdb_id": 1648659,
+          "name": "Y. Ravi Shankar",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/stZ6Fzi96nUlWyomx7hhXcqBQiX.jpg"
+        },
+        {
+          "tmdb_id": 1648660,
+          "name": "Naveen Yerneni",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/iestiUKLGHblxeQtI0DF5ENCxLW.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:18.929Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 1039482,
+      "imdb_id": "tt22987820",
+      "title": "(Tillu)²",
+      "original_title": "(టిల్లు)²",
+      "tagline": null,
+      "overview": "Balagangadhar Tilak, also known as Tillu, is rebounding from the heartbreak inflicted by Radhika. He returns to what he excels at: being a DJ, embodying a flamboyant lifestyle, and managing the Tillu Events company with his family and friends. He becomes the center of attraction at every gathering. Just when life seems favorable, Lilly enters his life, captivating him completely. But who is Lilly? Is she akin to Radhika, or is there more to her than meets the eye?",
+      "year": 2024,
+      "release_date": "2024-03-29",
+      "poster_url": "https://image.tmdb.org/t/p/w500/unRseguQgs9YQbzSHTZKIE3qXa7.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/zMGOItxIcvWkJztncbQPdbtliUd.jpg",
+      "trailer_url": "https://www.youtube.com/watch?v=oOJy-WH1Iyw",
+      "runtime_minutes": 123,
+      "language": "te",
+      "genres": [
+        "Romance",
+        "Comedy",
+        "Thriller",
+        "Crime"
+      ],
+      "keywords": [
+        "sequel"
+      ],
+      "production_houses": [
+        "Sithara Entertainments",
+        "Srikara Studios",
+        "Fortune Four Cinemas"
+      ],
+      "tmdb_rating": 6.192,
+      "tmdb_votes": 13,
+      "tmdb_popularity": 0.9791,
+      "ott_platforms": [
+        "Netflix"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 931864,
+          "name": "Siddhu Jonnalagadda",
+          "character": "Bala Gangadhar Tilak \"DJ Tillu\"",
+          "photo_url": "https://image.tmdb.org/t/p/w185/6B8PzdF7BkyABUoWJZZgn8IuZkn.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1470724,
+          "name": "Anupama Parameswaran",
+          "character": "Lily Joseph",
+          "photo_url": "https://image.tmdb.org/t/p/w185/iA8NAbwIKTbA8fKTNtXsAiBcC4W.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1999839,
+          "name": "Muralidhar Goud",
+          "character": "Tillu's Father",
+          "photo_url": "https://image.tmdb.org/t/p/w185/3KldPSnn08WhuwoUR9GhZ9OnsI2.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 85588,
+          "name": "Murali Sharma",
+          "character": "Sheikh Mehboob",
+          "photo_url": "https://image.tmdb.org/t/p/w185/8m4L7L9lK4Z2YK4Jg97pMbA0Le5.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 1060294,
+          "name": "Anish Kuruvilla",
+          "character": "ISF Chief",
+          "photo_url": "https://image.tmdb.org/t/p/w185/egs7BnJeBw7txSjoETg2XoqHO8e.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 3409165,
+          "name": "Praneeth Reddy Kallem",
+          "character": "Marcus",
+          "photo_url": null,
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 1339514,
+          "name": "Prince Cecil",
+          "character": "Shannon Gonzalez",
+          "photo_url": "https://image.tmdb.org/t/p/w185/yxKAPc3OPeAyIeIkeJL3PTRR3tk.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 1744060,
+          "name": "Neha Shetty",
+          "character": "Radhika",
+          "photo_url": "https://image.tmdb.org/t/p/w185/qjU2jiwvU3DnXZ67M1IXe4HRZ3K.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 1429161,
+          "name": "Narra Srinu",
+          "character": "Chandrakant",
+          "photo_url": "https://image.tmdb.org/t/p/w185/7PXj2khczo0S3PBF0rjQEDhR3aY.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 213432,
+          "name": "Brahmaji",
+          "character": "Inspector Rao",
+          "photo_url": "https://image.tmdb.org/t/p/w185/xDTE7POq1bkyjLINxdy7rW4wQlg.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 3420662,
+          "name": "Sai Prakash Ummadisingu",
+          "job": "Director of Photography",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1790294,
+          "name": "Suryadevara Naga Vamsi",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/hLJpBV45WFqS3sYxS3zmBhcHAoq.jpg"
+        },
+        {
+          "tmdb_id": 3289134,
+          "name": "Mallik Ram",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/wFxvjZCIXytlnkkF4YrO4WVbr9n.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:19.645Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 330172,
+      "imdb_id": "tt0156126",
+      "title": "Thakara",
+      "original_title": "തകര",
+      "tagline": null,
+      "overview": "Thakara  is an orphan. He is mentally immatured but clean hearted. He has a close relationship with Subhashini, the dream girl of the village. Thakara was betrayed by the words of Chellappanashari and indulges in a physical relationship with Subhashini. Subhashini's father Mathu Mooppan finds out their relation and beats Thakara unconscious. Thakara, fully filled with revenge on Mooppan, runs away. Once he earns enough money to buy a knife, he returns and kills Mooppan. Subhashini refuses to go with Thakara, who proposes her after killing her father. With no way to escape, Thakara finds his end in front of a running train.",
+      "year": 1979,
+      "release_date": "1979-09-28",
+      "poster_url": "https://image.tmdb.org/t/p/w500/9XnyI5Ph0XvuBUrxNrQRYiQiiWM.jpg",
+      "backdrop_url": null,
+      "trailer_url": null,
+      "runtime_minutes": 108,
+      "language": "ml",
+      "genres": [],
+      "keywords": [],
+      "production_houses": [
+        "Jovial Films"
+      ],
+      "tmdb_rating": 10,
+      "tmdb_votes": 1,
+      "tmdb_popularity": 0.1361,
+      "ott_platforms": [],
+      "cast": [
+        {
+          "tmdb_id": 581188,
+          "name": "Prathap Pothan",
+          "character": "Thakara",
+          "photo_url": "https://image.tmdb.org/t/p/w185/wDnpGLXgsBax5NE0LgSsV6EWrje.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1337484,
+          "name": "Surekha",
+          "character": "Subhashini",
+          "photo_url": "https://image.tmdb.org/t/p/w185/sDjOjI0JFxolb2wpWUHehFYMBz7.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 140466,
+          "name": "Nedumudi Venu",
+          "character": "Chellappanasar",
+          "photo_url": "https://image.tmdb.org/t/p/w185/d1MdSwIWnTNwk4qSxQ001GqZaaB.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 1438549,
+          "name": "K.G Menon",
+          "character": "Mathu Mooppan",
+          "photo_url": null,
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 1438550,
+          "name": "Anirudhan",
+          "character": "Pullai",
+          "photo_url": null,
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 591076,
+          "name": "Sreelatha Namboothiri",
+          "character": "Kamakshi",
+          "photo_url": "https://image.tmdb.org/t/p/w185/yjouVpWgk5Agc3N2t6ZIo81FdPL.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 1438551,
+          "name": "Santha Devi",
+          "character": "Subhashini's Mother",
+          "photo_url": "https://image.tmdb.org/t/p/w185/1gOeq0OnaFD1ZcsyuFIY95rNg4T.jpg",
+          "billing_order": 7
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1438552,
+          "name": "V V Babu",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 584494,
+          "name": "Bharathan",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/jr0T95WphBnJidHIvsqENUDr6aM.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:21.280Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 242256,
+      "imdb_id": "tt3328724",
+      "title": "17 Seconds",
+      "original_title": "17 Seconds",
+      "tagline": "One Goal II",
+      "overview": "“17 Seconds” provides an all-access pass inside the Blackhawks locker room party in Boston and the airplane ride home with the Cup following Game 6, in addition to insight from the players on the Stanley Cup-winning team and members of the organization. Fans can ride along on the players’ buses during the championship parade and follow the Blackhawks as they spend their Cup days with family and friends, sharing the greatest trophy in sports with their communities. It also includes footage from the opening night banner raising ceremony.",
+      "year": 2013,
+      "release_date": "2013-10-30",
+      "poster_url": "https://image.tmdb.org/t/p/w500/n2RL3hPNywJFYrKAQHqoF8fXlD5.jpg",
+      "backdrop_url": null,
+      "trailer_url": "https://www.youtube.com/watch?v=2QmaZIx-g6I",
+      "runtime_minutes": 53,
+      "language": "en",
+      "genres": [
+        "Documentary"
+      ],
+      "keywords": [
+        "chicago, illinois",
+        "ice hockey",
+        "stanley cup"
+      ],
+      "production_houses": [
+        "Blackhawks TV",
+        "Banner Collective"
+      ],
+      "tmdb_rating": 5.2,
+      "tmdb_votes": 2,
+      "tmdb_popularity": 0.1684,
+      "ott_platforms": [],
+      "cast": [
+        {
+          "tmdb_id": 1277282,
+          "name": "Bryan Bickell",
+          "character": "LW",
+          "photo_url": null,
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1277283,
+          "name": "Dave Bolland",
+          "character": "C",
+          "photo_url": "https://image.tmdb.org/t/p/w185/uE7FiGfBOB3XTle4YjnK7oDU7Hs.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1277284,
+          "name": "Brandon Bollig",
+          "character": "LW",
+          "photo_url": null,
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 1277285,
+          "name": "Sheldon Brookbank",
+          "character": "D",
+          "photo_url": null,
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 1277286,
+          "name": "Corey Crawford",
+          "character": "G",
+          "photo_url": null,
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 1277287,
+          "name": "Ray Emery",
+          "character": "G",
+          "photo_url": null,
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 1277288,
+          "name": "Michael Frolik",
+          "character": "RW",
+          "photo_url": null,
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 1277289,
+          "name": "Michal Handzus",
+          "character": "C",
+          "photo_url": null,
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 1277290,
+          "name": "Niklas Hjalmarsson",
+          "character": "D",
+          "photo_url": "https://image.tmdb.org/t/p/w185/19GcPA9Zvk6WISBt8eM2LweAnnR.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 1277291,
+          "name": "Marian Hossa",
+          "character": "RW",
+          "photo_url": "https://image.tmdb.org/t/p/w185/tQrabm2HVD5Vvjlm7RyDS2yYmv3.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1277305,
+          "name": "Patrick Dahl",
+          "job": "Director",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1277314,
+          "name": "Adam Kempenaar",
+          "job": "Producer",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:22.511Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 472221,
+      "imdb_id": "tt5525650",
+      "title": "The Goat Life",
+      "original_title": "ആടുജീവിതം",
+      "tagline": "Every Breath Is A Battle",
+      "overview": "Indian migrant worker Najeeb Muhammad goes to Saudi Arabia to earn money. However, in a twist of fate, he finds himself living a slave-like existence, herding goats in the middle of the desert.",
+      "year": 2024,
+      "release_date": "2024-03-28",
+      "poster_url": "https://image.tmdb.org/t/p/w500/vwRkVhvJuAFz4i8udXMNkcJCztc.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/u7GXKY7EUTBS4kQO6aXqDNXWgpd.jpg",
+      "trailer_url": "https://www.youtube.com/watch?v=xjQKvhEi7NI",
+      "runtime_minutes": 173,
+      "language": "ml",
+      "genres": [
+        "Drama",
+        "Adventure"
+      ],
+      "keywords": [
+        "based on novel or book",
+        "based on true story",
+        "missing person",
+        "migrant worker",
+        "goat life"
+      ],
+      "production_houses": [
+        "Visual Romance",
+        "Jet Media Productions",
+        "Alta Global Media",
+        "Prithviraj Productions"
+      ],
+      "tmdb_rating": 7.27,
+      "tmdb_votes": 61,
+      "tmdb_popularity": 1.8279,
+      "ott_platforms": [
+        "Netflix"
+      ],
+      "cast": [
+        {
+          "tmdb_id": 117690,
+          "name": "Prithviraj Sukumaran",
+          "character": "Najeeb Muhammad",
+          "photo_url": "https://image.tmdb.org/t/p/w185/oxLS80XtmMJVHbTfFCfXMJvE5i9.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 4558836,
+          "name": "K R  Gokul",
+          "character": "Hakkim",
+          "photo_url": "https://image.tmdb.org/t/p/w185/8DEuSxGUQd7AIfpTxWgvr7SaANr.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 105762,
+          "name": "Jimmy Jean-Louis",
+          "character": "Ibrahim Khadiri",
+          "photo_url": "https://image.tmdb.org/t/p/w185/cWfLE9CHVQPn65gkdiQ4We33VAy.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 4837924,
+          "name": "Talib Al Balushi",
+          "character": "Kafeel",
+          "photo_url": "https://image.tmdb.org/t/p/w185/jVNxFIMpS0FM9XInOU7HSt2WUHU.jpg",
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 3101516,
+          "name": "Rik Aby",
+          "character": "Jasser",
+          "photo_url": "https://image.tmdb.org/t/p/w185/xGx8VD5sTaR7Z9AsARcSz41ytfx.jpg",
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 593025,
+          "name": "Robin Das",
+          "character": "Hindiwala",
+          "photo_url": "https://image.tmdb.org/t/p/w185/kqbdKYFZbC3bfugX2aCvQ2hq0Me.jpg",
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 223164,
+          "name": "Amala Paul",
+          "character": "Sainu",
+          "photo_url": "https://image.tmdb.org/t/p/w185/11tTCca9pl89XaPhaE2o8UQLUVr.jpg",
+          "billing_order": 7
+        },
+        {
+          "tmdb_id": 584769,
+          "name": "Shobha Mohan",
+          "character": "Ummah",
+          "photo_url": "https://image.tmdb.org/t/p/w185/n9tckrmtOEkyQ5zC9MlkyiqNnvK.jpg",
+          "billing_order": 8
+        },
+        {
+          "tmdb_id": 2016029,
+          "name": "Nasar Karutheni",
+          "character": "Kunjikka",
+          "photo_url": "https://image.tmdb.org/t/p/w185/ynlPhYI3PLKO6CESAa4j8vCrKT2.jpg",
+          "billing_order": 9
+        },
+        {
+          "tmdb_id": 2635612,
+          "name": "Akef Najem",
+          "character": "Rich Man",
+          "photo_url": "https://image.tmdb.org/t/p/w185/uP7p5TtNJrwfTp2eE7nSuoYYcnl.jpg",
+          "billing_order": 10
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 2016514,
+          "name": "Sunil K S",
+          "job": "Director of Photography",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 580661,
+          "name": "Blessy",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/8UWCbHFHWnsiXgUKwsSZhI10RPs.jpg"
+        },
+        {
+          "tmdb_id": 580661,
+          "name": "Blessy",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/8UWCbHFHWnsiXgUKwsSZhI10RPs.jpg"
+        },
+        {
+          "tmdb_id": 105762,
+          "name": "Jimmy Jean-Louis",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/cWfLE9CHVQPn65gkdiQ4We33VAy.jpg"
+        },
+        {
+          "tmdb_id": 1563438,
+          "name": "Steven Adams",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 2211789,
+          "name": "Supriya Menon",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/xGvfT5bOTPDHJNCvhWPMLgahBpU.jpg"
+        },
+        {
+          "tmdb_id": 117690,
+          "name": "Prithviraj Sukumaran",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/oxLS80XtmMJVHbTfFCfXMJvE5i9.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:23.332Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 457118,
+      "imdb_id": "tt3891696",
+      "title": "Rules of Reduction",
+      "original_title": "Rules of Reduction",
+      "tagline": null,
+      "overview": "Billy is a man child who has developed 'The Pedo Instant', a product that acts as a repellent to those unsuspecting individuals who might invade his personal space. He calls his mom to boast about the product's effectiveness and the ensuing riches that are sure to follow. His mother displays grave concern and attempts to explain to her son why this might not be the best idea.",
+      "year": 2015,
+      "release_date": "2015-01-01",
+      "poster_url": "https://image.tmdb.org/t/p/w500/71iYgh36C9Eu1Sw6dU9ehUC3qEo.jpg",
+      "backdrop_url": null,
+      "trailer_url": null,
+      "runtime_minutes": 7,
+      "language": "en",
+      "genres": [
+        "Comedy"
+      ],
+      "keywords": [
+        "pedophilia",
+        "beach",
+        "pedophile",
+        "disguise",
+        "after disaster",
+        "loveline",
+        "short film"
+      ],
+      "production_houses": [],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.155,
+      "ott_platforms": [],
+      "cast": [
+        {
+          "tmdb_id": 1343225,
+          "name": "Jacob Flowers",
+          "character": "Beach Kid #1",
+          "photo_url": null,
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 1343228,
+          "name": "Kelci Flowers",
+          "character": "Beach Kid #2",
+          "photo_url": null,
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1814794,
+          "name": "Lauren Shand",
+          "character": "Mommy and Me Mom",
+          "photo_url": null,
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 1814796,
+          "name": "Scarlett Shand",
+          "character": "Mommy and Me Daughter",
+          "photo_url": null,
+          "billing_order": 4
+        },
+        {
+          "tmdb_id": 1814797,
+          "name": "Travis Eller",
+          "character": "Mormon",
+          "photo_url": null,
+          "billing_order": 5
+        },
+        {
+          "tmdb_id": 1814799,
+          "name": "Caitlin Sheridan",
+          "character": "Girl on Swing Set",
+          "photo_url": null,
+          "billing_order": 6
+        },
+        {
+          "tmdb_id": 1814801,
+          "name": "George Thibault",
+          "character": "Enormous Father",
+          "photo_url": null,
+          "billing_order": 7
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 1781273,
+          "name": "Anderson Cowan",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/4OQr9WohQOttIkTQ4rQWB3T6443.jpg"
+        },
+        {
+          "tmdb_id": 1814812,
+          "name": "Trevor Shand",
+          "job": "Music",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1814809,
+          "name": "Chris Gardner",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1781273,
+          "name": "Anderson Cowan",
+          "job": "Producer",
+          "photo_url": "https://image.tmdb.org/t/p/w185/4OQr9WohQOttIkTQ4rQWB3T6443.jpg"
+        },
+        {
+          "tmdb_id": 1781877,
+          "name": "Milan Janicin",
+          "job": "Producer",
+          "photo_url": null
+        },
+        {
+          "tmdb_id": 1781877,
+          "name": "Milan Janicin",
+          "job": "Director of Photography",
+          "photo_url": null
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:24.073Z",
+      "is_verified": false
+    },
+    {
+      "tmdb_id": 637116,
+      "imdb_id": "tt9399168",
+      "title": "Roam Rome Mein",
+      "original_title": "Roam Rome Mein",
+      "tagline": null,
+      "overview": "Raj goes to Rome looking for his missing sister Reena. Through the search he discovers the real Reena, things that he never knew about her. He also meets a few magical characters who make him realize who Raj actually is as well.",
+      "year": 2019,
+      "release_date": "2019-10-05",
+      "poster_url": "https://image.tmdb.org/t/p/w500/yIbhVBzf1Ca43FaEN604UtpUFhF.jpg",
+      "backdrop_url": "https://image.tmdb.org/t/p/w1280/3tSBkHcmpTJxqFGqbkDdc8sv5XM.jpg",
+      "trailer_url": null,
+      "runtime_minutes": 101,
+      "language": "hi",
+      "genres": [],
+      "keywords": [],
+      "production_houses": [],
+      "tmdb_rating": null,
+      "tmdb_votes": 0,
+      "tmdb_popularity": 0.2054,
+      "ott_platforms": [],
+      "cast": [
+        {
+          "tmdb_id": 85047,
+          "name": "Nawazuddin Siddiqui",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/w1eXF7T60QlEC2gNfr99J3n8CgX.jpg",
+          "billing_order": 1
+        },
+        {
+          "tmdb_id": 87297,
+          "name": "Tannishtha Chatterjee",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/sMHI5SS5CSvDLzqwfnGn4XG0oGc.jpg",
+          "billing_order": 2
+        },
+        {
+          "tmdb_id": 1374579,
+          "name": "Valentina Corti",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/feeyNEmLmzUcgCNpjYa3q9Y1er4.jpg",
+          "billing_order": 3
+        },
+        {
+          "tmdb_id": 2376306,
+          "name": "Priyansh Jora",
+          "character": "",
+          "photo_url": "https://image.tmdb.org/t/p/w185/lNISKscTLC6AN5VG0xOX2j9Vh7E.jpg",
+          "billing_order": 4
+        }
+      ],
+      "crew": [
+        {
+          "tmdb_id": 87297,
+          "name": "Tannishtha Chatterjee",
+          "job": "Director",
+          "photo_url": "https://image.tmdb.org/t/p/w185/sMHI5SS5CSvDLzqwfnGn4XG0oGc.jpg"
+        }
+      ],
+      "mood_tags": [],
+      "vibe_tags": [],
+      "fetched_at": "2026-06-23T03:06:24.801Z",
+      "is_verified": false
+    }
+  ]
+}
