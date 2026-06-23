@@ -553,8 +553,6 @@ export default function OnboardingPage() {
         .upsert(reactions, { onConflict: "user_id,movie_id" });
       if (reactErr) {
         console.error("[onboarding] user_reactions upsert failed:", JSON.stringify(reactErr));
-        // Surface to user so it's visible in UI testing
-        alert(`Save error (reactions): ${reactErr.message || reactErr.code || JSON.stringify(reactErr)}`);
       }
     }
 
