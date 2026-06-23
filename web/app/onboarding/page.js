@@ -462,15 +462,23 @@ export default function OnboardingPage() {
 
   async function fetchCuratedFilms(langs) {
     const selectedLangs = langs?.length > 0 ? langs : ["hi"];
-    const allFilms = selectedLangs.flatMap(code => CURATED_FILMS[code] || []);
-    const titles = [...new Set(allFilms.map(f => f.title))];
-    const { data } = await supabase
-      .from("movies")
-      .select("id, title, year, poster_url, genres")
-      .in("title", titles)
-      .limit(500);
-    if (!data?.length) return [];
-    return data.sort((a, b) => (b.year || 0) - (a.year || 0));
+    const perLang = await Promise.all(
+      selectedLangs.map(async (code) => {
+        const films = CURATED_FILMS[code] || [];
+        if (!films.length) return [];
+        const titles = [...new Set(films.map(f => f.title))];
+        const { data } = await supabase
+          .from("movies")
+          .select("id, title, year, poster_url, genres")
+          .in("title", titles)
+          .eq("language", code)
+          .limit(500);
+        return data || [];
+      })
+    );
+    const all = perLang.flat();
+    if (!all.length) return [];
+    return all.sort((a, b) => (b.year || 0) - (a.year || 0));
   }
 
   function handleIdentityContinue() { setStep(1); }
