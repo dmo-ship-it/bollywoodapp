@@ -96,7 +96,7 @@ export default function HomePage() {
           .select("movie_id, rating, score, movies(genres, language)")
           .eq("user_id", data.user.id),
         browserSupabase.from("user_watchlist").select("movie_id").eq("user_id", data.user.id),
-        browserSupabase.from("user_profiles").select("language_preferences").eq("user_id", data.user.id).single(),
+        browserSupabase.from("user_profiles").select("preferred_languages").eq("user_id", data.user.id).single(),
       ]);
 
       const ratedIds = new Set();
@@ -153,7 +153,7 @@ export default function HomePage() {
       (r.movies?.genres ?? []).forEach((g) => { genreCount[g] = (genreCount[g] ?? 0) + 1; });
     });
     const topGenres = Object.entries(genreCount).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([g]) => g);
-    const langs = profile?.language_preferences ?? [];
+    const langs = profile?.preferred_languages ?? [];
 
     if (topGenres.length === 0 && langs.length === 0) { setRecommended([]); return; }
 
