@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { createClient } from "../../../lib/supabase-browser";
 import Link from "next/link";
 import WatchlistButton from "../../components/WatchlistButton";
+import RatingModal from "../../components/RatingModal";
 
 const RATING_COLORS = { 5: "#E14B33", 4: "#E6A437", 3: "#C07A4E", 2: "#8C8A93", 1: "#8C8A93" };
 const RATING_TEXT   = { 5: "Loved", 4: "Liked", 3: "Okay", 2: "Meh", 1: "Hated" };
@@ -21,6 +22,7 @@ export default function PersonPage() {
   const [user,        setUser]        = useState(null);
   const [loading,     setLoading]     = useState(true);
   const [activeRole,  setActiveRole]  = useState(null);
+  const [ratingMovie, setRatingMovie] = useState(null); // { id, title, poster_url }
 
   useEffect(() => {
     async function load() {
@@ -227,7 +229,8 @@ export default function PersonPage() {
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
         {activeFilms.map((film) => {
           const userRating = userRatings[film.id];
-          const score      = film.global_score ? Math.round(film.global_score) : null;
+          const scoreVal   = Math.round(Number(film.global_score));
+          const score      = film.global_score && !isNaN(scoreVal) ? scoreVal : null;
 
           return (
             <div key={film.id} className="group relative">
@@ -266,6 +269,16 @@ export default function PersonPage() {
                       <WatchlistButton movieId={film.id} movieTitle={film.title} />
                     </div>
                   </div>
+
+                  {/* Rate on hover */}
+                  <button
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMovie({ id: film.id, title: film.title, poster_url: film.poster_url }); }}
+                    className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1"
+                    style={{ background: "rgba(255,255,255,0.95)", boxShadow: "0 1px 3px rgba(0,0,0,0.08)", borderRadius: 6 }}
+                    title="Rate this film"
+                  >
+                    <span className="text-xs leading-none font-semibold" style={{ color: "var(--ink-soft)" }}>+</span>
+                  </button>
                 </div>
 
                 {/* Title + year */}
@@ -290,6 +303,20 @@ export default function PersonPage() {
           );
         })}
       </div>
+
+      {/* Rating modal */}
+      {ratingMovie && (
+        <RatingModal
+          movieId={ratingMovie.id}
+          movieTitle={ratingMovie.title}
+          posterUrl={ratingMovie.poster_url}
+          onClose={() => setRatingMovie(null)}
+          onRated={(rating) => {
+            setUserRatings((prev) => ({ ...prev, [ratingMovie.id]: rating }));
+            setRatingMovie(null);
+          }}
+        />
+      )}
 
       {/* Seen / unseen CTA */}
       {user && activeFilms.length > 0 && (
