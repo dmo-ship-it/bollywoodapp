@@ -404,7 +404,7 @@ export async function getPersonalizedScoreMap(userId, movieIds) {
   seenMovies = seenMovies || [];
 
   const lovedBaseline = computeLovedBaseline(seenMovies, affinities);
-  if (lovedBaseline <= 0) return {}; // not enough signal — caller uses global score
+  if (!(lovedBaseline > 0)) return {}; // not enough signal — caller uses global score; !(>0) catches NaN too
 
   // Fetch enrichment for the requested movies (the home page only loads light cols).
   let { data: movies } = await supabase

@@ -11,8 +11,8 @@ function scoreTextColor(v) {
 
 export default function ScoreCircle({ score, size = "md" }) {
   if (score == null) return null;
-
-  const val = Math.round(score);
+  const val = Math.round(Number(score));
+  if (isNaN(val)) return null;
 
   const dim = { sm: 32, md: 40, lg: 48 }[size] ?? 40;
   const fs  = { sm: 11, md: 13, lg: 15 }[size] ?? 13;

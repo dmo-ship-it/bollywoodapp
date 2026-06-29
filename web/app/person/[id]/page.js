@@ -177,7 +177,7 @@ export default function PersonPage() {
               <div className="flex gap-1.5 flex-wrap">
                 {roles.map((r) => (
                   <span key={r} className="text-xs bg-stone-100 text-stone-500 border border-stone-200 px-2 py-0.5 rounded-full">
-                    <RoleIcon role={r} /> {r}
+                    {r}
                   </span>
                 ))}
               </div>
