@@ -18,6 +18,10 @@ const TODAY    = new Date().toISOString().split("T")[0];
 const NEW_CUTOFF = new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
 const MOVIE_COLS = "id, title, year, release_date, poster_url, tmdb_rating, tmdb_popularity, genres, verdict, tone, mood_tags";
+// Minimal columns for the client-side search index (covers what MovieCard needs).
+const SEARCH_INDEX_COLS = "id, title, year, poster_url, language, genres, tmdb_rating, global_score, mood_tags, verdict, tone";
+const SEARCH_INDEX_KEY  = "rasika_search_index_v2";
+const SEARCH_INDEX_TTL  = 6 * 60 * 60 * 1000; // 6 hours
 
 export default function HomePage() {
   const [hero,           setHero]          = useState(null);
@@ -37,11 +41,48 @@ export default function HomePage() {
   const [personalScores, setPersonalScores]= useState({});  // predicted "for you" scores (taste match)
   const [userId,         setUserId]        = useState(null);
   const [userWatchlist,  setUserWatchlist] = useState(new Set());
+  const [searchIndex,    setSearchIndex]   = useState([]);
 
   // The score shown on every card: the user's own score wins where they've rated,
   // otherwise the personalized taste-match prediction. Falls back to global score
   // (inside MovieCard) when the user has no taste signal yet.
   const cardScores = useMemo(() => ({ ...personalScores, ...userScores }), [personalScores, userScores]);
+
+  // Lazy-load the full search index after initial render.
+  // Reads from localStorage first (instant), then refreshes from DB if stale.
+  useEffect(() => {
+    async function loadSearchIndex() {
+      try {
+        const cached = localStorage.getItem(SEARCH_INDEX_KEY);
+        if (cached) {
+          const { ts, data } = JSON.parse(cached);
+          if (Date.now() - ts < SEARCH_INDEX_TTL) {
+            setSearchIndex(data);
+            return;
+          }
+        }
+      } catch {}
+
+      // Paginate through all movies to build the full index
+      const all = [];
+      const PAGE = 1000;
+      for (let offset = 0; ; offset += PAGE) {
+        const { data } = await supabase
+          .from("movies")
+          .select(SEARCH_INDEX_COLS)
+          .order("title", { ascending: true })
+          .range(offset, offset + PAGE - 1);
+        if (!data?.length) break;
+        all.push(...data);
+        if (data.length < PAGE) break;
+      }
+      if (all.length) {
+        setSearchIndex(all);
+        try { localStorage.setItem(SEARCH_INDEX_KEY, JSON.stringify({ ts: Date.now(), data: all })); } catch {}
+      }
+    }
+    loadSearchIndex();
+  }, []);
 
   // Initial load — hero, curated sections, user data
   useEffect(() => {
@@ -216,14 +257,25 @@ export default function HomePage() {
   const hasActiveFilters = countActiveFilters(filters) > 0;
   const isGridMode       = (search && search.length >= 3) || hasActiveFilters || seeAll;
 
+  // Pure search (no filters, no seeAll): use the in-memory index for instant results.
+  const isSearchOnly = !!(search && search.length >= 3 && !hasActiveFilters && !seeAll);
+
+  const searchResults = useMemo(() => {
+    if (!isSearchOnly || !searchIndex.length) return null;
+    const q = search.toLowerCase();
+    return searchIndex.filter((m) => m.title.toLowerCase().includes(q)).slice(0, 60);
+  }, [isSearchOnly, search, searchIndex]);
+
+  // Only hit the DB when filters are active or seeAll, not for pure search.
   useEffect(() => {
-    if (!isGridMode) return;
+    if (!isGridMode || isSearchOnly) return;
     const controller = new AbortController();
     const t = setTimeout(() => fetchMovies(controller.signal), 150);
     return () => { clearTimeout(t); controller.abort(); };
-  }, [fetchMovies, isGridMode]);
+  }, [fetchMovies, isGridMode, isSearchOnly]);
 
-  const gridMovies = movies;
+  // searchResults=null means index not loaded yet (show DB fallback); [] means loaded but no matches.
+  const gridMovies = isSearchOnly && searchResults !== null ? searchResults : movies;
 
   function clearAll() { setSearch(""); setFilters(EMPTY_FILTERS); setSeeAll(null); }
 
@@ -404,7 +456,7 @@ export default function HomePage() {
               </button>
             </div>
 
-            {(loading && gridMovies.length === 0) ? (
+            {(loading && !isSearchOnly && gridMovies.length === 0) ? (
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">
                 {Array.from({ length: 21 }).map((_, i) => <div key={i} className="aspect-[2/3] rounded-xl shimmer" />)}
               </div>
