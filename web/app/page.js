@@ -37,7 +37,6 @@ export default function HomePage() {
   const [personalScores, setPersonalScores]= useState({});  // predicted "for you" scores (taste match)
   const [userId,         setUserId]        = useState(null);
   const [userWatchlist,  setUserWatchlist] = useState(new Set());
-  const [titleIndex,     setTitleIndex]    = useState([]);
 
   // The score shown on every card: the user's own score wins where they've rated,
   // otherwise the personalized taste-match prediction. Falls back to global score
@@ -46,14 +45,8 @@ export default function HomePage() {
 
   // Initial load — hero, curated sections, user data
   useEffect(() => {
-    // Seed title index from cache immediately so search works before the fetch returns.
-    try {
-      const cached = localStorage.getItem("rasika_title_index");
-      if (cached) setTitleIndex(JSON.parse(cached));
-    } catch {}
-
     async function loadCurated() {
-      const [heroRes, newRes, trendRes, soonRes, indexRes] = await Promise.all([
+      const [heroRes, newRes, trendRes, soonRes] = await Promise.all([
         supabase
           .from("movies")
           .select("id, title, year, overview, backdrop_url, poster_url, tmdb_rating, genres, ott_platforms, mood_tags, tone")
@@ -69,19 +62,12 @@ export default function HomePage() {
         supabase.from("movies").select(MOVIE_COLS + ", trailer_url")
           .gt("release_date", TODAY)
           .order("release_date", { ascending: true }).limit(20),
-        supabase.from("movies").select(MOVIE_COLS)
-          .order("tmdb_popularity", { ascending: false })
-          .limit(5000),
       ]);
 
       if (heroRes.data?.length) setHero(heroRes.data[Math.floor(Math.random() * heroRes.data.length)]);
       setNewReleases(newRes.data ?? []);
       setTrending(trendRes.data ?? []);
       setComingSoon(soonRes.data ?? []);
-      if (indexRes.data?.length) {
-        setTitleIndex(indexRes.data);
-        try { localStorage.setItem("rasika_title_index", JSON.stringify(indexRes.data)); } catch {}
-      }
       setCuratedLoading(false);
     }
     loadCurated();
@@ -230,23 +216,14 @@ export default function HomePage() {
   const hasActiveFilters = countActiveFilters(filters) > 0;
   const isGridMode       = (search && search.length >= 3) || hasActiveFilters || seeAll;
 
-  // Pure title search is handled client-side — no DB round-trip needed.
-  const isSearchOnly  = !!(search && search.length >= 3 && !hasActiveFilters && !seeAll);
-
-  const searchResults = useMemo(() => {
-    if (!isSearchOnly) return [];
-    const q = search.toLowerCase();
-    return titleIndex.filter((m) => m.title.toLowerCase().includes(q));
-  }, [isSearchOnly, search, titleIndex]);
-
   useEffect(() => {
-    if (!isGridMode || isSearchOnly) return;
+    if (!isGridMode) return;
     const controller = new AbortController();
     const t = setTimeout(() => fetchMovies(controller.signal), 150);
     return () => { clearTimeout(t); controller.abort(); };
-  }, [fetchMovies, isGridMode, isSearchOnly]);
+  }, [fetchMovies, isGridMode]);
 
-  const gridMovies = isSearchOnly ? searchResults : movies;
+  const gridMovies = movies;
 
   function clearAll() { setSearch(""); setFilters(EMPTY_FILTERS); setSeeAll(null); }
 
@@ -427,7 +404,7 @@ export default function HomePage() {
               </button>
             </div>
 
-            {(!isSearchOnly && loading && gridMovies.length === 0) ? (
+            {(loading && gridMovies.length === 0) ? (
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">
                 {Array.from({ length: 21 }).map((_, i) => <div key={i} className="aspect-[2/3] rounded-xl shimmer" />)}
               </div>
@@ -439,7 +416,7 @@ export default function HomePage() {
             ) : (
               <div
                 className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4"
-                style={{ opacity: (!isSearchOnly && loading) ? 0.45 : 1, transition: "opacity 0.15s ease" }}
+                style={{ opacity: loading ? 0.45 : 1, transition: "opacity 0.15s ease" }}
               >
                 {gridMovies.map((movie) => (
                   <MovieCard
