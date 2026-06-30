@@ -556,6 +556,7 @@ export default function OnboardingPage() {
       }
     }
 
+    const meta = currentUser.user_metadata || {};
     const { error: profileErr } = await supabase.from("user_profiles").upsert(
       {
         user_id:             currentUser.id,
@@ -566,21 +567,13 @@ export default function OnboardingPage() {
         email:               currentUser.email,
         country:             country || null,
         city:                city.trim() || null,
-      },
-      { onConflict: "user_id" }
-    );
-    if (profileErr) console.error("[onboarding] user_profiles core upsert failed:", JSON.stringify(profileErr));
-
-    const meta = currentUser.user_metadata || {};
-    await supabase.from("user_profiles").upsert(
-      {
-        user_id:             currentUser.id,
         full_name:           meta.full_name || meta.name || displayName.trim() || null,
         profile_picture_url: meta.avatar_url || meta.picture || null,
         preferred_languages: languageRanking.length > 0 ? languageRanking : null,
       },
       { onConflict: "user_id" }
     );
+    if (profileErr) console.error("[onboarding] user_profiles upsert failed:", JSON.stringify(profileErr));
 
     router.push("/");
   }
